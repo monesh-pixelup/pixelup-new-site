@@ -20,36 +20,30 @@ export default function Header({ current }: { current?: 'work' | 'blog' | 'explo
       </a>
 
       <nav className="hdr__nav" aria-label="Primary">
-        <div className="hdr__group">
-          <a href="/work" className="hdr__link" aria-current={current === 'work' ? 'page' : undefined}>
-            <span className="mask" data-intro="rise">
-              <span>
-                <Roll>Work</Roll>
-                <sup data-count={projects.length}>{projects.length}</sup>
-              </span>
+        <a href="/work" className="hdr__link" aria-current={current === 'work' ? 'page' : undefined}>
+          <span className="mask" data-intro="rise">
+            <span>
+              <Roll>Work</Roll>
+              <sup data-count={projects.length}>{projects.length}</sup>
             </span>
-          </a>
-          <a href="/#about" className="hdr__link">
-            <span className="mask" data-intro="rise">
-              <span>
-                <Roll>About</Roll>
-              </span>
+          </span>
+        </a>
+        <a href="/#about" className="hdr__link">
+          <span className="mask" data-intro="rise">
+            <span>
+              <Roll>About</Roll>
             </span>
-          </a>
-          <a
-            href="/explorations"
-            className="hdr__link"
-            aria-current={current === 'explorations' ? 'page' : undefined}
-          >
-            <span className="mask" data-intro="rise">
-              <span>
-                <Roll>Explorations</Roll>
-                <sup data-count={explorations.length}>{explorations.length}</sup>
-              </span>
+          </span>
+        </a>
+        <a href="/explorations" className="hdr__link" aria-current={current === 'explorations' ? 'page' : undefined}>
+          <span className="mask" data-intro="rise">
+            <span>
+              <Roll>Explorations</Roll>
+              <sup data-count={explorations.length}>{explorations.length}</sup>
             </span>
-          </a>
-        </div>
-        <a href="/blog" className="hdr__link hdr__link--news" aria-current={current === 'blog' ? 'page' : undefined}>
+          </span>
+        </a>
+        <a href="/blog" className="hdr__link" aria-current={current === 'blog' ? 'page' : undefined}>
           <span className="mask" data-intro="rise">
             <span>
               <Roll>Blog</Roll>

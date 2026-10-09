@@ -18,8 +18,11 @@
   pointer-events: auto;
 }
 
+/* Every header item sits on row 1 explicitly. Left to auto-placement, the nav and meta
+   share a column and the meta drops to a second row, below the links' baseline. */
 .hdr__brand {
   grid-column: 1 / 9;
+  grid-row: 1;
   justify-self: start;
   display: inline-flex;
   align-items: baseline;
@@ -55,20 +58,12 @@
 }
 
 .hdr__nav {
-  grid-column: 9 / 14;
-  display: grid;
-  grid-template-columns: 1fr auto;
+  grid-column: 9 / 13;
+  grid-row: 1;
+  display: flex;
   align-items: baseline;
-  column-gap: calc(28 * var(--u));
-}
-.hdr__group {
-  display: inline-flex;
-  align-items: baseline;
-  gap: calc(22 * var(--u));
+  gap: max(18px, calc(26 * var(--u)));
   padding-left: calc(8 * var(--u));
-}
-.hdr__link--news {
-  justify-self: end;
 }
 /* Room above the reveal mask so the raised counts are not clipped. */
 .hdr__link .mask {
@@ -88,6 +83,7 @@
 
 .hdr__meta {
   grid-column: 13 / -1;
+  grid-row: 1;
   justify-self: end;
   display: inline-flex;
   align-items: baseline;
@@ -230,13 +226,7 @@
   inset: 0;
   z-index: 30;
   pointer-events: none;
-}
-/* The global mark is a page-level piece — hide it on the explorations stage so it
-   does not fight with the WebGL ring. */
-body:has([data-page='explorations']) .mark {
-  display: none;
-}
-.mark__canvas {
+}.mark__canvas {
   position: absolute;
   inset: 0;
   width: 100%;

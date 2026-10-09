@@ -1,6 +1,6 @@
 import { site } from '@/content/site';
 import CopyEmail from './CopyEmail';
-import { Hook, StatusDots } from './ui';
+import { ArrowSwap, StatusDots } from './ui';
 
 const echo = [
   'Brand, websites and motion for AI companies',
@@ -29,8 +29,8 @@ export default function Footer() {
           </a>
           {site.socials.map((s) => (
             <a key={s.label} href={s.href} className="foot__social" target="_blank" rel="noreferrer">
-              <Hook />
               <span className="u-link">{s.label}</span>
+              <ArrowSwap rotate={-45} />
             </a>
           ))}
         </div>

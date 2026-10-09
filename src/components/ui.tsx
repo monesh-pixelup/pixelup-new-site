@@ -38,7 +38,7 @@ export function Scope({ items }: { items: string[] }) {
   return <>{items.map((s, i) => `${CIRCLED[i] ?? ''}${s}`).join(', ')}</>;
 }
 
-/** Arrow from the Figma CONTACT link. */
+/** The one arrow used across the site (Figma PIXELUP Brand 2026, node 756:1746). Use via ArrowSwap, which sizes it to 1em. */
 export function Arrow({ className = '' }: { className?: string }) {
   return (
     <svg className={className} width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
@@ -57,14 +57,6 @@ export function ArrowSwap({ rotate = 0 }: { rotate?: number }) {
       <Arrow />
       <Arrow />
     </span>
-  );
-}
-
-export function Hook() {
-  return (
-    <svg className="hook" width="7" height="8" viewBox="0 0 7 8" fill="none" aria-hidden="true">
-      <path d="M1 0v5.5h4.6M3.8 3.6l1.9 1.9-1.9 1.9" stroke="currentColor" strokeWidth="0.9" />
-    </svg>
   );
 }
 

@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 gsap.registerPlugin(CustomEase);
 import type { Exploration } from '@/content/explorations';
+import { ArrowSwap } from '../ui';
 
 // The camera flies down Z through a spiral of cards. Every card loops back to the far end
 // once it passes the viewer, so the tunnel never runs out.
@@ -438,7 +439,9 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
               </span>
               {it?.href && (
                 <span className="exp__line">
-                  <span className="exp__info-cta">{it.external ? 'Visit site ↗' : 'Open case study →'}</span>
+                  <span className="exp__info-cta">
+                    {it.external ? 'Visit site' : 'Open case study'} <ArrowSwap rotate={it.external ? -45 : 0} />
+                  </span>
                 </span>
               )}
             </div>

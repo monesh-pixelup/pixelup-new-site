@@ -337,8 +337,8 @@
 .clients__set {
   display: flex;
   align-items: center;
-  gap: clamp(40px, calc(72 * var(--u)), 88px);
-  padding-right: clamp(40px, calc(72 * var(--u)), 88px);
+  gap: clamp(36px, calc(60 * var(--u)), 72px);
+  padding-right: clamp(36px, calc(60 * var(--u)), 72px);
 }
 .clients__set li {
   flex: none;
@@ -346,7 +346,7 @@
 }
 .clients__set img {
   width: auto;
-  height: calc(clamp(18px, calc(24 * var(--u)), 26px) * var(--k));
+  height: calc(clamp(13px, calc(17 * var(--u)), 19px) * var(--k));
   /* Every mark rendered as solid white, whatever colour it ships in. */
   filter: brightness(0) invert(1);
   opacity: 0.86;
@@ -780,8 +780,8 @@
 }
 .foot__social {
   display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
+  align-items: center;
+  gap: 0.3em;
 }
 .foot__echo {
   position: absolute;

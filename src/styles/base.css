@@ -329,11 +329,6 @@ a:hover > .u-link::after {
   }
 }
 
-.hook {
-  flex: none;
-  width: 0.7em;
-  height: auto;
-}
 
 /* ---------------------------------------------------------------
    Initial states for the motion layer (only when JS + motion are on)

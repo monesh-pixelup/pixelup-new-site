@@ -1,4 +1,4 @@
-# PIXELUP Labs — Website 2026
+# PIXELUP LABS — Website 2026
 
 Built from the Figma file `PIXELUP-Brand-2026`: **Home - Desktop - 1440p** (`674:68`) at `/` and **Work - Desktop - 1440p** (`674:208`) at `/work`.
 

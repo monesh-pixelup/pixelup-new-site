@@ -5,7 +5,7 @@ import { Hook, StatusDots } from './ui';
 const echo = [
   'Brand, websites and motion for AI companies',
   `${site.email}, @dakshpixelup, pixeluplabs.com`,
-  `PIXELUP Labs © ${new Date().getFullYear()}, all rights reserved`,
+  `PIXELUP LABS © ${new Date().getFullYear()}, all rights reserved`,
 ];
 
 export default function Footer() {

@@ -6,7 +6,7 @@ export default function Hero() {
       <div className="hero__foot">
         <div className="hero__intro">
           <h1 id="hero-title" className="hero__title" data-intro="lines">
-            PIXELUP Labs is an independent design studio for AI companies.
+            PIXELUP LABS is an independent design studio for AI companies.
           </h1>
           <p className="hero__sub" data-intro="lines">
             Brand, websites and motion for teams moving from model to market.

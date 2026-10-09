@@ -7,7 +7,7 @@ import * as THREE from 'three';
  * stars). A bloom pass in MarkScene supplies the glow.
  */
 export const FINISHES = [
-  { name: 'chrome', halo: [0.75, 0.82, 1.0], haloStrength: 0.05, bloom: { strength: 0.42, radius: 0.35, threshold: 2.2 } },
+  { name: 'chrome', halo: [0.75, 0.82, 1.0], haloStrength: 0, bloom: { strength: 0.12, radius: 0.15, threshold: 5 } },
   { name: 'fireball', halo: [1.0, 0.34, 0.05], haloStrength: 0.05, bloom: { strength: 0.4, radius: 0.3, threshold: 1.4 } },
   { name: 'cosmos', halo: [0.28, 0.4, 1.0], haloStrength: 0.12, bloom: { strength: 0.8, radius: 0.4, threshold: 0.9 } },
   { name: 'ascii', halo: [0.55, 0.7, 1.0], haloStrength: 0.0, bloom: { strength: 0.22, radius: 0.3, threshold: 1.6 } },

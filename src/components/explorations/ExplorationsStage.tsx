@@ -10,19 +10,19 @@ import type { Exploration } from '@/content/explorations';
 
 // The camera flies down Z through a spiral of cards. Every card loops back to the far end
 // once it passes the viewer, so the tunnel never runs out.
-const SPACING = 300; // px between cards along Z (average — each card jitters around its slot)
+const SPACING = 150; // px between cards along Z
+const MIN_CARDS = 36;
 const PERSPECTIVE = 800; // must match the stage's CSS perspective
 const FOCAL = 480; // distance ahead at which a card sits on the screen plane (translateZ 0)
-const DEPTH = 2400; // only cards within this distance ahead are drawn, which keeps ~7 on screen
-const IDLE = 0.45; // forward drift in px per frame while nobody is steering
-const WHEEL = 1.1;
-const DRAG = 3;
-const MAX_SPEED = 7; // px per frame: the fastest the camera ever travels, however hard you scroll
-const MAX_LEAD = 700; // how far the target may run ahead of the camera, so input can't bank up speed
-const SPRING = 0.0055; // camera spring stiffness per frame²
-const FLING = 10; // frames of drag velocity carried after release
-const ENTER = 1500; // the camera starts this far back and dollies in
-const EXIT = 2200; // and flies this far forward on the way out
+const IDLE = 0.55; // forward drift in px per frame while nobody is steering
+const WHEEL = 2;
+const DRAG = 5;
+const MAX_SPEED = 16; // px per frame: fast enough to streak, slow enough that cards stay readable
+const MAX_LEAD = 1400; // how far the target may run ahead of the camera, so input can't bank up speed
+const SPRING = 0.0065; // camera spring stiffness per frame²
+const FLING = 12; // frames of drag velocity carried after release
+const ENTER = 2600; // the camera starts this far back and dollies in
+const EXIT = 3400; // and flies this far forward on the way out
 
 // The site's house curves (Experience registers the same ones for GSAP).
 CustomEase.create('pxl', '0.16, 1, 0.3, 1');
@@ -40,43 +40,24 @@ function mulberry32(seed: number) {
   };
 }
 
-// The tunnel is paced in beats rather than a uniform spiral: a large hero card held near the centre line,
-// mid-size cards to either side, small ones out at the edges, so the eye gets a rhythm instead of a swarm.
-const BEATS = ['hero', 'side', 'edge', 'side', 'side', 'edge', 'hero', 'side', 'edge', 'side'] as const;
-
 function layout(count: number) {
   const rand = mulberry32(2026 + count * 7919);
-  let side = 1;
-  const cards: Card[] = Array.from({ length: count }, (_, i) => {
-    const beat = BEATS[i % BEATS.length];
-    const spread = (rand() * 2 - 1) * 0.5; // vertical scatter, in radians off the horizontal
-    let nx: number;
-    let ny: number;
-    let size: number;
-    if (beat === 'hero') {
-      nx = (rand() * 2 - 1) * 0.08;
-      ny = (rand() * 2 - 1) * 0.06;
-      size = 1.35 + rand() * 0.25;
-    } else {
-      // Alternate sides so consecutive cards never stack on the same wall.
-      side = -side;
-      const r = beat === 'side' ? 0.42 + rand() * 0.2 : 0.78 + rand() * 0.18;
-      nx = side * Math.cos(spread) * r;
-      ny = Math.sin(spread) * r * 0.9;
-      size = beat === 'side' ? 0.85 + rand() * 0.3 : 0.55 + rand() * 0.2;
-    }
+  const n = Math.max(count, MIN_CARDS);
+  const cards: Card[] = Array.from({ length: n }, (_, i) => {
+    // Golden-angle spiral keeps consecutive cards on opposite sides; the radius floor leaves a clear flight path.
+    const angle = 2.39996 * i + 0.5 * rand();
+    const radius = 0.34 + 0.66 * Math.sqrt(rand());
     return {
-      item: i,
-      nx,
-      ny,
-      z: SPACING * i + (rand() * 2 - 1) * SPACING * 0.25,
-      size,
-      // Heroes face you almost square; the walls turn in toward the flight path.
-      rx: (rand() * 2 - 1) * (beat === 'hero' ? 3 : 8),
-      ry: beat === 'hero' ? (rand() * 2 - 1) * 4 : -Math.sign(nx) * (6 + rand() * 10),
+      item: i % count,
+      nx: Math.cos(angle) * radius,
+      ny: Math.sin(angle) * radius,
+      z: SPACING * i,
+      size: 0.72 + 0.56 * rand(),
+      rx: (rand() * 2 - 1) * 9,
+      ry: (rand() * 2 - 1) * 12,
     };
   });
-  return { cards, length: SPACING * count };
+  return { cards, length: SPACING * n };
 }
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -163,8 +144,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         const c = cards[i];
         const u = wrap(c.z - camera, length); // how far ahead of the camera
         const tz = FOCAL - u;
-        // Fade in over the last 600px of the visible depth, fade out as a card passes the viewer.
-        const alpha = clamp01((DEPTH - u) / 600) * clamp01(u / 260);
+        const alpha = clamp01((length - u) / (0.2 * length)) * clamp01(u / 260);
 
         if (alpha <= 0.001) {
           if (!hidden[i]) {
@@ -217,7 +197,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${tz.toFixed(2)}px) rotateX(${c.rx}deg) rotateY(${c.ry}deg)${smear}`;
 
         // Depth of field on the far cards plus motion blur, quantised so the filter isn't rebuilt every frame.
-        const far = clamp01((u - 1100) / (DEPTH - 1100));
+        const far = clamp01((u - 900) / (0.85 * length - 900));
         const dof = 3 * far * far * (3 - 2 * far);
         const amount = Math.min(10, Math.hypot(dof, Math.min(6, 0.25 * speed)) / scale);
         const q = amount < 0.3 ? 0 : Math.pow(1.2, Math.round(Math.log(amount) / Math.log(1.2)));
@@ -396,7 +376,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
                 {
                   '--size': c.size,
                   '--ar': media.w / media.h,
-                  '--delay': `${Math.min(i, 8) * 90}ms`,
+                  '--delay': `${Math.min(i, 24) * 40}ms`,
                 } as React.CSSProperties
               }
               {...(it.href

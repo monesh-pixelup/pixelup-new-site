@@ -32,7 +32,6 @@
   max-width: 36ch;
   margin-top: 0.6em;
   color: var(--fog);
-  font-size: clamp(13px, calc(16 * var(--u)), 21px);
   line-height: 1.35;
 }
 /* Starts on the header nav's column (9, + 8u) so the cue sits directly under "Work". */
@@ -346,7 +345,8 @@
 }
 .clients__set img {
   width: auto;
-  height: calc(clamp(13px, calc(17 * var(--u)), 19px) * var(--k));
+  height: calc(clamp(14px, calc(18 * var(--u)), 20px) * var(--k, 1));
+  translate: 0 var(--shift, 0%);
   /* Every mark rendered as solid white, whatever colour it ships in. */
   filter: brightness(0) invert(1);
   opacity: 0.86;

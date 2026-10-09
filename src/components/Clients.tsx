@@ -4,14 +4,21 @@ import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
 import { clients } from '@/content/site';
 
-// Optical sizing: scale height by 1/sqrt(aspect) so long wordmarks and compact marks carry equal weight.
-const optical = (w: number, h: number) => Math.min(1.5, Math.max(0.62, Math.sqrt(4 / (w / h))));
+// Every logo's visible mark renders at the same height. Where the artwork doesn't fill its box (a badge,
+// padding), scale it up by the ink fraction and shift it so the mark itself sits on the shared centre line.
+function fit({ ink = [0, 1] }: { ink?: [number, number] }) {
+  const [top, bottom] = ink;
+  return {
+    '--k': (1 / (bottom - top)).toFixed(3),
+    '--shift': `${((0.5 - (top + bottom) / 2) * 100).toFixed(1)}%`,
+  } as React.CSSProperties;
+}
 
 function Logos({ hidden }: { hidden?: boolean }) {
   return (
     <ul className="clients__set" aria-hidden={hidden || undefined}>
       {clients.map((c) => (
-        <li key={c.name} style={{ '--k': optical(c.w, c.h).toFixed(3) } as React.CSSProperties}>
+        <li key={c.name} style={fit(c)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={c.src} width={c.w} height={c.h} alt={hidden ? '' : c.name} draggable={false} loading="lazy" />
         </li>

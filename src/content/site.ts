@@ -248,13 +248,14 @@ export const work: Work[] = projects
 export const workCanvasHeight = 1915;
 
 
-/** Logos from pixeluplabs.com/clients. `w`/`h` are the artwork's viewBox, used for optical sizing. */
-export const clients = [
+/** Logos from pixeluplabs.com/clients. `w`/`h` are the artwork's viewBox; `ink` is the [top, bottom] fraction
+    of that height the visible mark occupies, where it isn't the full box (measured from the rendered file). */
+export const clients: { name: string; src: string; w: number; h: number; ink?: [number, number] }[] = [
   { name: 'Greptile', src: '/clients/greptile.svg', w: 256, h: 62 },
-  { name: 'Razorpay', src: '/clients/razorpay.png', w: 106, h: 32 },
+  { name: 'Razorpay', src: '/clients/razorpay.png', w: 106, h: 32, ink: [0.063, 0.789] },
   { name: 'Bland.ai', src: '/clients/bland.svg', w: 76, h: 22 },
   { name: 'Reducto', src: '/clients/reducto.svg', w: 103, h: 18 },
-  { name: 'Streamline.ai', src: '/clients/streamline.svg', w: 151, h: 31 },
+  { name: 'Streamline.ai', src: '/clients/streamline.svg', w: 151, h: 31, ink: [0, 0.742] },
   { name: 'Sully.ai', src: '/clients/sully.svg', w: 475, h: 98 },
   { name: 'Pogo', src: '/clients/pogo.svg', w: 60, h: 29 },
   { name: 'Valley', src: '/clients/valley.svg', w: 215, h: 51 },

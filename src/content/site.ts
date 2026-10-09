@@ -14,7 +14,7 @@ export const site = {
   tagline: 'A full service design studio.',
   description: 'We build brands, websites and products that command enterprise trust.',
   url: 'https://www.pixeluplabs.com',
-  email: 'contact@pixelup.co',
+  email: 'hello@pixeluplabs.com',
   status: 'Not taking projects',
   socials: [
     { label: 'Contra', href: 'https://contra.com' },

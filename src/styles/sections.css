@@ -720,15 +720,17 @@
 .foot__email {
   position: relative;
   display: inline-block;
-  font-size: var(--fs-mega);
+  /* Sized to span the content width exactly: "hello@pixeluplabs.com" is 9.91em wide in Switzer.
+     Update the divisor if the address changes. */
+  font-size: calc((var(--vw, 100vw) - 2 * var(--pad)) / 9.95);
   line-height: 1;
   white-space: nowrap;
 }
 .foot__toast {
   position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 18px;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 14px;
   padding: 5px 9px 6px;
   border-radius: 999px;
   background: var(--paper);

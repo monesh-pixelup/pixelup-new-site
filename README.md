@@ -40,7 +40,7 @@ All copy and data live in `src/content/site.ts`. Before launch, confirm:
 
 - Services copy (prices are from pixeluplabs.com) and News rows (case studies link to pixeluplabs.com; the report row is a placeholder)
 - Contra profile URL, X handle, Privacy / Legal links
-- Email: the Figma uses `contact@pixelup.co`, while the domain in use is `pixeluplabs.com`
+- Email: hello@pixeluplabs.com (the Figma used `contact@pixelup.co`)
 - Projects (home grid and Work index) come from pixeluplabs.com: descriptions, services, years, covers and case-study imagery (`public/projects/`). The Industry column uses short labels derived from each description; check them
 - Archives holds three concept pieces from the Figma collage imagery
 - Client logos are the 1× PNG crops from the Figma strip; SVG versions would sharpen them on retina screens

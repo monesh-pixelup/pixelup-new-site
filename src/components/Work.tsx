@@ -25,7 +25,7 @@ function Media({ item }: { item: WorkItem }) {
         src={media.src}
         alt={media.alt}
         fill
-        quality={90}
+        quality={80}
         sizes="(min-width: 1024px) 34vw, (min-width: 768px) 50vw, 100vw"
         style={media.position ? { objectPosition: media.position } : undefined}
         draggable={false}

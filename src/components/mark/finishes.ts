@@ -3,18 +3,16 @@ import * as THREE from 'three';
 /**
  * Surface finishes for the mark. Press and hold cycles through them.
  * Every finish is evaluated in one shader that extends MeshPhysicalMaterial, so each keeps real studio
- * reflections and clearcoat; colour comes from physics where it can (blackbody temperature for fire and
- * stars). A bloom pass in MarkScene supplies the glow.
+ * reflections and clearcoat; fire takes its colour from blackbody temperature. A bloom pass in MarkScene supplies the glow.
  */
 export const FINISHES = [
   { name: 'chrome', halo: [0.75, 0.82, 1.0], haloStrength: 0, bloom: { strength: 0.12, radius: 0.15, threshold: 5 } },
   { name: 'fireball', halo: [1.0, 0.34, 0.05], haloStrength: 0.05, bloom: { strength: 0.4, radius: 0.3, threshold: 1.4 } },
-  { name: 'cosmos', halo: [0.28, 0.4, 1.0], haloStrength: 0.12, bloom: { strength: 0.8, radius: 0.4, threshold: 0.9 } },
   { name: 'ascii', halo: [0.55, 0.7, 1.0], haloStrength: 0.0, bloom: { strength: 0.22, radius: 0.3, threshold: 1.6 } },
 ] as const;
 
 export const FIRE = 1;
-export const ASCII = 3;
+export const ASCII = 2;
 
 export type FinishUniforms = {
   uTime: { value: number };
@@ -111,12 +109,6 @@ float mkTurb(vec3 p) {
   return s;
 }
 
-float mkHash(vec3 p) {
-  p = fract(p * 0.1031);
-  p += dot(p, p.zyx + 31.32);
-  return fract((p.x + p.y) * p.z);
-}
-
 // Colour of a blackbody at temperature K (Tanner Helland's fit to the Planckian locus), in linear RGB.
 vec3 mkBlackbody(float K) {
   float t = K / 100.0;
@@ -145,7 +137,6 @@ struct MarkLook {
   float metal;
   float coat;
   float coatRough;
-  float irid;
   float aniso;
 };
 
@@ -157,7 +148,6 @@ MarkLook mkBlend(MarkLook a, MarkLook b, float k) {
   o.metal = mix(a.metal, b.metal, k);
   o.coat = mix(a.coat, b.coat, k);
   o.coatRough = mix(a.coatRough, b.coatRough, k);
-  o.irid = mix(a.irid, b.irid, k);
   o.aniso = mix(a.aniso, b.aniso, k);
   return o;
 }
@@ -165,7 +155,6 @@ MarkLook mkBlend(MarkLook a, MarkLook b, float k) {
 vec3 mkGlow(float id) {
   if (id < 0.5) return vec3(0.75, 0.85, 1.0);
   if (id < 1.5) return vec3(1.0, 0.42, 0.08);
-  if (id < 2.5) return vec3(0.35, 0.55, 1.0);
   return vec3(0.8, 0.88, 1.0);
 }
 
@@ -177,7 +166,6 @@ MarkLook mkLook(float id, vec3 p, vec3 N, vec3 V, float fr, float baseRough, flo
   L.metal = 0.0;
   L.coat = 0.0;
   L.coatRough = 0.1;
-  L.irid = 0.0;
   L.aniso = 0.0;
 
   if (id < 0.5) {
@@ -190,10 +178,9 @@ MarkLook mkLook(float id, vec3 p, vec3 N, vec3 V, float fr, float baseRough, flo
     #else
       L.rough = baseRough;
     #endif
-    float smudge = smoothstep(0.05, 0.75, mkFbm(p * 4.5 + 3.0) * 0.5 + 0.5);
+    float smudge = smoothstep(0.05, 0.75, (mkSnoise(p * 4.5 + 3.0) * 0.65 + mkSnoise(p * 9.0 + 7.0) * 0.3) * 0.5 + 0.5);
     L.coat = 0.5;
     L.coatRough = mix(0.025, 0.11, smudge);
-    L.irid = 0.07;
     L.aniso = 1.0;
   } else if (id < 1.5) {
     // Fireball: temperature field from rising, warped turbulence; colour and brightness from blackbody
@@ -216,61 +203,13 @@ MarkLook mkLook(float id, vec3 p, vec3 N, vec3 V, float fr, float baseRough, flo
     L.rough = 0.62;
     L.coat = 0.12;
     L.coatRough = 0.25;
-  } else if (id > 2.5) {
+  } else {
     // ASCII: matte clay with a soft diagonal falloff, so the glyph pass (MarkScene) gets a smooth tonal ramp
     // across each face — dense characters where it's lit, dots where it falls away — plus edge highlights.
     float ramp = smoothstep(-0.55, 0.75, p.x * 0.55 + p.y * 0.95);
     L.albedo = vec3(0.9) * (0.18 + 0.82 * ramp);
     L.emissive = vec3(0.04) + vec3(0.5) * fr;
     L.rough = 0.6;
-  } else {
-    // Cosmos: the mark is a window. Position on the face sets the field and the refracted view ray shifts each
-    // layer by depth. Emission-line colours (H-alpha red, O-III teal), ridged filaments, dust lanes that
-    // absorb, stars coloured by temperature with diffraction spikes on the brightest.
-    vec3 rv = refract(-V, N, 0.78);
-    vec3 r = normalize((vec4(rv, 0.0) * viewMatrix).xyz);
-    vec3 d = p * 1.7 + r * 0.8;
-    float slow = t * 0.02;
-    // Domain warping drags the gas into the swirling wisps of a real emission nebula.
-    vec3 swirl = vec3(mkFbm(d * 0.8 + vec3(0.0, slow, 0.0)), mkFbm(d * 0.8 + vec3(5.2, 1.3, slow)), 0.0) * 1.3;
-    float gas = mkFbm(d * 1.1 + swirl + vec3(0.0, 0.0, slow)) * 0.5 + 0.5;
-    gas = smoothstep(0.3, 0.95, gas);
-    float fil = pow(1.0 - abs(mkFbm(d * 2.3 + swirl * 0.8 + vec3(slow, 0.0, 0.0))), 7.0) * gas;
-    float dust = smoothstep(-0.05, 0.45, mkFbm(d * 3.2 + vec3(4.0)));
-    vec3 ha = vec3(0.9, 0.1, 0.22);
-    vec3 o3 = vec3(0.06, 0.7, 0.72);
-    vec3 refl = vec3(0.18, 0.32, 0.95);
-    // Broad regions alternate hydrogen red and oxygen teal, with gold where they meet, as in real nebula images.
-    float region = mkFbm(d * 0.45 + swirl * 0.3 + 20.0) * 0.5 + 0.5;
-    vec3 tint = mix(o3, ha, smoothstep(0.38, 0.62, region));
-    tint = mix(tint, vec3(1.0, 0.62, 0.22), (1.0 - abs(region - 0.5) * 6.0) * 0.35 * step(abs(region - 0.5), 0.17));
-    vec3 neb = tint * gas * 0.62;
-    neb += refl * smoothstep(0.6, 0.98, mkFbm(d * 0.7 + swirl * 0.5 + 9.0) * 0.5 + 0.5) * 0.3;
-    neb += mix(o3, vec3(1.0, 0.75, 0.6), 0.5) * fil * 1.1;
-    neb *= mix(0.06, 1.0, dust);
-    vec3 starLight = vec3(0.0);
-    for (int i = 0; i < 3; i++) {
-      float fi = float(i);
-      vec3 g = (p + r * (0.25 + 0.3 * fi)) * (18.0 + fi * 14.0) + fi * 7.3;
-      vec3 cell = floor(g);
-      float h = mkHash(cell + fi * 13.1);
-      if (h > 0.72) {
-        vec3 off = vec3(mkHash(cell + 1.3), mkHash(cell + 2.7), mkHash(cell + 4.1)) - 0.5;
-        vec3 fd = fract(g) - 0.5 - off * 0.6;
-        float dd = length(fd);
-        float mag = pow((h - 0.72) / 0.28, 3.0);
-        float core = exp(-dd * dd * 650.0) * (1.0 + 7.0 * mag);
-        float glow = exp(-dd * 18.0) * mag * 0.6;
-        float spikes = (exp(-abs(fd.x) * 140.0) * exp(-abs(fd.y) * 9.0) + exp(-abs(fd.y) * 140.0) * exp(-abs(fd.x) * 9.0))
-          * step(0.975, h) * 2.0;
-        float twinkle = 0.75 + 0.25 * sin(t * (1.0 + h * 3.0) + h * 50.0);
-        starLight += mkBlackbody(mix(3200.0, 11000.0, mkHash(cell + 8.8))) * (core + glow + spikes) * twinkle;
-      }
-    }
-    L.emissive = neb * 1.9 + starLight;
-    L.rough = 0.08;
-    L.coat = 1.0;
-    L.coatRough = 0.02;
   }
   return L;
 }
@@ -333,9 +272,6 @@ export function applyFinish(material: THREE.MeshPhysicalMaterial, uniforms: Fini
           material.clearcoat = saturate(mk.coat);
           material.clearcoatRoughness = min(max(mk.coatRough, 0.0525) + geometryRoughness, 1.0);
         #endif
-        #ifdef USE_IRIDESCENCE
-          material.iridescence = mk.irid;
-        #endif
         #ifdef USE_ANISOTROPY
           material.anisotropy *= mk.aniso;
           material.alphaT = mix(pow2(material.roughness), 1.0, pow2(material.anisotropy));
@@ -345,9 +281,6 @@ export function applyFinish(material: THREE.MeshPhysicalMaterial, uniforms: Fini
   material.customProgramCacheKey = () => (side ? 'mark-finish-side' : 'mark-finish-face');
   // Turn on every physical feature a finish can use; the shader sets the per-pixel amounts.
   material.clearcoat = 1;
-  material.iridescence = 1;
-  material.iridescenceIOR = 1.3;
-  material.iridescenceThicknessRange = [120, 420];
   // Halves the plain dielectric reflection so colour finishes stay saturated (the clearcoat carries their gloss).
   // Metals take their reflectance from their own colour, so chrome is unaffected.
   material.specularIntensity = 0.5;

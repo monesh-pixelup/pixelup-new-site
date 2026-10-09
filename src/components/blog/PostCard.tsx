@@ -14,7 +14,7 @@ export default function PostCard({ post, shape, priority = false }: { post: Post
             width={w}
             height={h}
             sizes={shape === 'full' ? '97vw' : '(min-width: 768px) 48vw, 100vw'}
-            quality={85}
+            quality={80}
             priority={priority}
           />
         </div>

@@ -21,7 +21,7 @@ export default function Collage({ variant }: { variant: 'intro' | 'outro' }) {
                     src={c.src}
                     alt={c.label.replace(' / ', ', ')}
                     fill
-                    quality={90}
+                    quality={80}
                     priority={variant === 'intro' && i < 3}
                     sizes={`(min-width: 1024px) ${Math.round((w / 1440) * 100)}vw, 90vw`}
                     style={{ objectPosition: c.position, '--zoom': c.zoom ?? 1 } as Vars}

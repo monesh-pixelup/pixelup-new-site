@@ -1,23 +1,18 @@
 import * as THREE from 'three';
 import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
 import gsap from 'gsap';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {
   ASCII,
   FINISHES,
   FIRE,
   applyFinish,
-  createAsciiShader,
   createEmbers,
   createFinishUniforms,
   createFlames,
   createHalo,
   type FinishUniforms,
 } from './finishes';
+import type { Post } from './post';
 import { GLYPH_ASPECT, GLYPH_BOTTOM, GLYPH_SEAM, GLYPH_TOP } from './glyph';
 import type { Dock, Viewport } from './types';
 import { restDock } from '@/lib/docks';
@@ -39,27 +34,6 @@ const SPLIT_X = Math.cos(Math.PI / 3);
 const SPLIT_Y = Math.sin(Math.PI / 3);
 const DEPTH = 0.12;
 const TAU = Math.PI * 2;
-// After tone mapping, glow outside the mark has colour but almost no alpha. The canvas is premultiplied,
-// so lift alpha to the brightest channel: the glow then composites over the page instead of vanishing.
-const AlphaFromLight = {
-  uniforms: { tDiffuse: { value: null } },
-  vertexShader: /* glsl */ `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: /* glsl */ `
-    uniform sampler2D tDiffuse;
-    varying vec2 vUv;
-    void main() {
-      vec4 c = texture2D(tDiffuse, vUv);
-      gl_FragColor = vec4(c.rgb, max(c.a, max(c.r, max(c.g, c.b))));
-    }
-  `,
-};
-
 /** The glyph outline of one half, in the same coordinates as its mesh (centred on the seam). */
 const seamOutline = (flat: number[]): [number, number][] => {
   const pts: [number, number][] = [];
@@ -214,16 +188,18 @@ export class MarkScene {
   private hold = { start: 0, charge: 0, fired: false };
   private lit = 0;
   private squeeze = { value: 1, vel: 0 };
-  /** Rendering: HDR scene → bloom → tone map → alpha fix. Fire extras fade with `uFire`. */
-  private composer: EffectComposer;
-  private bloom: UnrealBloomPass;
-  private ascii: ShaderPass;
+  /** Fire extras fade with `uFire`. */
+  /** Bloom/ASCII pipeline, loaded the first time a finish needs it. Chrome renders straight to the canvas. */
+  private post: Post | null = null;
+  private postLoading = false;
+  private bloomParams = { ...FINISHES[0].bloom };
   private asciiAmount = { value: 0 };
   private fx = { uFire: { value: 0 } };
   private embers: THREE.Points;
   private flameMeshes: THREE.Mesh[] = [];
   private frameCount = 0;
   private visible = true;
+  private disposed = false;
   private vp: Viewport = { w: 1, h: 1, mobile: false };
   private dock: Dock | null = null;
   private rot = new THREE.Vector3();
@@ -242,7 +218,13 @@ export class MarkScene {
   private coords: HTMLElement | null;
 
   constructor(canvas: HTMLCanvasElement, private ui: MarkUI) {
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    // At 2x and above the pixel density antialiases on its own; MSAA on a full-viewport canvas isn't free.
+    this.renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: (window.devicePixelRatio || 1) < 2,
+      alpha: true,
+      powerPreference: 'high-performance',
+    });
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -287,19 +269,6 @@ export class MarkScene {
     this.root.add(this.halo, this.spin, this.frame, this.embers);
     this.setLabel(FINISHES[0].name);
 
-    // HDR pipeline. MSAA on the scene target at 1x screens; at 2x the pixel density does the antialiasing.
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: pixelRatio < 1.5 ? 4 : 0 });
-    this.composer = new EffectComposer(this.renderer, target);
-    this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.ascii = new ShaderPass(createAsciiShader());
-    this.ascii.enabled = false;
-    this.composer.addPass(this.ascii);
-    const b = FINISHES[0].bloom;
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), b.strength, b.radius, b.threshold);
-    this.composer.addPass(this.bloom);
-    this.composer.addPass(new OutputPass());
-    this.composer.addPass(new ShaderPass(AlphaFromLight));
     this.root.visible = false;
     this.scene.add(this.root);
 
@@ -324,8 +293,7 @@ export class MarkScene {
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
     this.renderer.setPixelRatio(pixelRatio);
     this.renderer.setSize(w, h, false);
-    this.composer?.setPixelRatio(pixelRatio);
-    this.composer?.setSize(w, h);
+    this.post?.setSize(w, h, pixelRatio);
     if (this.embers) (this.embers.material as THREE.ShaderMaterial).uniforms.uPixelRatio.value = pixelRatio;
     // One world unit = one CSS pixel on the z = 0 plane.
     const distance = h / 2 / Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
@@ -408,6 +376,7 @@ export class MarkScene {
     const now = performance.now();
     this.drag = { down: true, moved: false, touch: e.pointerType === 'touch', sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, t: now };
     this.hold = { start: now, charge: 0, fired: false };
+    this.loadPost();
     // A long press must not select text or open the touch callout underneath the mark.
     document.documentElement.classList.add('is-holding');
   };
@@ -483,7 +452,8 @@ export class MarkScene {
     (this.haloMaterial.uniforms.uBoostColor.value as THREE.Color).setRGB(after[0], after[1], after[2]);
     gsap.to(this.fx.uFire, { value: next === FIRE ? 1 : 0, duration: next === FIRE ? BURN : BURN * 0.6, ease: 'power2.inOut' });
     gsap.to(this.asciiAmount, { value: next === ASCII ? 1 : 0, duration: BURN, ease: 'power1.inOut' });
-    gsap.to(this.bloom, { ...f.bloom, duration: BURN, ease: 'power2.inOut' });
+    gsap.to(this.bloomParams, { ...f.bloom, duration: BURN, ease: 'power2.inOut' });
+    if (next === FIRE || next === ASCII) this.loadPost();
     this.squeeze.vel += 2.6;
     markState.pulse = Math.max(markState.pulse, 0.16);
     this.setLabel(f.name);
@@ -625,23 +595,54 @@ export class MarkScene {
     this.embers.visible = burning;
     this.flameMeshes.forEach((m) => (m.visible = burning));
 
-    // ASCII grid: cells scale with the mark so it reads as type at any dock size.
+    // Skip drawing entirely while the mark is hidden (e.g. the explorations page).
+    if (this.frameCount++ % 20 === 0) this.visible = this.renderer.domElement.offsetParent !== null;
+    if (this.visible) this.draw(d, dt, burning);
+    this.updateUI(d, hovering);
+  };
+
+  /** Chrome draws straight to the canvas. Fire (bloom) and ASCII (glyph pass) go through the HDR pipeline. */
+  private draw(d: Dock, dt: number, burning: boolean) {
     const amount = this.asciiAmount.value;
-    this.ascii.enabled = amount > 0.001;
-    if (this.ascii.enabled) {
+    const needsPost = burning || amount > 0.001;
+    const post = this.post;
+    if (!needsPost || !post) {
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
+    // Bloom only earns its cost while there's fire.
+    post.bloom.enabled = burning;
+    post.bloom.strength = this.bloomParams.strength;
+    post.bloom.radius = this.bloomParams.radius;
+    post.bloom.threshold = this.bloomParams.threshold;
+    // ASCII grid: cells scale with the mark so it reads as type at any dock size.
+    post.ascii.enabled = amount > 0.001;
+    if (post.ascii.enabled) {
       const pr = this.renderer.getPixelRatio();
-      const au = this.ascii.uniforms;
+      const au = post.ascii.uniforms;
       au.uAmount.value = amount;
       au.uTime.value = this.finish.uTime.value;
       au.uCell.value = clamp(d.g * 0.042, 7, 16) * pr;
-      (au.uResolution.value as THREE.Vector2).set(vp.w * pr, vp.h * pr);
+      (au.uResolution.value as THREE.Vector2).set(this.vp.w * pr, this.vp.h * pr);
     }
+    post.composer.render(dt);
+  }
 
-    // The composer is the expensive part; skip it while the mark is hidden (e.g. the explorations page).
-    if (this.frameCount++ % 20 === 0) this.visible = this.renderer.domElement.offsetParent !== null;
-    if (this.visible) this.composer.render(dt);
-    this.updateUI(d, hovering);
-  };
+  /** Fetch and build the HDR pipeline once; started as soon as a hold begins so it's ready by the switch. */
+  private loadPost() {
+    if (this.post || this.postLoading) return;
+    this.postLoading = true;
+    import('./post')
+      .then(({ createPost }) => {
+        if (this.disposed) return;
+        this.post = createPost(this.renderer, this.scene, this.camera);
+        this.post.setSize(this.vp.w, this.vp.h, this.renderer.getPixelRatio());
+      })
+      .catch(() => {
+        // Without the pipeline, fire and ASCII still render their surfaces; they just lose bloom and glyphs.
+        this.postLoading = false;
+      });
+  }
 
   private updateUI(d: Dock, hovering: boolean) {
     const { ui, vp } = this;
@@ -713,16 +714,14 @@ export class MarkScene {
     window.removeEventListener('contextmenu', this.onContextMenu);
     document.documentElement.removeEventListener('pointerleave', this.onLeave);
     document.documentElement.classList.remove('is-grabbing', 'is-holding');
-    gsap.killTweensOf([this.finish.uMix, this.haloMaterial.uniforms.uColor.value, this.haloMaterial.uniforms.uStrength, this.fx.uFire, this.bloom, this.asciiAmount]);
-    (this.ascii.uniforms.tGlyphs.value as THREE.Texture).dispose();
-    this.ascii.dispose();
+    this.disposed = true;
+    gsap.killTweensOf([this.finish.uMix, this.haloMaterial.uniforms.uColor.value, this.haloMaterial.uniforms.uStrength, this.fx.uFire, this.bloomParams, this.asciiAmount]);
+    this.post?.dispose();
     this.halo.geometry.dispose();
     this.haloMaterial.dispose();
     this.flameMeshes.forEach((m) => (m.material as THREE.Material).dispose());
     this.embers.geometry.dispose();
     (this.embers.material as THREE.Material).dispose();
-    this.bloom.dispose();
-    this.composer.dispose();
     markState.hover = false;
     markState.dragging = false;
     this.scene.traverse((o) => {

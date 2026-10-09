@@ -18,7 +18,7 @@ export function MediaFrame({ media, shape, priority = false }: { media: CaseMedi
         {media.kind === 'video' ? (
           <video src={media.src} aria-label={media.alt} autoPlay muted loop playsInline preload="metadata" />
         ) : (
-          <Image src={media.src} alt={media.alt} fill sizes={SIZES[shape]} quality={85} priority={priority} draggable={false} />
+          <Image src={media.src} alt={media.alt} fill sizes={SIZES[shape]} quality={80} priority={priority} draggable={false} />
         )}
       </div>
     </figure>

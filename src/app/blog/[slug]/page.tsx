@@ -64,7 +64,7 @@ export default async function PostPage({ params }: Props) {
           <div className="article__cover" data-dock="index">
             <figure className="frame frame--cover" data-media>
               <div className="frame__zoom">
-                <Image src={post.cover} alt="" width={w} height={h} sizes="97vw" quality={90} priority />
+                <Image src={post.cover} alt="" width={w} height={h} sizes="97vw" quality={80} priority />
               </div>
             </figure>
           </div>

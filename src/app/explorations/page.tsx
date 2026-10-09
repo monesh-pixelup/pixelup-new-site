@@ -16,7 +16,7 @@ export default function ExplorationsPage() {
   return (
     <>
       <Header current="explorations" />
-      <main data-page="explorations">
+      <main data-page="explorations" className="exp-main">
         <ExplorationsStage items={explorations} />
       </main>
       <Footer />

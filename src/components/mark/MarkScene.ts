@@ -279,7 +279,7 @@ export class MarkScene {
     const bottomFlames = createFlames(seamOutline(GLYPH_BOTTOM), fireUniforms);
     topFlames.position.z = bottomFlames.position.z = -DEPTH / 2 - 0.02;
     this.flameMeshes = [topFlames, bottomFlames];
-    this.embers = createEmbers(90, fireUniforms);
+    this.embers = createEmbers(36, fireUniforms);
 
     this.top.add(half(GLYPH_TOP, this.materials), topFlames);
     this.bottom.add(half(GLYPH_BOTTOM, this.materials), bottomFlames);

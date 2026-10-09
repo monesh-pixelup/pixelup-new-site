@@ -8,7 +8,7 @@ import * as THREE from 'three';
  */
 export const FINISHES = [
   { name: 'chrome', halo: [0.75, 0.82, 1.0], haloStrength: 0.05, bloom: { strength: 0.42, radius: 0.35, threshold: 2.2 } },
-  { name: 'fireball', halo: [1.0, 0.34, 0.05], haloStrength: 0.16, bloom: { strength: 0.75, radius: 0.42, threshold: 0.95 } },
+  { name: 'fireball', halo: [1.0, 0.34, 0.05], haloStrength: 0.05, bloom: { strength: 0.4, radius: 0.3, threshold: 1.4 } },
   { name: 'cosmos', halo: [0.28, 0.4, 1.0], haloStrength: 0.12, bloom: { strength: 0.8, radius: 0.4, threshold: 0.9 } },
   { name: 'ascii', halo: [0.55, 0.7, 1.0], haloStrength: 0.0, bloom: { strength: 0.22, radius: 0.3, threshold: 1.6 } },
 ] as const;
@@ -211,7 +211,7 @@ MarkLook mkLook(float id, vec3 p, vec3 N, vec3 V, float fr, float baseRough, flo
     float base = clamp(1.0 - (p.y + 0.36) * 0.95, 0.0, 1.0);
     float T = clamp(base * 0.55 + body * 0.45 + turb * 0.8 + tongues * 0.14 + fr * 0.18 - 0.4, 0.0, 1.0);
     float flick = 0.88 + 0.12 * mkSnoise(vec3(t * 6.0, p.x * 2.0, p.y * 2.0));
-    L.emissive = mkBlackbody(mix(800.0, 3400.0, T)) * (pow(T, 3.2) * 7.0 + T * 0.18) * flick;
+    L.emissive = mkBlackbody(mix(800.0, 3200.0, T)) * (pow(T, 3.2) * 3.6 + T * 0.14) * flick;
     L.albedo = vec3(0.025, 0.02, 0.018);
     L.rough = 0.62;
     L.coat = 0.12;
@@ -454,10 +454,10 @@ export function createFlames(outline: [number, number][], uniforms: { uTime: { v
           float lift = float(k) * 0.065;
           d = min(d, sdPoly(p - vec2(wobble * 0.03, lift)) + lift * (0.5 + 0.7 * (1.0 - n)));
         }
-        float flame = pow(clamp(1.0 - max(d, 0.0) / (0.05 + 0.17 * n), 0.0, 1.0), 1.6);
-        float T = clamp(flame * (0.5 + 0.75 * n), 0.0, 1.0);
-        vec3 col = mkBlackbody(mix(900.0, 3200.0, T)) * (pow(T, 2.6) * 6.0 + T * 0.25);
-        gl_FragColor = vec4(col, clamp(T * 1.5, 0.0, 1.0) * uFire);
+        float flame = pow(clamp(1.0 - max(d, 0.0) / (0.03 + 0.08 * n), 0.0, 1.0), 1.8);
+        float T = clamp(flame * (0.45 + 0.6 * n), 0.0, 1.0);
+        vec3 col = mkBlackbody(mix(900.0, 3000.0, T)) * (pow(T, 2.6) * 2.6 + T * 0.2);
+        gl_FragColor = vec4(col, clamp(T * 1.2, 0.0, 1.0) * uFire * 0.8);
       }
     `,
   });
@@ -590,7 +590,7 @@ export function createEmbers(count: number, uniforms: { uTime: { value: number }
         float a = smoothstep(0.5, 0.0, r);
         a *= smoothstep(0.0, 0.08, vLife) * (1.0 - smoothstep(0.55, 1.0, vLife)) * uFire;
         float T = mix(0.95, 0.3, vLife);
-        gl_FragColor = vec4(mkBlackbody(mix(1300.0, 2700.0, T)) * (2.0 + 7.0 * T * T), a);
+        gl_FragColor = vec4(mkBlackbody(mix(1300.0, 2700.0, T)) * (1.2 + 3.0 * T * T), a * 0.7);
       }
     `,
   });

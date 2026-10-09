@@ -10,6 +10,7 @@ import '@/styles/chrome.css';
 import '@/styles/sections.css';
 import '@/styles/work.css';
 import '@/styles/case.css';
+import '@/styles/explorations.css';
 
 // Self-hosted so the type never depends on a third-party CDN.
 const switzer = localFont({

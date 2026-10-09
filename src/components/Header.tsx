@@ -1,9 +1,10 @@
 import { blog } from '@/content/caseStudies';
+import { explorations } from '@/content/explorations';
 import { projects, site } from '@/content/site';
 import MenuToggle from './MenuToggle';
 import { ArrowSwap, Roll, StatusDots } from './ui';
 
-export default function Header({ current }: { current?: 'work' | 'blog' } = {}) {
+export default function Header({ current }: { current?: 'work' | 'blog' | 'explorations' } = {}) {
   return (
     <header className="hdr">
       <a href="/" className="hdr__brand" aria-label={`${site.name}, back to top`}>
@@ -32,6 +33,18 @@ export default function Header({ current }: { current?: 'work' | 'blog' } = {}) 
             <span className="mask" data-intro="rise">
               <span>
                 <Roll>About</Roll>
+              </span>
+            </span>
+          </a>
+          <a
+            href="/explorations"
+            className="hdr__link"
+            aria-current={current === 'explorations' ? 'page' : undefined}
+          >
+            <span className="mask" data-intro="rise">
+              <span>
+                <Roll>Explorations</Roll>
+                <sup data-count={explorations.length}>{explorations.length}</sup>
               </span>
             </span>
           </a>

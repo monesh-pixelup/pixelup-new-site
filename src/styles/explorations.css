@@ -1,0 +1,399 @@
+/* ---------------------------------------------------------------
+   Explorations — a scroll-driven carousel on a curved stage
+---------------------------------------------------------------- */
+
+.exp {
+  position: relative;
+  min-height: calc(100vh + (24 * (var(--exp-count, 16) * 1vh)));
+  padding: 0 var(--pad);
+  color: var(--paper);
+}
+/* The section's height drives how far you scroll before the ring completes a turn. */
+.exp[data-mode='canvas'] {
+  --exp-count: 16;
+  min-height: calc(100vh + 480vh);
+}
+.exp[data-mode='grid'] {
+  min-height: auto;
+  padding-bottom: max(80px, calc(120 * var(--u)));
+}
+
+.exp__intro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: max(96px, calc(140 * var(--u))) var(--pad) 0;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 24px;
+}
+.exp__kicker {
+  grid-column: 1 / 7;
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.exp__title {
+  grid-column: 1 / 11;
+  margin-top: 12px;
+  font-size: clamp(32px, calc(56 * var(--u)), 88px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+.exp__lede {
+  grid-column: 11 / 17;
+  align-self: end;
+  color: var(--mute);
+  font-size: max(14px, calc(16 * var(--u)));
+  line-height: 1.45;
+  max-width: 32ch;
+  justify-self: end;
+}
+
+/* --- Sticky stage holding the canvas --- */
+.exp-stage {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  margin: 0 calc(-1 * var(--pad));
+  overflow: hidden;
+  cursor: grab;
+}
+.exp-stage:active {
+  cursor: grabbing;
+}
+.exp-stage.is-fallback {
+  display: none;
+}
+.exp-stage__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Vignette and film-grain overlays unify the WebGL frame with the dark chrome. */
+.exp-stage::before,
+.exp-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.exp-stage::before {
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(10, 10, 10, 0.3) 85%, rgba(10, 10, 10, 0.75) 100%);
+}
+.exp-stage::after {
+  background-image:
+    linear-gradient(180deg, rgba(10, 10, 10, 0.9), transparent 20%, transparent 76%, rgba(10, 10, 10, 0.95));
+}
+.exp-stage__videos {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.exp-stage__videos video {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* A horizon line beneath the ring — gives the stage a floor without geometry. */
+.exp-stage__floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18) 20%, rgba(255, 255, 255, 0.18) 80%, transparent);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.3s;
+}
+.exp[data-ready='true'] .exp-stage__floor {
+  opacity: 1;
+}
+
+/* Nav dots — one per panel, mapped to progress. */
+.exp-stage__dots {
+  position: absolute;
+  right: calc(var(--pad) + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.exp-stage__dots li {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- Big ghost index behind the stage --- */
+/* Lives behind the WebGL canvas; the stage renders with alpha so the number
+   shows through the dark room, like a page number beneath tracing paper. */
+.exp__ghost {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.exp__ghost-num {
+  font-size: clamp(260px, 54vw, 820px);
+  font-weight: 300;
+  line-height: 0.78;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  font-variant-numeric: tabular-nums;
+  transform: translateY(2vh);
+  animation: expGhostIn 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes expGhostIn {
+  from {
+    opacity: 0;
+    transform: translateY(5vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(2vh);
+  }
+}
+
+/* --- Meta panel in the bottom-left --- */
+.exp__meta {
+  position: fixed;
+  left: var(--pad);
+  bottom: max(32px, calc(44 * var(--u)));
+  z-index: 3;
+  max-width: min(380px, 42vw);
+  pointer-events: auto;
+  color: var(--paper);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+}
+.exp[data-ready='true'] .exp__meta {
+  opacity: 1;
+  transform: none;
+}
+.exp__meta-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.exp__meta-index {
+  display: inline-flex;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.exp__meta-index i {
+  font-style: normal;
+  opacity: 0.4;
+}
+.exp__meta-kind::before {
+  content: '·';
+  margin-right: 10px;
+  color: var(--rule);
+}
+.exp__meta-title {
+  margin: 10px 0 6px;
+  font-size: clamp(22px, calc(34 * var(--u)), 44px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.exp__meta-title a {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  transition: background-size 0.3s ease;
+}
+.exp__meta-title a:hover {
+  background-size: 100% 1.5px;
+}
+.exp__meta-sum {
+  color: var(--mute);
+  font-size: max(13px, calc(14 * var(--u)));
+  line-height: 1.45;
+}
+.exp__meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.exp__meta-tags li + li::before {
+  content: '·';
+  margin-right: 14px;
+}
+.exp__meta-year {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Scrubber at the bottom center --- */
+.exp__scrubber {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(280px, 36vw);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.4s;
+}
+.exp[data-ready='true'] .exp__scrubber {
+  opacity: 0.75;
+}
+.exp__scrubber-rail {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.exp__scrubber-dot {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform 0.1s linear;
+}
+.exp__scrubber-hint {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* --- Mobile / fallback grid --- */
+.exp-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.exp-grid__item {
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.4s ease;
+}
+.exp-grid__item:focus-within,
+.exp-grid__item:hover {
+  transform: rotate(0deg);
+}
+.exp-grid__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.exp-grid__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.exp-grid__media img,
+.exp-grid__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.exp-grid__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 10px;
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.exp-grid__title {
+  color: var(--paper);
+  text-transform: none;
+  letter-spacing: -0.01em;
+  font-size: max(14px, calc(16 * var(--u)));
+}
+.exp-grid__year {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1023px) {
+  .exp__intro {
+    padding-top: 96px;
+    gap: 16px;
+  }
+  .exp__title {
+    grid-column: 1 / -1;
+  }
+  .exp__lede {
+    grid-column: 1 / -1;
+    justify-self: start;
+    max-width: 48ch;
+    margin-top: 12px;
+  }
+  .exp__meta {
+    max-width: 60vw;
+  }
+}
+
+@media (max-width: 767px) {
+  .exp {
+    padding: 0 var(--pad);
+  }
+  .exp__intro {
+    position: relative;
+    padding: 96px 0 0;
+  }
+  .exp__kicker,
+  .exp__title,
+  .exp__lede {
+    grid-column: 1 / -1;
+  }
+  .exp__meta,
+  .exp__scrubber {
+    display: none;
+  }
+}

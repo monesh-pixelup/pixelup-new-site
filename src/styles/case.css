@@ -567,11 +567,22 @@
   line-height: 1.4;
 }
 @media (min-width: 1024px) {
-  /* Tables and figures break out of the reading column by one column each side */
-  .article__table-wrap,
+  /* Figures break out of the reading column by one column each side; tables stay in-column */
   .article__figure {
     margin-inline: -12.5%;
   }
+}
+.article__table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.article__table {
+  min-width: 0;
+  table-layout: fixed;
+}
+.article__table th,
+.article__table td {
+  overflow-wrap: anywhere;
 }
 @media (max-width: 1023px) {
   .article__aside {

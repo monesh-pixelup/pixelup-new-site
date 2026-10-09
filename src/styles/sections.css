@@ -552,6 +552,18 @@
   visibility: hidden;
 }
 
+/* Tablet: half the grid is too narrow for two text columns, so the copy stacks (same left edge as the intro). */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .services__intro,
+  .svc__body {
+    grid-column: 9 / -1;
+  }
+  .svc__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+
 @media (max-width: 767px) {
   .services__eyebrow {
     grid-column: 1 / 8;

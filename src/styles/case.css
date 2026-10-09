@@ -588,6 +588,24 @@
 .article__table td {
   overflow-wrap: anywhere;
 }
+/* Phones: five columns can't share 343px without breaking words mid-way. Give the table room and let it
+   scroll sideways, with a fade on the right edge as the cue that there's more. */
+@media (max-width: 767px) {
+  .article__table-wrap {
+    margin-right: calc(-1 * var(--pad));
+    padding-right: var(--pad);
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+  .article__table {
+    min-width: 600px;
+    table-layout: auto;
+  }
+  .article__table th,
+  .article__table td {
+    overflow-wrap: normal;
+  }
+}
 @media (max-width: 1023px) {
   .article__aside {
     display: none;

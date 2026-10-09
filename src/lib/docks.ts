@@ -30,8 +30,9 @@ export function heroDock(vp: Viewport): Dock {
     const g = Math.min(vp.h * 0.26, vp.w * 0.52);
     return { x: vp.w * 0.5, y: vp.h * 0.4, g, gap: 0, ...still, dots: 1 };
   }
-  const g = Math.min(vp.h * 0.3, vp.w * 0.21);
-  return { x: vp.w * 0.5, y: vp.h * 0.44, g, gap: 0, ...still, dots: 1 };
+  // Tablets are tall and narrow: size by width more generously so the mark still owns the screen.
+  const g = vp.w < 1024 ? Math.min(vp.h * 0.26, vp.w * 0.36) : Math.min(vp.h * 0.3, vp.w * 0.21);
+  return { x: vp.w * 0.5, y: vp.h * 0.42, g, gap: 0, ...still, dots: 1 };
 }
 
 /** Work page: the mark floats over the collage, inverting the imagery beneath it. */
@@ -46,8 +47,9 @@ function collageDock(vp: Viewport): Dock {
 
 export function railDock(vp: Viewport): Dock {
   if (vp.mobile) {
-    const g = Math.min(vp.h * 0.13, vp.w * 0.28);
-    return { x: vp.w - g * 0.75, y: vp.h * 0.58, g, gap: 0, rx: 0, ry: -0.3, rz: 0, dots: 0.4 };
+    // Phones: small and half-tucked past the right edge, so it accompanies the content instead of covering it.
+    const g = Math.min(vp.h * 0.085, vp.w * 0.19);
+    return { x: vp.w - g * 0.42, y: vp.h * 0.62, g, gap: 0, rx: 0, ry: -0.3, rz: 0, dots: 0 };
   }
   const g = Math.min(vp.h * 0.19, vp.w * 0.14);
   return { x: vp.w * 0.88, y: vp.h * 0.54, g, gap: 0, rx: 0, ry: -0.24, rz: 0, dots: 0.45 };

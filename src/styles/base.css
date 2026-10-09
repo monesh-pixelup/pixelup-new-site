@@ -28,6 +28,20 @@
   --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
+/* Tablets keep the desktop layout unit (the Figma-placed layouts depend on it) but not its type, which would
+   shrink to the 10px floor. Body sizes match phones; display sizes meet the desktop values at 1024px. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --pad: 24px;
+    --fs-micro: 11px;
+    --fs-m: 17px;
+    --fs-logo: 22px;
+    --fs-display: 7vw;
+    --fs-title: 7.2vw;
+    --fs-mega: 8vw;
+  }
+}
+
 @media (max-width: 767px) {
   :root {
     --u: calc(var(--vw) / 390);

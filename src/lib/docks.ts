@@ -8,8 +8,24 @@ import { clamp, lerpDock, smoothstep } from './math';
 
 const still = { rx: 0, ry: 0, rz: 0 };
 
+/** Every page except the home hero: the original placement, bottom right of the first screen. */
+function cornerDock(vp: Viewport): Dock {
+  if (vp.mobile) {
+    const g = Math.min(vp.h * 0.28, vp.w * 0.56);
+    return { x: vp.w * 0.58, y: vp.h * 0.45, g, gap: 0, ...still, dots: 1 };
+  }
+  // Figma: the hero object sits in a 432 × 540 frame centred at x 1125 / 1440
+  const g = Math.min(vp.h * 0.32, vp.w * 0.22);
+  return { x: vp.w * 0.78125, y: vp.h * 0.55, g, gap: 0, ...still, dots: 1 };
+}
+
+/** Where the mark rests before any section has claimed it: centred on the home hero, in the corner elsewhere. */
+export function restDock(vp: Viewport): Dock {
+  return document.querySelector('.hero') ? heroDock(vp) : cornerDock(vp);
+}
+
 export function heroDock(vp: Viewport): Dock {
-  // Centred on the page, a touch above the middle so the hero copy below has room.
+  // Home hero only: centred on the page, a touch above the middle so the hero copy below has room.
   if (vp.mobile) {
     const g = Math.min(vp.h * 0.26, vp.w * 0.52);
     return { x: vp.w * 0.5, y: vp.h * 0.4, g, gap: 0, ...still, dots: 1 };
@@ -93,7 +109,7 @@ export function phase(progress: number, n: number) {
 
 /** Case studies and articles on phones: the title owns the screen, so the mark starts small in the corner. */
 function introDock(vp: Viewport): Dock {
-  if (!vp.mobile) return heroDock(vp);
+  if (!vp.mobile) return cornerDock(vp);
   const g = Math.min(vp.h * 0.1, vp.w * 0.22);
   return { x: vp.w - g * 0.75, y: vp.h * 0.15, g, gap: 0, ...still, dots: 0.6 };
 }
@@ -101,7 +117,8 @@ function introDock(vp: Viewport): Dock {
 export function buildStops(vp: Viewport): DockStop[] {
   const collage = document.querySelector('[data-dock="collage"]');
   const intro = document.querySelector('.cs-intro, .blog-intro');
-  const stops: DockStop[] = [{ at: 0, dock: collage ? collageDock : intro ? introDock : heroDock }];
+  const home = document.querySelector('.hero');
+  const stops: DockStop[] = [{ at: 0, dock: collage ? collageDock : intro ? introDock : home ? heroDock : cornerDock }];
   const scrollY = window.scrollY;
   const work = document.getElementById('work');
   const news = document.getElementById('news');

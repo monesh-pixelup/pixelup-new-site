@@ -19,8 +19,8 @@ export default function Hero() {
         <p className="hero__coords" data-intro="fade" aria-hidden="true">
           <span data-mark-coords>X 0  Y 0  R 0°</span>
           <span className="hero__drag">
-            <span className="hero__drag-fine">Drag the mark</span>
-            <span className="hero__drag-touch">Tap the mark</span>
+            <span className="hero__drag-fine">Drag the mark · hold to transform</span>
+            <span className="hero__drag-touch">Hold the mark to transform</span>
           </span>
         </p>
       </div>

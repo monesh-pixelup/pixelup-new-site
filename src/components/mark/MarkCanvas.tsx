@@ -60,7 +60,7 @@ export default function MarkCanvas() {
           <i className="mark__handle" key={i} />
         ))}
         <span className="mark__label">
-          <span>pixelup / mark</span>
+          <span>pixelup / chrome</span>
         </span>
         <span className="mark__size">
           <span>432 × 540</span>

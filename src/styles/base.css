@@ -123,8 +123,8 @@ sup {
 }
 
 ::selection {
-  background: var(--paper);
-  color: var(--ink);
+  background: #2549e6;
+  color: #fff;
 }
 
 :focus-visible {

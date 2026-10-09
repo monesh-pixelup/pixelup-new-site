@@ -412,12 +412,16 @@
   max-width: calc(700 * var(--u));
   white-space: normal;
 }
+/* The cover rises just above the hovered row, in the Type/Published columns, so it never sits on a title. */
 .cluster__img--cover {
-  top: calc(-44 * var(--u));
-  left: calc(93 * var(--u));
+  top: auto;
+  bottom: 10px;
+  left: calc(660 * var(--u));
   z-index: 4;
-  width: calc(230 * var(--u));
+  width: calc(250 * var(--u));
   height: auto;
+  border-radius: 4px;
+  box-shadow: 0 24px 50px -16px rgba(0, 0, 0, 0.8);
 }
 .cluster__img--cover img {
   position: relative;

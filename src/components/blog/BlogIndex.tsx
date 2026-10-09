@@ -31,9 +31,7 @@ export default function BlogIndex({ id, title, posts, kicker = 'Articles' }: { i
           {posts.map((p, i) => {
             const [w, h] = sanitySize(p.cover);
             return (
-              <div key={p.slug} className="cluster cluster--cover" data-for={i} style={{ '--accent': '#5e5e5e' } as Vars}>
-                <i className="cluster__slab cluster__slab--1" />
-                <i className="cluster__slab cluster__slab--3" />
+              <div key={p.slug} className="cluster cluster--cover" data-for={i}>
                 <div className="cluster__img cluster__img--cover" style={{ '--k': 0 } as Vars}>
                   <Image src={p.cover} alt="" width={w} height={h} sizes="320px" quality={80} draggable={false} />
                 </div>

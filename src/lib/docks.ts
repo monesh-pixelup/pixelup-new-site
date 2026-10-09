@@ -9,13 +9,13 @@ import { clamp, lerpDock, smoothstep } from './math';
 const still = { rx: 0, ry: 0, rz: 0 };
 
 export function heroDock(vp: Viewport): Dock {
+  // Centred on the page, a touch above the middle so the hero copy below has room.
   if (vp.mobile) {
-    const g = Math.min(vp.h * 0.28, vp.w * 0.56);
-    return { x: vp.w * 0.58, y: vp.h * 0.45, g, gap: 0, ...still, dots: 1 };
+    const g = Math.min(vp.h * 0.26, vp.w * 0.52);
+    return { x: vp.w * 0.5, y: vp.h * 0.4, g, gap: 0, ...still, dots: 1 };
   }
-  // Figma: the hero object sits in a 432 × 540 frame centred at x 1125 / 1440
-  const g = Math.min(vp.h * 0.32, vp.w * 0.22);
-  return { x: vp.w * 0.78125, y: vp.h * 0.55, g, gap: 0, ...still, dots: 1 };
+  const g = Math.min(vp.h * 0.3, vp.w * 0.21);
+  return { x: vp.w * 0.5, y: vp.h * 0.44, g, gap: 0, ...still, dots: 1 };
 }
 
 /** Work page: the mark floats over the collage, inverting the imagery beneath it. */

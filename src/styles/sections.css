@@ -17,16 +17,22 @@
   align-items: end;
 }
 .hero__intro {
-  grid-column: 1 / 6;
+  grid-column: 1 / 9;
   padding-left: var(--pad);
 }
 .hero__title {
-  max-width: 29ch;
+  max-width: 22ch;
+  font-size: clamp(26px, calc(40 * var(--u)), 60px);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
 }
 .hero__sub {
-  max-width: 34ch;
-  margin-top: 0.45em;
+  max-width: 36ch;
+  margin-top: 0.7em;
   color: var(--fog);
+  font-size: clamp(15px, calc(18 * var(--u)), 24px);
+  line-height: 1.35;
 }
 /* Starts on the header nav's column (9, + 8u) so the cue sits directly under "Work". */
 .hero__hint {
@@ -81,6 +87,14 @@
   }
   .hero__coords {
     display: none;
+  }
+}
+@media (max-width: 767px) {
+  .hero__title {
+    font-size: clamp(26px, 8vw, 34px);
+  }
+  .hero__sub {
+    font-size: 15px;
   }
 }
 

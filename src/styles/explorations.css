@@ -54,8 +54,9 @@
   background: #151515;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
   transition:
-    transform 0.6s var(--ease-out),
-    box-shadow 0.6s var(--ease-out);
+    transform 0.8s var(--ease-out),
+    box-shadow 0.8s var(--ease-out),
+    filter 0.7s var(--ease-out);
   animation: tcardIn 1.2s var(--ease-out) var(--delay) both;
 }
 .tcard__in img,
@@ -66,6 +67,13 @@
   border-radius: inherit;
   object-fit: cover;
   pointer-events: none;
+}
+/* Hovering a card lets the rest of the tunnel fall back. */
+.tcard__in {
+  filter: brightness(1) saturate(1);
+}
+.exp-stage:has(.tcard:hover) .tcard:not(:hover) .tcard__in {
+  filter: brightness(0.5) saturate(0.6);
 }
 .tcard:hover .tcard__in,
 .tcard:focus-visible .tcard__in {
@@ -153,6 +161,50 @@
   max-width: min(420px, 40vw);
   pointer-events: none;
 }
+.exp__panel {
+  grid-area: 1 / 1;
+  display: grid;
+  gap: 6px;
+  align-content: end;
+}
+/* Each line rises out of its own mask on the house ease; the outgoing panel lifts away first. */
+.exp__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.exp__line > * {
+  display: block;
+  animation: expLineIn 0.95s var(--ease-out) both;
+}
+.exp__line:nth-child(2) > * {
+  animation-delay: 0.05s;
+}
+.exp__line:nth-child(3) > * {
+  animation-delay: 0.1s;
+}
+.exp__panel.is-out .exp__line > * {
+  animation: expLineOut 0.45s var(--ease-io) both;
+}
+.exp__panel.is-out .exp__line:nth-child(2) > * {
+  animation-delay: 0.03s;
+}
+@keyframes expLineIn {
+  from {
+    transform: translateY(105%);
+  }
+}
+@keyframes expLineOut {
+  to {
+    transform: translateY(-105%);
+  }
+}
+.exp__hud-num {
+  display: inline-block;
+  animation: expLineIn 0.6s var(--ease-out) both;
+}
+
 .exp__info-kicker,
 .exp__info-cta {
   color: var(--fog);

@@ -28,8 +28,9 @@
   margin-top: 0.45em;
   color: var(--fog);
 }
+/* Starts on the header nav's column (9, + 8u) so the cue sits directly under "Work". */
 .hero__hint {
-  grid-column: 10 / 13;
+  grid-column: 9 / 13;
   justify-self: start;
   display: inline-flex;
   align-items: center;
@@ -114,29 +115,34 @@
   object-fit: cover;
   transition: transform 1.4s var(--ease-out);
 }
+/* Caption hierarchy: client name leads, the one-line summary sits tight beneath it as secondary copy,
+   and the scope is a small uppercase label on the name's baseline — metadata, not a link. */
 .card__meta {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: baseline;
   gap: 16px;
-  margin-top: calc(11 * var(--u));
+  margin-top: max(10px, calc(14 * var(--u)));
 }
 .card__title {
-  margin-bottom: max(8px, calc(13 * var(--u)));
+  color: var(--paper);
+  font-weight: 400;
+  line-height: 1.2;
 }
 .card__summary {
-  max-width: max(150px, calc(225 * var(--u)));
+  max-width: max(180px, calc(260 * var(--u)));
+  margin-top: 3px;
   color: var(--fog);
+  line-height: 1.35;
 }
 .card__scope {
+  flex: none;
   color: var(--fog);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   white-space: nowrap;
   transition: color 0.4s;
-  text-decoration-line: underline;
-  text-decoration-style: solid;
-  text-decoration-thickness: from-font;
-  text-underline-position: from-font;
-  text-decoration-skip-ink: none;
 }
 
 /* Cards without imagery: a dot field in the studio's own vernacular (a frame waiting for its cover). */
@@ -281,82 +287,106 @@
 }
 
 /* ---------------------------------------------------------------
-   Clients — Figma 674:206 / 674:207
+   Clients — label row, rule, then an endless logo marquee
 ---------------------------------------------------------------- */
 .clients {
   padding: calc(88 * var(--u)) 0 calc(150 * var(--u));
 }
+.clients__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 var(--pad) calc(20 * var(--u));
+}
+.clients__label {
+  display: flex;
+  gap: 6px;
+  font-size: inherit;
+  font-weight: 400;
+}
+.clients__count,
+.clients__note {
+  color: var(--fog);
+  font-variant-numeric: tabular-nums;
+}
 .clients__rule {
-  width: calc(1371 * var(--u));
   height: 1px;
-  margin-left: var(--pad);
+  margin: 0 var(--pad);
   background: var(--rule);
   transform-origin: left;
 }
-.clients__row {
-  display: grid;
-  grid-template-columns: repeat(16, minmax(0, 1fr));
-  align-items: center;
-  margin-top: calc(48 * var(--u));
+.clients__marquee {
+  overflow: hidden;
+  margin-top: calc(56 * var(--u));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
-.clients__logos {
-  grid-column: 1 / 13;
+.clients__track {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px calc(22 * var(--u));
-  padding-left: var(--pad);
+  width: max-content;
+  animation: clientsLoop 60s linear infinite;
 }
-.clients__logos img {
+.clients__set {
+  display: flex;
+  align-items: center;
+  gap: clamp(40px, calc(72 * var(--u)), 88px);
+  padding-right: clamp(40px, calc(72 * var(--u)), 88px);
+}
+.clients__set li {
+  flex: none;
+  display: flex;
+}
+.clients__set img {
   width: auto;
-  height: clamp(22px, calc(32 * var(--u)), 32px);
-  opacity: 0.92;
-  transition:
-    opacity 0.5s var(--ease-out),
-    transform 0.8s var(--ease-out);
-}
-.clients__label {
-  grid-column: 14 / -1;
-  justify-self: end;
-  display: flex;
-  gap: 6px;
-  padding-right: var(--pad);
-  color: var(--fog);
-}
-.clients__count {
-  font-variant-numeric: tabular-nums;
+  height: calc(clamp(18px, calc(24 * var(--u)), 26px) * var(--k));
+  /* Every mark rendered as solid white, whatever colour it ships in. */
+  filter: brightness(0) invert(1);
+  opacity: 0.86;
+  transition: opacity 0.5s var(--ease-out);
 }
 @media (hover: hover) {
-  .clients__logos:hover img {
-    opacity: 0.28;
+  .clients__track:hover img {
+    opacity: 0.35;
   }
-  .clients__logos img:hover {
+  .clients__track img:hover {
     opacity: 1;
-    transform: translateY(-2px);
+  }
+}
+@keyframes clientsLoop {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clients__track {
+    animation: none;
+    width: auto;
+    flex-wrap: wrap;
+    padding: 0 var(--pad);
+  }
+  .clients__set[aria-hidden] {
+    display: none;
+  }
+  .clients__set {
+    flex-wrap: wrap;
+    row-gap: 28px;
   }
 }
 @media (max-width: 1023px) {
   .clients {
-    padding: 88px 0 120px;
+    padding: 72px 0 96px;
   }
-  .clients__rule {
-    width: auto;
-    margin-right: var(--pad);
+  .clients__head {
+    padding-bottom: 16px;
   }
-  .clients__row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    margin-top: 28px;
+  .clients__marquee {
+    margin-top: 40px;
   }
-  .clients__logos {
-    grid-column: 1;
-    padding-right: var(--pad);
-  }
-  .clients__label {
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: start;
-    padding-left: var(--pad);
+}
+@media (max-width: 767px) {
+  .clients__note {
+    display: none;
   }
 }
 
@@ -449,8 +479,8 @@
   justify-self: start;
   display: inline-block;
   overflow: hidden;
-  padding-bottom: 0.22em;
-  margin-bottom: -0.22em;
+  padding-bottom: 0.3em;
+  margin-bottom: -0.3em;
   font-size: var(--fs-title);
   font-weight: 400;
   line-height: 1;
@@ -459,8 +489,9 @@
 .svc__title-inner {
   display: block;
 }
+/* Starts on the intro's column ("Three ways to work together.") so the copy shares one left edge. */
 .svc__body {
-  grid-column: 11 / -1;
+  grid-column: 10 / -1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: calc(24 * var(--u));
@@ -781,6 +812,24 @@
   }
   .foot__legal {
     order: 3;
+  }
+}
+
+/* Small text links keep their look but get a ~40px hit area on touch screens. */
+@media (max-width: 767px) {
+  .hero__hint,
+  .foot__links a,
+  .foot__legal a,
+  .cs-meta a {
+    position: relative;
+  }
+  .hero__hint::before,
+  .foot__links a::before,
+  .foot__legal a::before,
+  .cs-meta a::before {
+    content: '';
+    position: absolute;
+    inset: -13px -6px;
   }
 }
 .svc__price {

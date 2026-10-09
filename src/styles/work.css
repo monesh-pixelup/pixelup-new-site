@@ -416,6 +416,13 @@
   .index__hover {
     display: none;
   }
+  /* Four-item scopes (①Brand, ②Web, ③Product, ④Next.js) outgrow 248u below ~950px; borrow width from the client column. */
+  .index__col-client {
+    width: calc(740 * var(--u));
+  }
+  .index__col-scope {
+    width: calc(326 * var(--u));
+  }
 }
 
 @media (max-width: 767px) {

@@ -78,6 +78,7 @@ export default function Experience() {
         if (leaving) return;
         leaving = true;
         lenis?.stop();
+        window.dispatchEvent(new CustomEvent('page:leave', { detail: href }));
         if (reduced) {
           router.push(href);
           return;

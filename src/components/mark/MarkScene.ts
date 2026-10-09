@@ -59,6 +59,80 @@ function half(flat: number[], materials: THREE.Material[]) {
   return new THREE.Mesh(geometry, materials);
 }
 
+/** A dark photo studio: softboxes and strip lights the metal can reflect. Values above 1 are HDR. */
+function studioEnvironment(renderer: THREE.WebGLRenderer) {
+  const scene = new THREE.Scene();
+  const disposables: { dispose(): void }[] = [];
+  const add = (geo: THREE.BufferGeometry, color: number, pos: [number, number, number], side: THREE.Side = THREE.FrontSide) => {
+    const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color().setScalar(color), side });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(...pos);
+    mesh.lookAt(0, 0, 0);
+    scene.add(mesh);
+    disposables.push(geo, mat);
+  };
+  add(new THREE.BoxGeometry(12, 12, 12), 0.05, [0, 0, 0], THREE.BackSide);
+  add(new THREE.PlaneGeometry(9, 6), 2.6, [0.5, 0.8, 5.6]); // big softbox behind the viewer: what the faces reflect
+  add(new THREE.PlaneGeometry(1.2, 9), 6, [-1.8, 0, 5.5]); // hot strip inside it — sweeps across the faces as the studio turns
+  add(new THREE.PlaneGeometry(5, 2.4), 4.2, [-2.4, 3.8, 3]); // key softbox, high left
+  add(new THREE.PlaneGeometry(0.5, 7), 2.6, [5.2, 0.4, 1.4]); // tall strip, right
+  add(new THREE.PlaneGeometry(0.4, 6), 1.4, [-5.4, -0.6, -1]); // fill strip, left
+  add(new THREE.PlaneGeometry(7, 0.6), 1.8, [0, 1.2, -5.4]); // rim behind
+  add(new THREE.PlaneGeometry(5, 5), 0.18, [0, -5.4, 2]); // floor bounce
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const texture = pmrem.fromScene(scene, 0.03).texture;
+  pmrem.dispose();
+  disposables.forEach((d) => d.dispose());
+  return texture;
+}
+
+/** Brushed-metal grain: long horizontal streaks, as a normal map (visible texture) and a roughness map. */
+function brushedGrain() {
+  const size = 512;
+  const height = new Float32Array(size * size);
+  for (let i = 0; i < 2600; i++) {
+    const y = Math.floor(Math.random() * size);
+    const x0 = Math.random() * size;
+    const len = 30 + Math.random() * 320;
+    const amp = (Math.random() - 0.5) * 0.9;
+    for (let x = 0; x < len; x++) {
+      const fade = Math.sin((x / len) * Math.PI);
+      height[y * size + (Math.floor(x0 + x) % size)] += amp * fade;
+    }
+  }
+  const normal = document.createElement('canvas');
+  const rough = document.createElement('canvas');
+  normal.width = normal.height = rough.width = rough.height = size;
+  const n = normal.getContext('2d')!.createImageData(size, size);
+  const r = rough.getContext('2d')!.createImageData(size, size);
+  const at = (x: number, y: number) => height[((y + size) % size) * size + ((x + size) % size)];
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const dx = at(x + 1, y) - at(x - 1, y);
+      const dy = at(x, y + 1) - at(x, y - 1);
+      const len = Math.hypot(dx, dy, 1);
+      const o = (y * size + x) * 4;
+      n.data[o] = ((-dx / len) * 0.5 + 0.5) * 255;
+      n.data[o + 1] = ((-dy / len) * 0.5 + 0.5) * 255;
+      n.data[o + 2] = (1 / len) * 0.5 * 255 + 127.5;
+      n.data[o + 3] = 255;
+      const g = THREE.MathUtils.clamp(128 + at(x, y) * 70, 60, 200);
+      r.data[o] = r.data[o + 1] = r.data[o + 2] = g;
+      r.data[o + 3] = 255;
+    }
+  }
+  normal.getContext('2d')!.putImageData(n, 0, 0);
+  rough.getContext('2d')!.putImageData(r, 0, 0);
+  const wrap = (c: HTMLCanvasElement) => {
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(1.6, 1.6);
+    t.anisotropy = 8;
+    return t;
+  };
+  return { normal: wrap(normal), roughness: wrap(rough) };
+}
+
 export class MarkScene {
   private renderer: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
@@ -70,6 +144,8 @@ export class MarkScene {
   private top = new THREE.Group();
   private bottom = new THREE.Group();
   private materials: THREE.Material[];
+  private environment: THREE.Texture;
+  private grain: { normal: THREE.Texture; roughness: THREE.Texture };
   private vp: Viewport = { w: 1, h: 1, mobile: false };
   private dock: Dock | null = null;
   private rot = new THREE.Vector3();
@@ -92,24 +168,29 @@ export class MarkScene {
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    const caps = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const sides = new THREE.ShaderMaterial({
-      vertexShader: /* glsl */ `
-        varying vec3 vNormal;
-        void main() {
-          vNormal = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: /* glsl */ `
-        varying vec3 vNormal;
-        void main() {
-          vec3 n = normalize(vNormal);
-          float key = dot(n, normalize(vec3(-0.45, 0.62, 0.64)));
-          float shade = mix(0.32, 0.97, smoothstep(-0.55, 0.9, key));
-          gl_FragColor = vec4(vec3(shade), 1.0);
-        }
-      `,
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.05;
+    this.environment = studioEnvironment(this.renderer);
+    this.scene.environment = this.environment;
+    this.grain = brushedGrain();
+
+    // Brushed aluminium faces; the bevelled walls are polished so the edges catch a bright line.
+    const caps = new THREE.MeshPhysicalMaterial({
+      color: 0xdfe2e6,
+      metalness: 1,
+      roughness: 0.42,
+      roughnessMap: this.grain.roughness,
+      normalMap: this.grain.normal,
+      normalScale: new THREE.Vector2(0.35, 0.35),
+      anisotropy: 0.75,
+      anisotropyRotation: Math.PI / 2,
+      envMapIntensity: 1.2,
+    });
+    const sides = new THREE.MeshPhysicalMaterial({
+      color: 0xeef0f2,
+      metalness: 1,
+      roughness: 0.14,
+      envMapIntensity: 1.35,
     });
     this.materials = [caps, sides];
 
@@ -351,6 +432,10 @@ export class MarkScene {
     this.bottom.position.set(SEAM_X - SPLIT_X * part, SEAM_Y - SPLIT_Y * part, 0);
     this.bottom.rotation.z = -jaw;
 
+    // The studio slowly turns around the mark and leans toward the cursor, so highlights sweep the metal even at rest.
+    const lean = this.pointer.present && !reduced ? clamp((this.pointer.x - d.x) / vp.w, -1, 1) : 0;
+    this.scene.environmentRotation.set(tiltX * 0.8, (reduced ? 0 : this.time * 0.12) + lean * 0.9, 0);
+
     this.renderer.render(this.scene, this.camera);
     this.updateUI(d, hovering);
   };
@@ -417,6 +502,9 @@ export class MarkScene {
       if (o instanceof THREE.Mesh) o.geometry.dispose();
     });
     this.materials.forEach((m) => m.dispose());
+    this.environment.dispose();
+    this.grain.normal.dispose();
+    this.grain.roughness.dispose();
     this.renderer.dispose();
   }
 }

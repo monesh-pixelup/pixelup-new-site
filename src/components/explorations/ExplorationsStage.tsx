@@ -1,18 +1,32 @@
 'use client';
 
+import gsap from 'gsap';
+import { CustomEase } from 'gsap/CustomEase';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
+
+gsap.registerPlugin(CustomEase);
 import type { Exploration } from '@/content/explorations';
 
 // The camera flies down Z through a spiral of cards. Every card loops back to the far end
 // once it passes the viewer, so the tunnel never runs out.
-const SPACING = 150; // px between cards along Z
-const MIN_CARDS = 36;
+const SPACING = 300; // px between cards along Z (average — each card jitters around its slot)
 const PERSPECTIVE = 800; // must match the stage's CSS perspective
 const FOCAL = 480; // distance ahead at which a card sits on the screen plane (translateZ 0)
-const IDLE = 0.55; // forward drift in px per frame while nobody is steering
-const WHEEL = 2.2;
-const DRAG = 5;
+const DEPTH = 2400; // only cards within this distance ahead are drawn, which keeps ~7 on screen
+const IDLE = 0.45; // forward drift in px per frame while nobody is steering
+const WHEEL = 1.1;
+const DRAG = 3;
+const MAX_SPEED = 7; // px per frame: the fastest the camera ever travels, however hard you scroll
+const MAX_LEAD = 700; // how far the target may run ahead of the camera, so input can't bank up speed
+const SPRING = 0.0055; // camera spring stiffness per frame²
+const FLING = 10; // frames of drag velocity carried after release
+const ENTER = 1500; // the camera starts this far back and dollies in
+const EXIT = 2200; // and flies this far forward on the way out
+
+// The site's house curves (Experience registers the same ones for GSAP).
+CustomEase.create('pxl', '0.16, 1, 0.3, 1');
+CustomEase.create('pxl-io', '0.76, 0, 0.24, 1');
 
 type Card = { item: number; nx: number; ny: number; z: number; size: number; rx: number; ry: number };
 
@@ -26,24 +40,43 @@ function mulberry32(seed: number) {
   };
 }
 
+// The tunnel is paced in beats rather than a uniform spiral: a large hero card held near the centre line,
+// mid-size cards to either side, small ones out at the edges, so the eye gets a rhythm instead of a swarm.
+const BEATS = ['hero', 'side', 'edge', 'side', 'side', 'edge', 'hero', 'side', 'edge', 'side'] as const;
+
 function layout(count: number) {
   const rand = mulberry32(2026 + count * 7919);
-  const n = Math.max(count, MIN_CARDS);
-  const cards: Card[] = Array.from({ length: n }, (_, i) => {
-    // Golden-angle spiral keeps consecutive cards on opposite sides; the radius floor leaves a clear flight path.
-    const angle = 2.39996 * i + 0.5 * rand();
-    const radius = 0.34 + 0.66 * Math.sqrt(rand());
+  let side = 1;
+  const cards: Card[] = Array.from({ length: count }, (_, i) => {
+    const beat = BEATS[i % BEATS.length];
+    const spread = (rand() * 2 - 1) * 0.5; // vertical scatter, in radians off the horizontal
+    let nx: number;
+    let ny: number;
+    let size: number;
+    if (beat === 'hero') {
+      nx = (rand() * 2 - 1) * 0.08;
+      ny = (rand() * 2 - 1) * 0.06;
+      size = 1.35 + rand() * 0.25;
+    } else {
+      // Alternate sides so consecutive cards never stack on the same wall.
+      side = -side;
+      const r = beat === 'side' ? 0.42 + rand() * 0.2 : 0.78 + rand() * 0.18;
+      nx = side * Math.cos(spread) * r;
+      ny = Math.sin(spread) * r * 0.9;
+      size = beat === 'side' ? 0.85 + rand() * 0.3 : 0.55 + rand() * 0.2;
+    }
     return {
-      item: i % count,
-      nx: Math.cos(angle) * radius,
-      ny: Math.sin(angle) * radius,
-      z: SPACING * i,
-      size: 0.72 + 0.56 * rand(),
-      rx: (rand() * 2 - 1) * 9,
-      ry: (rand() * 2 - 1) * 12,
+      item: i,
+      nx,
+      ny,
+      z: SPACING * i + (rand() * 2 - 1) * SPACING * 0.25,
+      size,
+      // Heroes face you almost square; the walls turn in toward the flight path.
+      rx: (rand() * 2 - 1) * (beat === 'hero' ? 3 : 8),
+      ry: beat === 'hero' ? (rand() * 2 - 1) * 4 : -Math.sign(nx) * (6 + rand() * 10),
     };
   });
-  return { cards, length: SPACING * n };
+  return { cards, length: SPACING * count };
 }
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -56,10 +89,13 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
   const nav = useRef({
     current: 0,
     target: 0,
+    speed: 0, // camera velocity along Z, px per frame
+    idle: 0, // eased idle drift, so the tunnel glides to a stop on hover rather than braking
+    offset: 0, // added to the camera by the enter / exit tweens
     hover: -1,
     pointer: { x: 0.5, y: 0.5 },
     pointerTarget: { x: 0.5, y: 0.5 },
-    drag: { active: false, x: 0, y: 0, origin: 0, moved: 0 },
+    drag: { active: false, x: 0, y: 0, origin: 0, moved: 0, lastT: 0, lastTarget: 0, fling: 0 },
   });
   const [hover, setHover] = useState(-1);
   const [nearest, setNearest] = useState(0);
@@ -94,8 +130,22 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
       last = now;
       const s = nav.current;
 
-      if (!reduced && !s.drag.active && s.hover < 0) s.target += IDLE * d;
-      s.current += (s.target - s.current) * (1 - Math.pow(1 - (reduced ? 0.25 : 0.06), d));
+      const idleGoal = !reduced && !s.drag.active && s.hover < 0 ? IDLE : 0;
+      s.idle += (idleGoal - s.idle) * (1 - Math.pow(0.95, d));
+      s.target += s.idle * d;
+      // However much input arrives, the target never runs more than MAX_LEAD ahead of (or behind) the camera.
+      s.target = s.current + Math.max(-MAX_LEAD, Math.min(MAX_LEAD, s.target - s.current));
+      // Critically damped spring: moves ease in and out and carry momentum, instead of a lerp's hard start,
+      // with the travel speed capped so nobody can rip through the tunnel.
+      const k = reduced ? 0.2 : SPRING;
+      const damping = 2 * Math.sqrt(k);
+      for (let step = 0; step < Math.ceil(d); step++) {
+        const h = d / Math.ceil(d);
+        s.speed += ((s.target - s.current) * k - s.speed * damping) * h;
+        s.speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, s.speed));
+        s.current += s.speed * h;
+      }
+      const camera = s.current + s.offset;
       const follow = 1 - Math.pow(0.95, d);
       s.pointer.x += (s.pointerTarget.x - s.pointer.x) * follow;
       s.pointer.y += (s.pointerTarget.y - s.pointer.y) * follow;
@@ -111,9 +161,10 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         const el = cardRefs.current[i];
         if (!el) continue;
         const c = cards[i];
-        const u = wrap(c.z - s.current, length); // how far ahead of the camera
+        const u = wrap(c.z - camera, length); // how far ahead of the camera
         const tz = FOCAL - u;
-        const alpha = clamp01((length - u) / (0.2 * length)) * clamp01(u / 260);
+        // Fade in over the last 600px of the visible depth, fade out as a card passes the viewer.
+        const alpha = clamp01((DEPTH - u) / 600) * clamp01(u / 260);
 
         if (alpha <= 0.001) {
           if (!hidden[i]) {
@@ -166,7 +217,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${tz.toFixed(2)}px) rotateX(${c.rx}deg) rotateY(${c.ry}deg)${smear}`;
 
         // Depth of field on the far cards plus motion blur, quantised so the filter isn't rebuilt every frame.
-        const far = clamp01((u - 900) / (0.85 * length - 900));
+        const far = clamp01((u - 1100) / (DEPTH - 1100));
         const dof = 3 * far * far * (3 - 2 * far);
         const amount = Math.min(10, Math.hypot(dof, Math.min(6, 0.25 * speed)) / scale);
         const q = amount < 0.3 ? 0 : Math.pow(1.2, Math.round(Math.log(amount) / Math.log(1.2)));
@@ -204,7 +255,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     const onDown = (e: PointerEvent) => {
       if (e.button !== 0) return;
       const s = nav.current;
-      s.drag = { active: true, x: e.clientX, y: e.clientY, origin: s.target, moved: 0 };
+      s.drag = { active: true, x: e.clientX, y: e.clientY, origin: s.target, moved: 0, lastT: e.timeStamp, lastTarget: s.target, fling: 0 };
       point(e);
     };
     const onMove = (e: PointerEvent) => {
@@ -216,11 +267,18 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
       s.drag.moved = Math.max(s.drag.moved, Math.hypot(dx, dy));
       if (s.drag.moved > 6) setDragging(true);
       s.target = s.drag.origin - DRAG * (Math.abs(dy) >= Math.abs(dx) ? dy : dx);
+      // Track release velocity (px of travel per 60fps frame) for the fling.
+      const dt = Math.max(1, e.timeStamp - s.drag.lastT) / (1000 / 60);
+      s.drag.fling = s.drag.fling * 0.6 + ((s.target - s.drag.lastTarget) / dt) * 0.4;
+      s.drag.lastT = e.timeStamp;
+      s.drag.lastTarget = s.target;
     };
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
       const s = nav.current;
       if (!s.drag.active) return;
       s.drag.active = false;
+      // A flick keeps travelling; a drag that stopped before release doesn't.
+      if (e.timeStamp - s.drag.lastT < 80) s.target += s.drag.fling * FLING;
       setDragging(false);
       // Let the click that ends a drag see `moved` before it resets.
       setTimeout(() => (s.drag.moved = 0), 0);
@@ -232,6 +290,18 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
       nav.current.target += step * SPACING;
     };
 
+    // Enter: dolly in from deep in the tunnel on the house ease. Exit: accelerate past the viewer.
+    const enter = reduced
+      ? null
+      : gsap.fromTo(nav.current, { offset: -ENTER }, { offset: 0, duration: 2.6, ease: 'pxl', delay: 0.1 });
+    const onLeave = () => {
+      enter?.kill();
+      if (reduced) return;
+      gsap.to(nav.current, { offset: `+=${EXIT}`, duration: 0.8, ease: 'power3.in' });
+      stage.closest('.exp')?.classList.add('is-leaving');
+    };
+    window.addEventListener('page:leave', onLeave);
+
     stage.addEventListener('wheel', onWheel, { passive: false });
     stage.addEventListener('pointerdown', onDown);
     stage.addEventListener('keydown', onKey);
@@ -242,6 +312,9 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      enter?.kill();
+      gsap.killTweensOf(nav.current);
+      window.removeEventListener('page:leave', onLeave);
       stage.removeEventListener('wheel', onWheel);
       stage.removeEventListener('pointerdown', onDown);
       stage.removeEventListener('keydown', onKey);
@@ -272,7 +345,28 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     }
   };
 
-  const shown = hover >= 0 ? items[cards[hover].item] : null;
+  // The info panel swaps with an out/in animation. Leaving a card waits a beat before falling back to the
+  // default copy, so sliding from one card to the next doesn't flash it.
+  const [panels, setPanels] = useState([{ id: 0, item: -1, out: false }]);
+  const panelId = useRef(0);
+  useEffect(() => {
+    const item = hover >= 0 ? cards[hover].item : -1;
+    const t = window.setTimeout(
+      () =>
+        setPanels((prev) => {
+          if (prev.find((p) => !p.out)?.item === item) return prev;
+          panelId.current += 1;
+          return [...prev.map((p) => ({ ...p, out: true })), { id: panelId.current, item, out: false }];
+        }),
+      item < 0 ? 220 : 0,
+    );
+    return () => window.clearTimeout(t);
+  }, [hover, cards]);
+  useEffect(() => {
+    if (!panels.some((p) => p.out)) return;
+    const t = window.setTimeout(() => setPanels((prev) => prev.filter((p) => !p.out)), 600);
+    return () => window.clearTimeout(t);
+  }, [panels]);
 
   return (
     <section className="exp" aria-labelledby="exp-title">
@@ -302,7 +396,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
                 {
                   '--size': c.size,
                   '--ar': media.w / media.h,
-                  '--delay': `${Math.min(i, 24) * 40}ms`,
+                  '--delay': `${Math.min(i, 8) * 90}ms`,
                 } as React.CSSProperties
               }
               {...(it.href
@@ -352,29 +446,34 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
       </div>
 
       <div className="exp__info" aria-live="polite">
-        {shown ? (
-          <>
-            <span className="exp__info-kicker">
-              {shown.kind} · {shown.year}
-            </span>
-            <strong className="exp__info-title">{shown.title}</strong>
-            {shown.href && (
-              <span className="exp__info-cta">{shown.external ? 'Visit site ↗' : 'Open case study →'}</span>
-            )}
-          </>
-        ) : (
-          <>
-            <span className="exp__info-kicker">Explorations</span>
-            <strong className="exp__info-title">Concepts we killed, and the ones we shipped.</strong>
-          </>
-        )}
+        {panels.map((p) => {
+          const it = p.item >= 0 ? items[p.item] : null;
+          return (
+            <div key={p.id} className={`exp__panel${p.out ? ' is-out' : ''}`} aria-hidden={p.out || undefined}>
+              <span className="exp__line">
+                <span className="exp__info-kicker">{it ? `${it.kind} · ${it.year}` : 'Explorations'}</span>
+              </span>
+              <span className="exp__line">
+                <strong className="exp__info-title">{it ? it.title : 'Concepts we killed, and the ones we shipped.'}</strong>
+              </span>
+              {it?.href && (
+                <span className="exp__line">
+                  <span className="exp__info-cta">{it.external ? 'Visit site ↗' : 'Open case study →'}</span>
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <p className="exp__hud" aria-hidden="true">
         <span>Scroll / drag to fly</span>
         <span className="exp__hud-sep">/</span>
         <span className="exp__hud-count">
-          {String(nearest + 1).padStart(2, '0')} — {String(items.length).padStart(2, '0')}
+          <span key={nearest} className="exp__hud-num">
+            {String(nearest + 1).padStart(2, '0')}
+          </span>{' '}
+          — {String(items.length).padStart(2, '0')}
         </span>
       </p>
     </section>

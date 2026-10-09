@@ -248,14 +248,29 @@ export const work: Work[] = projects
 export const workCanvasHeight = 1915;
 
 
+/** Logos from pixeluplabs.com/clients. `w`/`h` are the artwork's viewBox, used for optical sizing. */
 export const clients = [
-  { name: 'Razorpay', src: '/clients/razorpay.png', width: 106 },
-  { name: 'Pogo', src: '/clients/pogo.png', width: 51 },
-  { name: 'Bland', src: '/clients/bland.png', width: 60 },
-  { name: 'Sainapse', src: '/clients/sainapse.png', width: 117 },
-  { name: 'Greptile', src: '/clients/greptile.png', width: 91 },
-  { name: 'Revyl', src: '/clients/revyl.png', width: 79 },
-  { name: 'Streamline', src: '/clients/streamline.png', width: 136 },
+  { name: 'Greptile', src: '/clients/greptile.svg', w: 256, h: 62 },
+  { name: 'Razorpay', src: '/clients/razorpay.png', w: 106, h: 32 },
+  { name: 'Bland.ai', src: '/clients/bland.svg', w: 76, h: 22 },
+  { name: 'Reducto', src: '/clients/reducto.svg', w: 103, h: 18 },
+  { name: 'Streamline.ai', src: '/clients/streamline.svg', w: 151, h: 31 },
+  { name: 'Sully.ai', src: '/clients/sully.svg', w: 475, h: 98 },
+  { name: 'Pogo', src: '/clients/pogo.svg', w: 60, h: 29 },
+  { name: 'Valley', src: '/clients/valley.svg', w: 215, h: 51 },
+  { name: 'CTGT', src: '/clients/ctgt.svg', w: 348, h: 95 },
+  { name: 'Autumn', src: '/clients/autumn-pricing.svg', w: 894, h: 220 },
+  { name: 'Monumint', src: '/clients/monumint.svg', w: 817, h: 109 },
+  { name: 'Sainapse', src: '/clients/sainapse.svg', w: 155, h: 28 },
+  { name: 'Limelight', src: '/clients/limelight.svg', w: 600, h: 107 },
+  { name: 'Revyl', src: '/clients/revyl.svg', w: 1100, h: 300 },
+  { name: 'Zenact', src: '/clients/zenact.svg', w: 1347, h: 188 },
+  { name: 'Henry Labs', src: '/clients/henrylabs.svg', w: 1453, h: 208 },
+  { name: 'Jumbo', src: '/clients/jumbo.svg', w: 870, h: 180 },
+  { name: 'DayFlow', src: '/clients/dayflow.svg', w: 1195, h: 339 },
+  { name: 'Synthio Labs', src: '/clients/synthio-labs.svg', w: 1217, h: 212 },
+  { name: 'Workers.io', src: '/clients/workers-io.svg', w: 797, h: 125 },
+  { name: "Audrion's", src: '/clients/audrion.svg', w: 284, h: 32 },
 ];
 
 export const about = {

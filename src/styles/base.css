@@ -165,11 +165,17 @@ html.lenis body {
   display: inline-flex;
   overflow: hidden;
   vertical-align: top;
-  padding-bottom: 0.14em;
-  margin-bottom: -0.14em;
+  /* Room for descenders (g, p, y) at display sizes; the negative margin keeps layout unchanged. */
+  padding-bottom: 0.26em;
+  margin-bottom: -0.26em;
 }
 .mask > * {
   display: inline-block;
+}
+/* Raised counts sit above the line box; give the mask headroom so they aren't clipped. */
+.mask:has(sup) {
+  padding-top: 0.5em;
+  margin-top: -0.5em;
 }
 
 /* Letter roll */

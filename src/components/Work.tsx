@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import { work, workCanvasHeight, type Work as WorkItem } from '@/content/site';
-import { Roll, Scope } from './ui';
+import { Roll } from './ui';
 
 type Vars = CSSProperties & Record<`--${string}`, string | number>;
 
@@ -73,9 +73,7 @@ function Card({ item }: { item: WorkItem }) {
           </h3>
           <p className="card__summary">{item.summary}</p>
         </div>
-        <p className="card__scope">
-          <Scope items={item.scope} />
-        </p>
+        <p className="card__scope">{item.scope.join(' · ')}</p>
       </div>
     </Tag>
   );

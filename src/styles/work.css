@@ -1,0 +1,468 @@
+/* ---------------------------------------------------------------
+   Work page — Figma 674:208
+---------------------------------------------------------------- */
+
+/* Collage: frames placed by design coordinates; on phones the canvas is enlarged and cropped to its centre. */
+.wk-hero,
+.wk-outro {
+  --cu: var(--u);
+}
+.collage {
+  position: absolute;
+  inset: 0;
+  overflow-x: clip;
+}
+.collage__inner {
+  position: absolute;
+  inset: 0;
+}
+.collage__item {
+  position: absolute;
+  top: calc(var(--y) * var(--cu));
+  left: calc(var(--x) * var(--cu));
+  z-index: var(--z);
+  width: calc(var(--w) * var(--cu));
+  height: calc(var(--h) * var(--cu));
+  margin: 0;
+}
+.collage__media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--panel);
+  outline: 1px solid transparent;
+  transition:
+    outline-color 0.4s var(--ease-out),
+    scale 0.9s var(--ease-out);
+}
+.collage__img {
+  object-fit: cover;
+  transform: scale(var(--zoom, 1));
+}
+.collage__blank {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+}
+.collage__caption {
+  position: absolute;
+  top: 81%;
+  left: 21%;
+  font-size: calc(16.3 * var(--cu));
+  font-weight: 500;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+.collage__label {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  padding-bottom: 6px;
+  color: var(--fog);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.4s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+@media (hover: hover) {
+  /* Like bringing a layer forward in a design tool */
+  .collage__item:hover {
+    z-index: 20;
+  }
+  .collage__item:hover .collage__media {
+    outline-color: var(--paper);
+    scale: 1.02;
+  }
+  .collage__item:hover .collage__label {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.wk-hero {
+  position: relative;
+  height: calc(780 * var(--u));
+  min-height: 560px;
+}
+.wk-outro {
+  position: relative;
+  height: calc(860 * var(--u));
+  margin-top: calc(80 * var(--u));
+}
+
+@media (max-width: 767px) {
+  .wk-hero,
+  .wk-outro {
+    --cu: calc(var(--vw) * 1.75 / 1440);
+  }
+  .collage__inner {
+    transform: translateX(calc(-430 * var(--cu)));
+  }
+  .wk-hero {
+    height: calc(800 * var(--cu));
+    min-height: 0;
+  }
+  .wk-outro {
+    height: calc(820 * var(--cu));
+  }
+}
+
+/* ---------------------------------------------------------------
+   Project index
+---------------------------------------------------------------- */
+.index {
+  position: relative;
+  padding: calc(20 * var(--u)) 0 calc(140 * var(--u));
+}
+.index__head {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  align-items: end;
+  padding: 0 var(--pad);
+}
+.index__title,
+.index__kicker {
+  font-size: clamp(32px, calc(52 * var(--u)), 84px);
+  font-weight: 400;
+  line-height: 1;
+}
+.index__title {
+  grid-column: 1 / 10;
+}
+.index__title .mask,
+.index__kicker .mask {
+  padding-top: 0.55em;
+  margin-top: -0.55em;
+}
+.index__title sup {
+  position: relative;
+  top: -0.12em;
+  margin-left: 0.04em;
+  font-size: 0.64em;
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+.index__kicker {
+  grid-column: 10 / -1;
+  padding-left: calc(6 * var(--u));
+}
+
+.index__body {
+  position: relative;
+  margin-top: max(40px, calc(84 * var(--u)));
+}
+.index__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.index__col-client {
+  width: calc(818 * var(--u));
+}
+.index__col-industry {
+  width: calc(166 * var(--u));
+}
+.index__col-scope {
+  width: calc(248 * var(--u));
+}
+.index__table th,
+.index__table td {
+  padding: 0;
+  font-weight: 400;
+  text-align: left;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.index__table th {
+  padding-bottom: max(28px, calc(60 * var(--u)));
+  color: var(--paper);
+}
+.index__table :is(th, td):first-child {
+  padding-left: calc(var(--pad) + 2px);
+}
+.index__table :is(th, td):last-child {
+  padding-right: var(--pad);
+}
+.index__row {
+  position: relative;
+}
+.index__table td {
+  color: #676767;
+  line-height: 1.5;
+  transition: color 0.3s var(--ease-out);
+}
+.index__link {
+  color: inherit;
+}
+/* The whole row is the link target */
+.index__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.index__scope {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+}
+.index__tag {
+  margin-left: 12px;
+}
+.index__cell {
+  position: relative;
+  display: inline-block;
+}
+.index__cell--year {
+  min-width: calc(188 * var(--u) - 6px);
+}
+/* Figma: #d9d9d9 bars laid over the text with exclusion, so white type reads dark on a pale bar. */
+.index__cell::after {
+  content: '';
+  position: absolute;
+  inset: 1px -3px 1px -3px;
+  background: #d9d9d9;
+  mix-blend-mode: exclusion;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s var(--ease-io);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .index__row:hover td {
+    color: var(--paper);
+  }
+  .index__row:hover .index__cell::after {
+    transform: scaleX(1);
+    transition-duration: 0.6s;
+    transition-timing-function: var(--ease-out);
+  }
+  .index__row:hover td:nth-child(2) .index__cell::after {
+    transition-delay: 60ms;
+  }
+  .index__row:hover td:nth-child(3) .index__cell::after {
+    transition-delay: 120ms;
+  }
+  .index__row:hover td:nth-child(4) .index__cell::after {
+    transition-delay: 180ms;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Hover layer: moves to the hovered row (GSAP), drawn above the table.
+   Coordinates are the Figma group 674:265 relative to the row (row text top = 0).
+---------------------------------------------------------------- */
+.index__hover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: 0;
+  pointer-events: none;
+}
+/* White hairline under the hovered row, full table width (Figma line 674:260). */
+.index__line {
+  position: absolute;
+  top: calc(1em + 4px);
+  right: var(--pad);
+  left: var(--pad);
+  height: 1px;
+  background: var(--paper);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s var(--ease-io);
+}
+.index__hover.is-active .index__line {
+  transform: scaleX(1);
+  transition: transform 0.9s var(--ease-out);
+}
+
+.cluster {
+  position: absolute;
+  top: 0;
+  left: calc(200 * var(--u));
+  width: calc(454 * var(--u));
+}
+.cluster__slab,
+.cluster__img {
+  position: absolute;
+  border-radius: 1px;
+}
+/* Glowing slabs: grey at the lit edge, the project's colour, then into the dark. Two are flipped like reflections. */
+.cluster__slab {
+  background: linear-gradient(to bottom, #a7a6a7, var(--accent) 27.9%, #0c0c0c 58.2%);
+  opacity: 0;
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.45s var(--ease-io);
+}
+.cluster__slab--1 {
+  top: calc(-26 * var(--u));
+  left: 0;
+  width: calc(454 * var(--u));
+  height: calc(70 * var(--u));
+  transform: scaleY(-0.2);
+}
+.cluster__slab--2 {
+  top: calc(-30 * var(--u));
+  left: calc(40 * var(--u));
+  width: calc(373 * var(--u));
+  height: calc(57 * var(--u));
+  mix-blend-mode: lighten;
+  transform: scaleY(-0.2);
+}
+.cluster__slab--3 {
+  top: calc(-37 * var(--u));
+  left: calc(62 * var(--u));
+  width: calc(330 * var(--u));
+  height: calc(51 * var(--u));
+  transform: scaleY(0.2);
+}
+.cluster__slab--4 {
+  top: calc(-25 * var(--u));
+  left: calc(91 * var(--u));
+  width: calc(272 * var(--u));
+  height: calc(41 * var(--u));
+  mix-blend-mode: lighten;
+  transform: scaleY(0.2);
+}
+.cluster.is-on .cluster__slab {
+  opacity: 1;
+  transition:
+    opacity 0.5s var(--ease-out),
+    transform 0.8s var(--ease-out);
+}
+.cluster.is-on .cluster__slab--1,
+.cluster.is-on .cluster__slab--2 {
+  transform: scaleY(-1);
+}
+.cluster.is-on .cluster__slab--3,
+.cluster.is-on .cluster__slab--4 {
+  transform: scaleY(1);
+}
+.cluster.is-on .cluster__slab--2 {
+  transition-delay: 50ms;
+}
+.cluster.is-on .cluster__slab--3 {
+  transition-delay: 100ms;
+}
+.cluster.is-on .cluster__slab--4 {
+  transition-delay: 150ms;
+}
+
+.cluster__img {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(14px) scale(0.92);
+  transition:
+    opacity 0.3s var(--ease-out),
+    transform 0.4s var(--ease-io);
+}
+.cluster__img img,
+.cluster__img video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cluster.is-on .cluster__img {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.5s var(--ease-out),
+    transform 0.9s var(--ease-out);
+  transition-delay: calc(140ms + var(--k) * 70ms);
+}
+/* main square (Figma rect, 114 × 102) */
+.cluster__img--a {
+  top: calc(-37 * var(--u));
+  left: calc(93 * var(--u));
+  z-index: 4;
+  width: calc(114 * var(--u));
+  height: calc(102 * var(--u));
+}
+/* wide sheet (image 84, 104 × 63) */
+.cluster__img--d {
+  top: calc(-1 * var(--u));
+  left: calc(271 * var(--u));
+  z-index: 1;
+  width: calc(104 * var(--u));
+  height: calc(63 * var(--u));
+}
+/* type card (image 85, 56 × 34) */
+.cluster__img--b {
+  top: calc(-14 * var(--u));
+  left: calc(242 * var(--u));
+  z-index: 2;
+  width: calc(56 * var(--u));
+  height: calc(34 * var(--u));
+}
+/* phone (image 86, 48 × 37) */
+.cluster__img--c {
+  top: calc(12 * var(--u));
+  left: calc(219 * var(--u));
+  z-index: 3;
+  width: calc(48 * var(--u));
+  height: calc(37 * var(--u));
+}
+
+@media (max-width: 1023px) {
+  .index__hover {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .index {
+    padding: 40px 0 96px;
+  }
+  .index__title {
+    grid-column: 1 / 9;
+  }
+  .index__kicker {
+    grid-column: 9 / -1;
+    justify-self: end;
+    padding-left: 0;
+  }
+  .index__table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .index__table,
+  .index__table tbody {
+    display: block;
+  }
+  .index__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 2px;
+    padding: 10px var(--pad);
+    border-top: 1px solid var(--rule);
+  }
+  .index__table td,
+  .index__table td:first-child,
+  .index__table td:last-child {
+    display: block;
+    padding: 0;
+  }
+  .index__table td:nth-child(1) {
+    color: var(--paper);
+  }
+  .index__table td:nth-child(4) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .index__table td:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}

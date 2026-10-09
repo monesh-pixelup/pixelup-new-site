@@ -1,0 +1,363 @@
+/* ---------------------------------------------------------------
+   Tokens
+   Layout is the Figma 1440 canvas mapped onto the viewport: 1u = 1 design px.
+   Palette is strictly monochrome; colour only enters through the work
+   and through the mark inverting whatever passes beneath it.
+---------------------------------------------------------------- */
+:root {
+  --ink: #0c0c0c;
+  --panel: #111111;
+  --rule: #363636;
+  --fog: #a9a9a9;
+  --mute: #5e5e5e;
+  --paper: #ffffff;
+
+  --vw: 100vw;
+  --u: calc(var(--vw) / 1440);
+  --pad: max(16px, calc(24 * var(--u)));
+  --track: -0.03em;
+
+  --fs-micro: clamp(10px, calc(10 * var(--u)), 13px);
+  --fs-m: clamp(16px, calc(22 * var(--u)), 30px);
+  --fs-logo: clamp(20px, calc(25 * var(--u)), 34px);
+  --fs-display: clamp(40px, calc(100 * var(--u)), 168px);
+  --fs-title: clamp(40px, calc(104 * var(--u)), 176px);
+  --fs-mega: clamp(36px, calc(116 * var(--u)), 190px);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --u: calc(var(--vw) / 390);
+    --pad: 16px;
+    --fs-micro: 11px;
+    --fs-m: 17px;
+    --fs-logo: 22px;
+    --fs-display: 11.4vw;
+    --fs-title: 10.4vw;
+    --fs-mega: 8.8vw;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Reset + type
+---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Tracking is relative to each element's own size, so it is declared everywhere rather than inherited as a fixed length. */
+:where(*) {
+  letter-spacing: var(--track);
+}
+
+html {
+  background: var(--ink);
+  color: var(--paper);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ink);
+  font-family: var(--font-switzer), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: var(--fs-micro);
+  font-weight: 400;
+  line-height: 1.28;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font: inherit;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+sup {
+  line-height: 0;
+}
+
+::selection {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------
+   Primitives
+---------------------------------------------------------------- */
+
+/* Line mask for rise reveals; padded so descenders survive the clip. */
+.mask {
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.mask > * {
+  display: inline-block;
+}
+
+/* Letter roll */
+.roll {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.roll__track {
+  display: inline-flex;
+}
+.roll__c {
+  position: relative;
+  display: inline-block;
+  white-space: pre;
+  transition: transform 0.65s var(--ease-out);
+  transition-delay: calc(var(--i) * 14ms);
+}
+.roll__c::after {
+  content: attr(data-c);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding-top: 0.1em;
+}
+:is(a, button):hover .roll__c,
+.card:hover .card__title .roll__c {
+  transform: translateY(calc(-100% - 0.1em));
+}
+
+/* Circled index, after the Figma's ① ② */
+.circ {
+  display: inline-grid;
+  place-items: center;
+  width: 1.22em;
+  height: 1.22em;
+  margin-right: 0.22em;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.68em;
+  line-height: 1;
+  letter-spacing: 0;
+  vertical-align: 0.16em;
+  font-variant-numeric: tabular-nums;
+}
+
+.arrow-swap {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+  transform: rotate(var(--r, 0deg));
+}
+.arrow-swap svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.65s var(--ease-out);
+}
+.arrow-swap svg + svg {
+  position: absolute;
+  inset: 0;
+  transform: translateX(-115%);
+}
+:is(a, button):hover .arrow-swap svg:first-child {
+  transform: translateX(115%);
+}
+:is(a, button):hover .arrow-swap svg + svg {
+  transform: translateX(0);
+}
+
+/* Underlined link that wipes out and back in on hover */
+.u-link {
+  position: relative;
+  display: inline-block;
+}
+.u-link::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+}
+a.u-link:hover::after,
+a:hover > .u-link::after {
+  animation: wipe 0.9s var(--ease-io);
+}
+
+@keyframes wipe {
+  0% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+  45% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  55% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ○ ● status */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: max(4px, calc(5 * var(--u)));
+  color: var(--fog);
+  white-space: nowrap;
+}
+.status__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.status__dots i {
+  width: 5px;
+  height: 5px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.status__dots i + i {
+  background: currentColor;
+  animation: blink 2.8s var(--ease-io) infinite;
+}
+.status__line {
+  display: block;
+  width: max(14px, calc(21 * var(--u)));
+  height: 1px;
+  background: currentColor;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.hook {
+  flex: none;
+  width: 0.7em;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------
+   Initial states for the motion layer (only when JS + motion are on)
+---------------------------------------------------------------- */
+.motion:not(.is-ready) [data-intro='rise'] > * {
+  transform: translateY(130%);
+}
+.motion:not(.is-ready) [data-intro='fade'] {
+  opacity: 0;
+}
+.motion:not(.is-ready) [data-intro='lines'] {
+  visibility: hidden;
+}
+.motion:not(.is-ready) .hdr__line {
+  transform: scaleX(0);
+}
+.motion [data-reveal='rise'] > * {
+  transform: translateY(130%);
+}
+.motion [data-reveal='fade'] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

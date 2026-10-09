@@ -1,0 +1,422 @@
+import * as THREE from 'three';
+import { toCreasedNormals } from 'three/addons/utils/BufferGeometryUtils.js';
+import gsap from 'gsap';
+import { GLYPH_ASPECT, GLYPH_BOTTOM, GLYPH_SEAM, GLYPH_TOP } from './glyph';
+import type { Dock, Viewport } from './types';
+import { heroDock } from '@/lib/docks';
+import { markState, motion } from '@/lib/markState';
+import { clamp, damp, lerpDock, smoothstep } from '@/lib/math';
+
+// Selection frame: the mark's bounds with breathing room, like a selected layer in Figma.
+const BOX_W = GLYPH_ASPECT + 0.36;
+const BOX_H = 1.36;
+const BOX_X = 0;
+const [SEAM_X, SEAM_Y] = GLYPH_SEAM;
+// The mark is drawn on a 60° grid; the two pieces part along it.
+const SPLIT_X = Math.cos(Math.PI / 3);
+const SPLIT_Y = Math.sin(Math.PI / 3);
+const DEPTH = 0.12;
+const TAU = Math.PI * 2;
+const HANDLE_UV: ReadonlyArray<readonly [number, number]> = [
+  [0, 0], [0.5, 0], [1, 0], [1, 0.5], [1, 1], [0.5, 1], [0, 1], [0, 0.5],
+];
+
+export type MarkUI = {
+  root: HTMLElement;
+  handles: HTMLElement[];
+  frame: SVGPolygonElement;
+  label: HTMLElement;
+  size: HTMLElement;
+  sizeText: HTMLElement;
+};
+
+function outline(flat: number[]) {
+  const shape = new THREE.Shape();
+  shape.moveTo(flat[0], flat[1]);
+  for (let i = 2; i < flat.length; i += 2) shape.lineTo(flat[i], flat[i + 1]);
+  shape.closePath();
+  return shape;
+}
+
+function half(flat: number[], materials: THREE.Material[]) {
+  const geometry = new THREE.ExtrudeGeometry(outline(flat), {
+    depth: DEPTH,
+    steps: 1,
+    curveSegments: 1,
+    bevelEnabled: true,
+    bevelThickness: 0.012,
+    bevelSize: 0.006,
+    bevelOffset: -0.006,
+    bevelSegments: 3,
+  });
+  // Smooth the walls along the curves but keep the corners crisp. The crease hash works at 0.01 precision,
+  // so do it at a scale where neighbouring outline points stay distinct.
+  geometry.scale(1000, 1000, 1000);
+  toCreasedNormals(geometry, THREE.MathUtils.degToRad(40));
+  geometry.scale(0.001, 0.001, 0.001);
+  // Pivot both pieces on the point where they meet so the mark unfolds around it.
+  geometry.translate(-SEAM_X, -SEAM_Y, -DEPTH / 2);
+  return new THREE.Mesh(geometry, materials);
+}
+
+export class MarkScene {
+  private renderer: THREE.WebGLRenderer;
+  private scene = new THREE.Scene();
+  private camera = new THREE.PerspectiveCamera(20, 1, 1, 10000);
+  private root = new THREE.Group();
+  private spin = new THREE.Group();
+  /** Same pose as `spin` minus the intro twist: the selection frame is projected from this. */
+  private frame = new THREE.Object3D();
+  private top = new THREE.Group();
+  private bottom = new THREE.Group();
+  private materials: THREE.Material[];
+  private vp: Viewport = { w: 1, h: 1, mobile: false };
+  private dock: Dock | null = null;
+  private rot = new THREE.Vector3();
+  private vel = new THREE.Vector3();
+  private gap = 0;
+  private gapVel = 0;
+  private twist = 0;
+  private time = 0;
+  private active = false;
+  private pointer = { x: -1e4, y: -1e4, inside: false, mouse: true, present: false };
+  private drag = { down: false, moved: false, touch: false, sx: 0, sy: 0, x: 0, y: 0, t: 0 };
+  private corners = HANDLE_UV.map(() => new THREE.Vector2());
+  private v3 = new THREE.Vector3();
+  private sizeLabel = '';
+  private coordsLabel = '';
+  private coords: HTMLElement | null;
+
+  constructor(canvas: HTMLCanvasElement, private ui: MarkUI) {
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    this.renderer.setClearColor(0x000000, 0);
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const caps = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const sides = new THREE.ShaderMaterial({
+      vertexShader: /* glsl */ `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        varying vec3 vNormal;
+        void main() {
+          vec3 n = normalize(vNormal);
+          float key = dot(n, normalize(vec3(-0.45, 0.62, 0.64)));
+          float shade = mix(0.32, 0.97, smoothstep(-0.55, 0.9, key));
+          gl_FragColor = vec4(vec3(shade), 1.0);
+        }
+      `,
+    });
+    this.materials = [caps, sides];
+
+    this.top.add(half(GLYPH_TOP, this.materials));
+    this.bottom.add(half(GLYPH_BOTTOM, this.materials));
+    this.spin.add(this.top, this.bottom);
+    this.root.add(this.spin, this.frame);
+    this.root.visible = false;
+    this.scene.add(this.root);
+
+    this.coords = document.querySelector('[data-mark-coords]');
+
+    this.resize();
+    window.addEventListener('resize', this.resize);
+    window.addEventListener('pointermove', this.onMove, { passive: true });
+    window.addEventListener('pointerdown', this.onDown);
+    window.addEventListener('pointerup', this.onUp);
+    window.addEventListener('pointercancel', this.onCancel);
+    window.addEventListener('dragstart', this.onDragStart);
+    document.documentElement.addEventListener('pointerleave', this.onLeave);
+    gsap.ticker.add(this.tick);
+  }
+
+  private resize = () => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    this.vp = { w, h, mobile: w < 768 };
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setSize(w, h, false);
+    // One world unit = one CSS pixel on the z = 0 plane.
+    const distance = h / 2 / Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2));
+    this.camera.aspect = w / h;
+    this.camera.position.set(0, 0, distance);
+    this.camera.near = distance * 0.1;
+    this.camera.far = distance * 4;
+    this.camera.updateProjectionMatrix();
+  };
+
+  private target(scroll: number): Dock {
+    const stops = markState.stops;
+    const vp = this.vp;
+    if (!stops.length) return heroDock(vp);
+    if (scroll <= stops[0].at) return stops[0].dock(vp, scroll);
+    for (let i = 0; i < stops.length - 1; i++) {
+      const a = stops[i];
+      const b = stops[i + 1];
+      if (scroll < b.at) {
+        const t = smoothstep(clamp((scroll - a.at) / (b.at - a.at), 0, 1));
+        return lerpDock(a.dock(vp, scroll), b.dock(vp, scroll), t);
+      }
+    }
+    return stops[stops.length - 1].dock(vp, scroll);
+  }
+
+  private inside(x: number, y: number) {
+    const c = this.corners;
+    const quad = [c[0], c[2], c[4], c[6]];
+    let sign = 0;
+    for (let i = 0; i < 4; i++) {
+      const a = quad[i];
+      const b = quad[(i + 1) % 4];
+      const cross = (b.x - a.x) * (y - a.y) - (b.y - a.y) * (x - a.x);
+      if (cross === 0) continue;
+      const s = Math.sign(cross);
+      if (!sign) sign = s;
+      else if (s !== sign) return false;
+    }
+    return sign !== 0;
+  }
+
+  private onMove = (e: PointerEvent) => {
+    this.pointer.x = e.clientX;
+    this.pointer.y = e.clientY;
+    this.pointer.mouse = e.pointerType !== 'touch';
+    this.pointer.present = true;
+
+    const d = this.drag;
+    if (!d.down) return;
+    if (!d.moved) {
+      if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 5) return;
+      if (d.touch) {
+        // Touch scrolls the page; only taps spin the mark.
+        d.down = false;
+        return;
+      }
+      d.moved = true;
+      markState.dragging = true;
+      document.documentElement.classList.add('is-grabbing');
+      window.getSelection()?.removeAllRanges();
+    }
+    const now = performance.now();
+    const dt = Math.max(8, now - d.t) / 1000;
+    const ay = (e.clientX - d.x) * 0.0105;
+    const ax = (e.clientY - d.y) * 0.0085;
+    this.rot.y += ay;
+    this.rot.x += ax;
+    this.vel.y = this.vel.y * 0.4 + (ay / dt) * 0.6;
+    this.vel.x = this.vel.x * 0.4 + (ax / dt) * 0.6;
+    d.x = e.clientX;
+    d.y = e.clientY;
+    d.t = now;
+  };
+
+  private onDown = (e: PointerEvent) => {
+    if (e.button !== 0 || markState.intro < 0.95) return;
+    if ((e.target as Element | null)?.closest?.('.hdr, .menu')) return;
+    if (!this.inside(e.clientX, e.clientY)) return;
+    const now = performance.now();
+    this.drag = { down: true, moved: false, touch: e.pointerType === 'touch', sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, t: now };
+  };
+
+  private onUp = (e: PointerEvent) => {
+    const d = this.drag;
+    if (!d.down) return;
+    d.down = false;
+    if (d.moved) {
+      markState.dragging = false;
+      document.documentElement.classList.remove('is-grabbing');
+      // A drag should never also count as a click on whatever sits under the mark.
+      const swallow = (ev: Event) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+      };
+      window.addEventListener('click', swallow, { capture: true, once: true });
+      window.setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
+      return;
+    }
+    if (!this.inside(e.clientX, e.clientY)) return;
+    // Tap: flick it around, away from the side that was pressed.
+    const dir = this.dock && e.clientX < this.dock.x ? 1 : -1;
+    this.vel.y += 8.5 * dir;
+    markState.pulse = Math.max(markState.pulse, 0.12);
+  };
+
+  private onCancel = () => {
+    if (this.drag.moved) {
+      markState.dragging = false;
+      document.documentElement.classList.remove('is-grabbing');
+    }
+    this.drag.down = false;
+  };
+
+  private onDragStart = (e: DragEvent) => {
+    if (this.drag.down) e.preventDefault();
+  };
+
+  private onLeave = () => {
+    this.pointer.present = false;
+  };
+
+  private tick = (_time: number, deltaMs: number) => {
+    const dt = Math.min(deltaMs / 1000, 1 / 20);
+    const vp = this.vp;
+    const reduced = motion.reduced;
+    this.time += dt;
+
+    // Dock: follow the scroll-driven target with a soft lag so the mark feels like it floats.
+    const target = this.target(motion.scroll);
+    if (!this.dock) this.dock = { ...target };
+    const d = this.dock;
+    const k = reduced ? 40 : 6;
+    d.x = damp(d.x, target.x, k, dt);
+    d.y = damp(d.y, target.y, k, dt);
+    d.g = damp(d.g, target.g, k, dt);
+    d.gap = damp(d.gap, target.gap, k, dt);
+    d.rx = damp(d.rx, target.rx, k, dt);
+    d.ry = damp(d.ry, target.ry, k, dt);
+    d.rz = damp(d.rz, target.rz, k, dt);
+    d.dots = damp(d.dots, target.dots, k, dt);
+
+    const intro = markState.intro;
+    const ready = intro > 0.95;
+
+    // Hover is evaluated every frame: the mark moves under a still cursor while scrolling.
+    const hovering = ready && this.pointer.present && this.pointer.mouse && this.inside(this.pointer.x, this.pointer.y);
+    markState.hover = hovering && !this.drag.moved;
+
+    // Look toward the cursor.
+    let tiltX = 0;
+    let tiltY = 0;
+    if (this.pointer.present && this.pointer.mouse && !reduced) {
+      const strength = hovering ? 1.4 : 1;
+      tiltY = clamp((this.pointer.x - d.x) / (vp.w * 0.5), -1, 1) * 0.36 * strength;
+      tiltX = clamp((this.pointer.y - d.y) / (vp.h * 0.5), -1, 1) * 0.24 * strength;
+    }
+
+    // Scroll speed twists the mark and pulls the halves apart; both spring back at rest.
+    const v = reduced ? 0 : clamp(motion.velocity, -90, 90);
+    this.twist = damp(this.twist, v * 0.011, 8, dt);
+
+    const floatY = reduced ? 0 : Math.sin(this.time * 0.9) * 0.012;
+    const floatX = reduced ? 0 : Math.sin(this.time * 0.7 + 0.6) * 0.035;
+    const floatZ = reduced ? 0 : Math.sin(this.time * 0.55 + 1.1) * 0.022;
+
+    const tx = d.rx + tiltX + floatX;
+    const ty = d.ry + tiltY + this.twist;
+    const tz = d.rz + floatZ;
+
+    if (!markState.dragging) {
+      const free = Math.abs(this.vel.y) > 2.4 || Math.abs(this.vel.x) > 2.4;
+      const stiffness = free ? 0 : 42;
+      const friction = free ? 1.15 : 7.5;
+      // Settle on the nearest full turn so a spin never unwinds backwards.
+      const ny = ty + Math.round((this.rot.y - ty) / TAU) * TAU;
+      const nx = tx + Math.round((this.rot.x - tx) / TAU) * TAU;
+      this.vel.y += (ny - this.rot.y) * stiffness * dt;
+      this.vel.x += (nx - this.rot.x) * stiffness * dt;
+      this.vel.y *= Math.exp(-friction * dt);
+      this.vel.x *= Math.exp(-friction * dt);
+      this.rot.y += this.vel.y * dt;
+      this.rot.x += this.vel.x * dt;
+    }
+    this.rot.z = damp(this.rot.z, tz, 6, dt);
+
+    const gapTarget =
+      d.gap +
+      (hovering ? 0.03 : 0) +
+      (markState.dragging ? 0.06 : 0) +
+      Math.min(Math.abs(v) * 0.0024, 0.14) +
+      markState.pulse;
+    this.gapVel += (gapTarget - this.gap) * 150 * dt;
+    this.gapVel *= Math.exp(-13 * dt);
+    this.gap += this.gapVel * dt;
+    markState.pulse *= Math.exp(-5 * dt);
+
+    // Intro: the two pieces arrive along the mark's own diagonal and lock together.
+    const settle = 1 - intro;
+    const travel = (settle * vp.h * 0.85) / d.g;
+    const part = this.gap / 2 + travel;
+    const jaw = Math.max(0, this.gap) * 0.55 + settle * 0.7;
+
+    this.root.visible = intro > 0.001;
+    this.root.position.set(d.x - vp.w / 2, vp.h / 2 - d.y + floatY * d.g, 0);
+    this.root.scale.setScalar(d.g);
+    this.spin.rotation.set(this.rot.x, this.rot.y - settle * 1.6, this.rot.z);
+    this.frame.rotation.set(this.rot.x, this.rot.y, this.rot.z);
+    this.top.position.set(SEAM_X + SPLIT_X * part, SEAM_Y + SPLIT_Y * part, 0);
+    this.top.rotation.z = jaw;
+    this.bottom.position.set(SEAM_X - SPLIT_X * part, SEAM_Y - SPLIT_Y * part, 0);
+    this.bottom.rotation.z = -jaw;
+
+    this.renderer.render(this.scene, this.camera);
+    this.updateUI(d, hovering);
+  };
+
+  private updateUI(d: Dock, hovering: boolean) {
+    const { ui, vp } = this;
+    this.frame.updateWorldMatrix(true, false);
+    const open = Math.max(0, this.gap);
+    const height = BOX_H + open * SPLIT_Y;
+    const width = BOX_W + open * SPLIT_X;
+
+    for (let i = 0; i < HANDLE_UV.length; i++) {
+      const [u, v] = HANDLE_UV[i];
+      this.v3.set(BOX_X + (u - 0.5) * width, (0.5 - v) * height, 0).applyMatrix4(this.frame.matrixWorld).project(this.camera);
+      const x = (this.v3.x + 1) * 0.5 * vp.w;
+      const y = (1 - this.v3.y) * 0.5 * vp.h;
+      this.corners[i].set(x, y);
+      ui.handles[i].style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    }
+
+    const c = this.corners;
+    const active = (hovering || markState.dragging) && markState.intro > 0.95;
+    if (active !== this.active) {
+      this.active = active;
+      ui.root.classList.toggle('is-active', active);
+    }
+    ui.root.style.setProperty('--dots', (markState.handles * d.dots).toFixed(3));
+    ui.frame.setAttribute('points', `${c[0].x},${c[0].y} ${c[2].x},${c[2].y} ${c[4].x},${c[4].y} ${c[6].x},${c[6].y}`);
+    ui.label.style.transform = `translate3d(${c[0].x.toFixed(1)}px, ${c[0].y.toFixed(1)}px, 0)`;
+    ui.size.style.transform = `translate3d(${c[5].x.toFixed(1)}px, ${c[5].y.toFixed(1)}px, 0)`;
+
+    const deg = Math.round(THREE.MathUtils.radToDeg(Math.atan2(Math.sin(this.rot.y), Math.cos(this.rot.y))));
+    const size = `${Math.round(width * d.g)} × ${Math.round(height * d.g)}${markState.dragging ? `  ↻ ${deg}°` : ''}`;
+    if (size !== this.sizeLabel) {
+      this.sizeLabel = size;
+      ui.sizeText.textContent = size;
+    }
+    if (!this.coords?.isConnected) {
+      this.coords = document.querySelector('[data-mark-coords]');
+      this.coordsLabel = '';
+    }
+    if (this.coords) {
+      const text = `X ${Math.round(d.x)}  Y ${Math.round(d.y)}  R ${deg}°`;
+      if (text !== this.coordsLabel) {
+        this.coordsLabel = text;
+        this.coords.textContent = text;
+      }
+    }
+  }
+
+  dispose() {
+    gsap.ticker.remove(this.tick);
+    window.removeEventListener('resize', this.resize);
+    window.removeEventListener('pointermove', this.onMove);
+    window.removeEventListener('pointerdown', this.onDown);
+    window.removeEventListener('pointerup', this.onUp);
+    window.removeEventListener('pointercancel', this.onCancel);
+    window.removeEventListener('dragstart', this.onDragStart);
+    document.documentElement.removeEventListener('pointerleave', this.onLeave);
+    document.documentElement.classList.remove('is-grabbing');
+    markState.hover = false;
+    markState.dragging = false;
+    this.scene.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.geometry.dispose();
+    });
+    this.materials.forEach((m) => m.dispose());
+    this.renderer.dispose();
+  }
+}

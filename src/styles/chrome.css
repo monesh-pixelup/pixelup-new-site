@@ -1,0 +1,418 @@
+/* ---------------------------------------------------------------
+   Header — Figma 674:775, placed on the same 16-column grid (90u columns)
+---------------------------------------------------------------- */
+.hdr {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  align-items: baseline;
+  padding-top: max(16px, calc(26 * var(--u)));
+  color: var(--paper);
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+.hdr a,
+.hdr button {
+  pointer-events: auto;
+}
+
+.hdr__brand {
+  grid-column: 1 / 9;
+  justify-self: start;
+  display: inline-flex;
+  align-items: baseline;
+  gap: max(6px, calc(8 * var(--u)));
+  padding-left: var(--pad);
+}
+.hdr__logo {
+  display: inline-flex;
+  align-items: flex-start;
+  font-size: var(--fs-logo);
+  font-weight: 500;
+  line-height: 1;
+}
+.hdr__reg {
+  position: relative;
+  margin: 0.08em 0 0 0.08em;
+  font-size: 0.42em;
+  line-height: 1;
+  vertical-align: baseline;
+  transition: transform 1s var(--ease-out);
+}
+.hdr__brand:hover .hdr__reg {
+  transform: rotate(360deg);
+}
+.hdr__tag-mask {
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.8s var(--ease-out);
+}
+.is-scrolled .hdr__tag-mask {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.hdr__nav {
+  grid-column: 10 / 14;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: baseline;
+}
+.hdr__group {
+  grid-column: 1 / 3;
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(22 * var(--u));
+  padding-left: calc(8 * var(--u));
+}
+.hdr__link--news {
+  grid-column: 3 / 5;
+  justify-self: start;
+  padding-left: calc(5 * var(--u));
+}
+/* Room above the reveal mask so the raised counts are not clipped. */
+.hdr__link .mask {
+  padding-top: 0.45em;
+  margin-top: -0.45em;
+}
+.hdr__link sup {
+  position: relative;
+  top: -0.3em;
+  margin-left: 1px;
+  font-size: 0.645em;
+  line-height: 1;
+  vertical-align: top;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.hdr__meta {
+  grid-column: 13 / -1;
+  justify-self: end;
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(12 * var(--u));
+  padding-right: var(--pad);
+}
+.hdr__contact {
+  position: relative;
+  display: inline-flex;
+  padding-bottom: 4px;
+  text-transform: uppercase;
+}
+.hdr__contact-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+  min-width: calc(63 * var(--u));
+}
+.hdr__line {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+}
+.hdr__contact:hover .hdr__line {
+  animation: wipe 0.9s var(--ease-io);
+}
+
+.hdr__menu {
+  display: none;
+}
+.hdr__menu-label {
+  display: inline-grid;
+  overflow: hidden;
+}
+.hdr__menu-label > span {
+  grid-area: 1 / 1;
+  transition: transform 0.7s var(--ease-out);
+}
+.hdr__menu-label > span + span {
+  transform: translateY(115%);
+}
+.hdr__menu-label[data-open='true'] > span:first-child {
+  transform: translateY(-115%);
+}
+.hdr__menu-label[data-open='true'] > span + span {
+  transform: none;
+}
+
+@media (max-width: 1023px) {
+  .hdr {
+    grid-template-columns: 1fr auto;
+    padding-inline: var(--pad);
+  }
+  .hdr__brand {
+    grid-column: 1;
+    padding-left: 0;
+  }
+  .hdr__nav,
+  .hdr__meta {
+    display: none;
+  }
+  .hdr__menu {
+    display: inline-flex;
+    grid-column: 2;
+    justify-self: end;
+    padding: 8px 0 8px 16px;
+    margin: -8px 0;
+  }
+}
+@media (max-width: 359px) {
+  .hdr__tag-mask {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Menu (tablet + mobile). Sits under the difference-blended header.
+---------------------------------------------------------------- */
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  padding: 96px var(--pad) 22px;
+  background: var(--ink);
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition:
+    clip-path 0.9s var(--ease-io),
+    visibility 0s linear 0.9s;
+}
+.menu-open .menu {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  transition:
+    clip-path 0.9s var(--ease-io),
+    visibility 0s;
+}
+.menu__nav {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+}
+.menu__link {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  font-size: min(14vw, 96px);
+  line-height: 1;
+}
+.menu__link > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.8s var(--ease-out);
+}
+.menu-open .menu__link > span {
+  transform: none;
+  transition-delay: calc(0.3s + var(--i) * 0.06s);
+}
+.menu__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 40px;
+  color: var(--fog);
+}
+
+/* ---------------------------------------------------------------
+   The mark — fixed WebGL layer, blended by difference so it never
+   sinks into the page: white on ink, black on paper, inverted on colour.
+---------------------------------------------------------------- */
+.mark {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.mark__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: difference;
+}
+.mark__ui {
+  --dots: 0;
+  position: absolute;
+  inset: 0;
+  color: var(--paper);
+  mix-blend-mode: difference;
+}
+.mark__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out);
+}
+.mark__frame polygon {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 1;
+}
+.mark__handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: #8f8f8f;
+  opacity: var(--dots);
+  will-change: transform;
+  transition:
+    width 0.45s var(--ease-out),
+    height 0.45s var(--ease-out),
+    margin 0.45s var(--ease-out),
+    border-radius 0.45s var(--ease-out),
+    background-color 0.45s;
+}
+.mark__label,
+.mark__size {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: pre;
+  font-variant-numeric: tabular-nums;
+  will-change: transform;
+}
+.mark__label > span {
+  display: block;
+  transform: translate(0, calc(-100% - 7px));
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.mark__size > span {
+  display: block;
+  padding: 3px 6px 4px;
+  border-radius: 3px;
+  background: var(--paper);
+  color: #000;
+  line-height: 1;
+  transform: translate(-50%, 11px);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.mark__ui.is-active .mark__frame {
+  opacity: 0.85;
+}
+.mark__ui.is-active .mark__handle {
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 1px;
+  background: var(--paper);
+  opacity: 1;
+}
+.mark__ui.is-active .mark__label > span,
+.mark__ui.is-active .mark__size > span {
+  opacity: 1;
+}
+.mark__fallback {
+  display: none;
+}
+.mark.is-fallback .mark__fallback {
+  position: absolute;
+  top: 55%;
+  right: 12vw;
+  display: block;
+  width: auto;
+  height: 40vh;
+  transform: translateY(-50%);
+  mix-blend-mode: difference;
+}
+.is-grabbing,
+.is-grabbing * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---------------------------------------------------------------
+   Cursor
+---------------------------------------------------------------- */
+.cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cursor.is-visible {
+  opacity: 1;
+}
+.cursor__dot,
+.cursor__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+.cursor__dot::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform 0.5s var(--ease-out);
+}
+.cursor[data-mode='link'] .cursor__dot::before {
+  transform: scale(3.4);
+}
+.cursor[data-mode='label'] .cursor__dot::before {
+  transform: scale(0);
+}
+.cursor.is-down .cursor__dot::before {
+  transform: scale(0.6);
+}
+.cursor.is-down[data-mode='link'] .cursor__dot::before {
+  transform: scale(2.6);
+}
+.cursor__label > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 5px 9px 6px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: #000;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s var(--ease-out);
+}
+.cursor[data-mode='label'] .cursor__label > span {
+  transform: translate(-50%, -50%) scale(1);
+}
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor {
+    display: none;
+  }
+}
+
+/* Current page */
+.hdr__link[aria-current='page'] .roll {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}

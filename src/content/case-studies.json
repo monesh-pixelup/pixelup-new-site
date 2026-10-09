@@ -1,0 +1,839 @@
+[
+ {
+  "slug": "greptile",
+  "title": "Greptile: YC W24 to $25M Series A in 6 Months",
+  "description": "How we evolved Greptile's AI code review platform into an enterprise-ready system, doubling demo requests in week one and helping set up a $25M Series A.",
+  "involvement": [
+   "Brand Identity",
+   "Product Design",
+   "Website",
+   "Sales Decks"
+  ],
+  "stats": [],
+  "hero": {
+   "kind": "image",
+   "src": "/case-studies/greptile/hero.jpg",
+   "alt": "Glowing green Greptile logo mark on a dark background"
+  },
+  "sections": [
+   {
+    "heading": "How Did We Approach the Project?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-1.jpg",
+      "alt": "Greptile brand color palette"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-2.jpg",
+      "alt": "Greptile brand type specimen"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-3.jpg",
+      "alt": "Greptile 'Ship Faster' billboard mockup on a city street"
+     }
+    ],
+    "items": [
+     {
+      "label": "Clarity over cleverness",
+      "text": "Making complex workflows simple"
+     },
+     {
+      "label": "Durability over novelty",
+      "text": "Designs that scale without fragmentation"
+     },
+     {
+      "label": "Trust signals",
+      "text": "Every decision reinforced reliability and maturity"
+     },
+     {
+      "label": "Unified experience",
+      "text": "Aligned product, brand, and narrative into one coherent signal"
+     }
+    ],
+    "paragraphs": [
+     "We treated this as a system design problem, not surface polish.\nOur focus:"
+    ],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "What Results Did Greptile Achieve?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-4.jpg",
+      "alt": "Greptile mobile experience mockup held in hand"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-5.jpg",
+      "alt": "Greptile sign-up screen on a laptop"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-6.jpg",
+      "alt": "Greptile 'Bridge the gap' brand poster"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Beyond metrics, our work became Greptile's internal standard for how they present themselves across product, sales, and investor touchpoints."
+    ],
+    "metrics": [
+     {
+      "label": "Week 1",
+      "text": "Demo requests doubled immediately after launch"
+     },
+     {
+      "label": "Month 1",
+      "text": "180,000+ bugs caught post-ship"
+     },
+     {
+      "label": "Month 6",
+      "text": "$25M Series A raised at $180M valuation, led by Benchmark"
+     }
+    ],
+    "stats": []
+   },
+   {
+    "heading": "What Happened After Launch?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-7.jpg",
+      "alt": "Greptile analytics dashboard on a studio display"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-8.jpg",
+      "alt": "Greptile subway poster mockup"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-9.jpg",
+      "alt": "Greptile Instagram post series"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/greptile/img-10.jpg",
+      "alt": "Greptile product interface on a laptop"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Greptile began referring us to other YC founders. One introduction turned into several, and this collaboration became the foundation for our long-term partnerships across the YC ecosystem.",
+     "Today, we work closely with multiple YC-backed teams, helping them translate strong technology into clear, credible systems."
+    ],
+    "metrics": [],
+    "stats": []
+   }
+  ]
+ },
+ {
+  "slug": "henrylabs",
+  "title": "We built the Henry Labs brand, then carried it across every touchpoint.",
+  "kicker": "AGENTIC COMMERCE · CHECKOUT",
+  "description": "PIXELUP LABS built the brand, website, partner dashboard and checkout for Henry Labs, a founding member of the Agentic Commerce Consortium.",
+  "involvement": [
+   "Positioning",
+   "Brand",
+   "Website",
+   "Product",
+   "Webflow Development"
+  ],
+  "stats": [],
+  "hero": {
+   "kind": "video",
+   "src": "/case-studies/henrylabs/hero.mp4",
+   "alt": "We built the Henry Labs brand, then carried it across every touchpoint."
+  },
+  "sections": [
+   {
+    "heading": "Why the brand was behind the company.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/64.avif",
+      "alt": "Henry Labs wordmark over a blue and orange mountain landscape"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/65.avif",
+      "alt": "Henry Labs positioning posters using the mountain imagery and angular brand mark"
+     }
+    ],
+    "items": [
+     {
+      "label": "Where Henry Labs was",
+      "text": "Henry Labs builds checkout for AI shopping apps. Visa had already cited their one-click checkout, and they were a founding member of the Agentic Commerce Consortium."
+     },
+     {
+      "label": "What the market looked like",
+      "text": "Agentic commerce was filling up fast with startups that all sounded the same. Platforms choosing a checkout partner could not tell them apart."
+     },
+     {
+      "label": "How we found the gap",
+      "text": "A competitor analysis and a product deep dive showed what Henry Labs really sells: an SDK platforms build on, not a shopping app."
+     },
+     {
+      "label": "Why it mattered",
+      "text": "Platforms trust Henry Labs with their transactions and revenue. The company had earned that trust. The brand still looked early-stage."
+     }
+    ],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "Shoppers see the Henry button. Platforms sign the contract.",
+    "challenge": "01 / 02",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/66.avif",
+      "alt": "Henry Labs execution layer positioning beside an illuminated shopping cart"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/58.avif",
+      "alt": "Henry Labs identity and positioning presented on a large conference screen"
+     }
+    ],
+    "items": [
+     {
+      "label": "Problem",
+      "text": "Shoppers meet Henry Labs as a checkout button. Platforms meet it as infrastructure they trust with revenue. A shopper-first brand would look forgettable to the actual buyer."
+     },
+     {
+      "label": "Why it mattered",
+      "text": "The founders wanted ethereal and technical, not consumer. Too soft reads like a shopping app. Too cold looks like every payments API."
+     },
+     {
+      "label": "What we did",
+      "text": "We designed for the platform buyer first. Landscape imagery and a sunset palette carried the ethereal. Precise type, grids and real product UI carried the technical."
+     },
+     {
+      "label": "Outcome",
+      "text": "One identity quiet enough to sit inside another company's checkout, and serious enough for a partner pitch."
+     }
+    ],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "Then the brand project turned into a product project.",
+    "challenge": "02 / 02",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/figjam-user-personas.jpg",
+      "alt": "Henry Labs FigJam research board mapping partner and shopper personas"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/figjam-checkout-flow.jpg",
+      "alt": "Henry Labs FigJam board mapping the audited checkout and shopper flows"
+     }
+    ],
+    "items": [
+     {
+      "label": "Problem",
+      "text": "A month into the brand work, Henry Labs asked us to design the product too: checkout and the partner dashboard, in a four-week sprint."
+     },
+     {
+      "label": "Why it mattered",
+      "text": "Partners wanted sales, traffic and referrals at a glance. The old dashboard buried all three. Shoppers just wanted to buy."
+     },
+     {
+      "label": "What we did",
+      "text": "We mapped both personas, audited the checkout flow and designed checkout first, handing it to their engineers mid-sprint."
+     },
+     {
+      "label": "Outcome",
+      "text": "One design system, two hierarchies. Partners see revenue first. Shoppers see their cart."
+     }
+    ],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "One brand, three products.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/asset-2.avif",
+      "alt": "Henry Labs website hero 'Own your checkout.' over a glowing mountain landscape"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/frame-2147244046.avif",
+      "alt": "Henry Labs website displayed on a laptop against a black and silver landscape"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/frame-2147244048.avif",
+      "alt": "Henry Labs mobile features section on a phone framed by a torn chain-link fence"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/70.avif",
+      "alt": "Henry Labs website feature section for building, monetizing and optimizing agentic commerce"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "The website, partner dashboard and consumer checkout all run on the same design system, so a shopper at checkout and a partner checking revenue are looking at the same company. The website tells the story in the order a buyer needs it: product data, universal cart, embedded checkout, then the analytics that come after."
+    ],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "In their own words.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/68.avif",
+      "alt": "Henry Labs brand posters, positioning and website screens shown as one work wall"
+     }
+    ],
+    "items": [],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": [],
+    "quote": {
+     "text": "PIXELUP LABS has been a great partner for us at Henry Labs. They handled our landing page redesign and core product design, and the output speaks for itself. Fast, thoughtful, and easy to work with. Highly recommend!",
+     "avatar": "/case-studies/henrylabs/faaris-hussain.jpg",
+     "author": "Faaris Hussain",
+     "role": "COO, Henry Labs"
+    }
+   },
+   {
+    "heading": "And this is where Henry Labs ended up.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/asset-1.avif",
+      "alt": "Henry Labs mobile website and brand mark over the launch landscape"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/henrylabs/frame-2147244047.avif",
+      "alt": "Henry Labs website use cases displayed on a laptop against an orange landscape"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Henry Labs now has a brand that looks as serious as the infrastructure behind it, a website that explains the product in the order buyers need it, and a design system its engineers build on directly.",
+     "The website went live in May 2026, and the checkout and dashboard were built in-house from our designs. Henry Labs CEO Phil Qiu shared it with one line: \"We wanted a landing page that actually feels like that future rather than explaining it.\" By September, Henry Labs was powering Allowance (YC P26), which went from 9 to 90 stores in two weeks. You can see the live site at henrylabs.ai.",
+     "If you recognised Henry Labs' problem in your own company, we should talk. We work with AI and B2B SaaS teams on brand, web and product design, helping them look as credible as the product they have built."
+    ],
+    "metrics": [],
+    "stats": []
+   }
+  ]
+ },
+ {
+  "slug": "streamline",
+  "title": "We repositioned Streamline for enterprise, then scaled the brand across 200 pages.",
+  "kicker": "SERIES A · LEGAL AI",
+  "description": "PIXELUP LABS repositioned Streamline for enterprise legal teams and built a brand, website and design system that scaled across more than 200 pages.",
+  "involvement": [
+   "Brand Identity",
+   "Positioning",
+   "Website Design",
+   "Design System",
+   "Webflow Development"
+  ],
+  "stats": [
+   {
+    "value": "40+",
+    "label": "Unique page designs"
+   },
+   {
+    "value": "200+",
+    "label": "Pages on one system"
+   },
+   {
+    "value": "100+",
+    "label": "Touchpoints"
+   },
+   {
+    "value": "F500",
+    "label": "Enterprise conversations"
+   }
+  ],
+  "hero": {
+   "kind": "image",
+   "src": "/case-studies/streamline/streamline.jpg",
+   "alt": "Streamline serif wordmark over a collage of legal AI product cards with a woman working at a desk"
+  },
+  "sections": [
+   {
+    "heading": "Why the old brand was no longer a good fit.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-5.jpg",
+      "alt": "Streamline website collage with desktop homepage, mobile mockup, and integration tiles"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-2.jpg",
+      "alt": "Streamline 'Built for how modern legal teams work' website section on a green textured background"
+     }
+    ],
+    "items": [
+     {
+      "label": "Where Streamline was",
+      "text": "Streamline had a mature AI platform built for enterprise legal teams. The product was getting better and the company was moving into bigger accounts."
+     },
+     {
+      "label": "What the market looked like",
+      "text": "When we looked at the competition, some newer competitors simply looked more modern, more credible and more enterprise-ready."
+     },
+     {
+      "label": "How we found the gap",
+      "text": "We went deep into the business: a brand workshop with the team, a study of the competitive landscape, a map of their buyers, and time spent understanding the product."
+     },
+     {
+      "label": "Why it mattered",
+      "text": "The gap became obvious. Their brand system was holding them back, and that mattered even more because Streamline was selling to Chief Legal Officers, General Counsels, legal ops teams and legal teams inside large companies."
+     }
+    ],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "Our first instinct was to make Streamline much bolder.",
+    "challenge": "01 / 02",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-3.jpg",
+      "alt": "Streamline document knowledge graph and Slack AI conversation cards on a green glass background"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-4.jpg",
+      "alt": "Streamline mobile integrations screen 'We work where your team already works'"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-6.jpg",
+      "alt": "Streamline integrations strip with Ironclad, Microsoft Teams, Slack, Salesforce, Jira, and DocuSign"
+     }
+    ],
+    "items": [
+     {
+      "label": "Problem",
+      "text": "If the old brand was underselling the product, the new one needed to make a much stronger statement. So we explored three creative directions: more colour, more gradients, more conceptual imagery, more personality."
+     },
+     {
+      "label": "Why it mattered",
+      "text": "After the first round of feedback, we realised we had pushed too far. The new directions felt modern, but they no longer looked like a company built for enterprise legal teams. They were not lawyer-like."
+     },
+     {
+      "label": "What we did",
+      "text": "The answer was not to make Streamline as different as possible. It was to make them feel modern without losing the trust their buyers expected. The question changed from how bold we could make Streamline to how modern we could make it without losing the maturity the product already had. The brief became: legal-tech serious, modern flavour."
+     },
+     {
+      "label": "Outcome",
+      "text": "That principle guided every decision from there. Royal blue became the primary colour and leaf green the secondary. Neutrals did a lot of the work. Product and illustration supported the copy instead of overpowering it, and gradients and textures stayed but became more subtle."
+     }
+    ],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "Getting the brand right was only half the job.",
+    "challenge": "02 / 02",
+    "media": [],
+    "items": [
+     {
+      "label": "Problem",
+      "text": "Finding the right visual direction solved the perception problem. The next challenge was making it work across the entire website and every marketing touchpoint."
+     },
+     {
+      "label": "Why it mattered",
+      "text": "Streamline did not need a five-page marketing site. The project grew to 40+ unique page designs, with the system extending across 200+ pages. A page written for a General Counsel had to tell a completely different story from an AI Contract Review page."
+     },
+     {
+      "label": "What we did",
+      "text": "We turned the brand into a design system: reusable components, page structures, product templates, design rules and an illustration system that could stretch across the whole website. The illustrations had to support dozens of different ideas without making every page feel disconnected."
+     },
+     {
+      "label": "Outcome",
+      "text": "By this point we were not just designing a new brand. We were building a system Streamline could keep using as the company grew."
+     }
+    ],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "One system, 200+ pages.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-7.jpg",
+      "alt": "Streamline 'Built for how modern legal teams work' team page on a tablet held in hands"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-8.jpg",
+      "alt": "Streamline resources section 'Insight for legal operations leaders' on a green background"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Product, feature, industry, team and resource pages all run on the same components, so a General Counsel page and an AI Contract Review page can tell different stories without looking like different companies."
+    ],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "Results",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-1.jpg",
+      "alt": "Streamline homepage hero 'In-house legal runs on Streamline' on a tablet held in hands"
+     }
+    ],
+    "items": [],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": [
+     {
+      "value": "40+",
+      "label": "Unique page designs"
+     },
+     {
+      "value": "200+",
+      "label": "Pages on one system"
+     },
+     {
+      "value": "100+",
+      "label": "Touchpoints"
+     },
+     {
+      "value": "F500",
+      "label": "Enterprise conversations"
+     }
+    ]
+   },
+   {
+    "heading": "And this is where Streamline ended up.",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/streamline/img-9.jpg",
+      "alt": "Streamline resources page on a laptop resting on a stone slab"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Streamline had much more than a new homepage. They had a brand that finally matched the maturity of the product behind it, a design system that could extend across all the touchpoints, and a website built around the perception they needed with enterprise legal buyers.",
+     "After launch, the team also reported positive customer feedback and stronger enterprise conversations, including with Fortune 500 companies. You can see the live site at streamline.ai.",
+     "If you recognised Streamline's problem in your own company, we should talk. We work with AI and B2B SaaS teams on brand, web and product design, helping them move upmarket."
+    ],
+    "metrics": [],
+    "stats": []
+   }
+  ]
+ },
+ {
+  "slug": "sainapse",
+  "title": "Sainapse: From Technical Product to Enterprise Standard",
+  "description": "A full system rebuild for Sainapse's agentic AI support platform: brand voice, visual identity and web presence, designed together ahead of its GA launch.",
+  "involvement": [
+   "Brand Identity",
+   "Website Design",
+   "Webflow Development"
+  ],
+  "stats": [],
+  "hero": {
+   "kind": "video",
+   "src": "/case-studies/sainapse/sainapse.mp4",
+   "alt": "Sainapse: From Technical Product to Enterprise Standard"
+  },
+  "sections": [
+   {
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/sainapse.svg",
+      "alt": ""
+     }
+    ],
+    "items": [],
+    "paragraphs": [],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "How Did We Approach the Project?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-1.jpg",
+      "alt": "Sainapse brand color palette swatches from dark to lavender"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-2.jpg",
+      "alt": "Sainapse Ronzino type specimen with agentic explainable AI tagline"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-3.jpg",
+      "alt": "Sainapse Rethink Enterprise Intelligence brand film on a cinema screen"
+     }
+    ],
+    "items": [
+     {
+      "label": "Proof over promise",
+      "text": "Leading with outcomes and evidence, never novelty or hype"
+     },
+     {
+      "label": "Precision in language",
+      "text": "Clear voice that speaks like a systems engineer, not marketer"
+     },
+     {
+      "label": "Trust at every touchpoint",
+      "text": "Calm, evidence-first tone that balances momentum with reliability"
+     },
+     {
+      "label": "Unified system design",
+      "text": "Brand, positioning, and web presence aligned into one coherent signal"
+     }
+    ],
+    "paragraphs": [
+     "We treated this as a credibility problem, not a cosmetics one.\nOur focus:"
+    ],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "What Results Did Sainapse Achieve?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-4.jpg",
+      "alt": "Sainapse mobile website hero on a phone against red fabric"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-5.jpg",
+      "alt": "Sainapse AI customer support whitepaper booklets lying on sand"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-6.jpg",
+      "alt": "Sainapse website homepage on a laptop in tall grass"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Beyond metrics, the rebrand became Sainapse's internal standard for how they present themselves across sales, product, and customer touchpoints."
+    ],
+    "metrics": [
+     {
+      "label": "Month 1",
+      "text": "Supported 2M+ tickets in production post-launch"
+     },
+     {
+      "label": "Projection",
+      "text": "On track to power 10M+ tickets by March 2026"
+     },
+     {
+      "label": "Impact",
+      "text": "Up to 93% deflection achieved across enterprise deployments"
+     },
+     {
+      "label": "Adoption",
+      "text": "Deployed by Fortune 500 companies including Ford, Avery Dennison, and Freshworks"
+     }
+    ],
+    "stats": []
+   },
+   {
+    "heading": "What Happened After Launch?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-7.jpg",
+      "alt": "Sainapse enterprise customer support poster with moody surfer imagery"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-8.jpg",
+      "alt": "Sainapse Rethink Enterprise Intelligence tablet screen on a leather sofa"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-9.jpg",
+      "alt": "Sainapse Rethink Enterprise Intelligence framed billboard poster mockup"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-10.jpg",
+      "alt": "Sainapse dark product page on a tablet held in hands"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sainapse/img-11.jpg",
+      "alt": "Sainapse dark dashboard UI displayed on a desktop monitor"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "The website shifted from explaining what the product does to demonstrating why it works. Sales conversations moved from technical justification to strategic value.",
+     "The brand system became the foundation for all customer-facing materials, from pitch decks to product documentation."
+    ],
+    "metrics": [],
+    "stats": []
+   }
+  ]
+ },
+ {
+  "slug": "sully",
+  "title": "Sully: From Liability to Deal Closer in 11 Months",
+  "description": "How we turned Sully's website into a deal closer with motion-driven explainers, alongside 26x scale and a $32M+ raise at a $150M valuation.",
+  "involvement": [
+   "Website Design",
+   "Product Pages",
+   "Motion Design",
+   "Framer Development"
+  ],
+  "stats": [],
+  "hero": {
+   "kind": "image",
+   "src": "/case-studies/sully/sully.jpg",
+   "alt": "Sully.ai homepage hero on a laptop mockup, website design by PIXELUP LABS"
+  },
+  "sections": [
+   {
+    "heading": "How Did We Approach the Project?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-1.jpg",
+      "alt": "Sully.ai autonomous care network diagram on a floating tablet"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-2.jpg",
+      "alt": "Sully.ai AI Receptionist features page on a laptop"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-3.jpg",
+      "alt": "Sully.ai homepage hero projected on stage before an audience"
+     }
+    ],
+    "items": [
+     {
+      "label": "Show, don't tell",
+      "text": "Motion-driven explainers that demonstrate how AI agents work in real workflows"
+     },
+     {
+      "label": "Enterprise clarity",
+      "text": "Hospital executives don't read walls of text; they need visual stories"
+     },
+     {
+      "label": "Consistent brand system",
+      "text": "Unified design language across all touchpoints"
+     }
+    ],
+    "paragraphs": [
+     "We treated this as a sales enablement problem, not a website redesign.\nOur focus:"
+    ],
+    "metrics": [],
+    "stats": []
+   },
+   {
+    "heading": "What Results Did Sully Achieve?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-4.jpg",
+      "alt": "Sully.ai mobile homepage held in a hand against blue sky"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-5.jpg",
+      "alt": "Sully.ai appointments booking product page on a dark laptop"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-6.jpg",
+      "alt": "Sully.ai scribes-versus-dictation comparison page on a laptop"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Beyond metrics, the website became Sully's standard for how they present complex AI workflows to enterprise buyers."
+    ],
+    "metrics": [
+     {
+      "label": "Immediate",
+      "text": "Website became a sales asset, deals that stalled started moving"
+     },
+     {
+      "label": "Month 1",
+      "text": "One concept explainer page directly closed a major enterprise contract"
+     },
+     {
+      "label": "Month 11",
+      "text": "Scaled 26x, adding 20M+ minutes to healthcare workforce capacity"
+     },
+     {
+      "label": "Funding",
+      "text": "Raised $32M+ total at $150M valuation"
+     }
+    ],
+    "stats": []
+   },
+   {
+    "heading": "What Happened After Launch?",
+    "media": [
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-7.jpg",
+      "alt": "Sully.ai hospital impact stats page on a laptop"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-8.jpg",
+      "alt": "Sully.ai clinical co-pilot mobile screen on a leather chair"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-9.jpg",
+      "alt": "Sully.ai Partner with Sully Labs page on a phone"
+     },
+     {
+      "kind": "image",
+      "src": "/case-studies/sully/img-10.jpg",
+      "alt": "Sully.ai EPIC and EHR integrations explainer page on a laptop"
+     }
+    ],
+    "items": [],
+    "paragraphs": [
+     "Enterprise buyers began understanding the product before demos started. Sales conversations shifted from explaining workflows to discussing implementation.",
+     "The motion-driven pages became internal references for how Sully communicates product value across all channels."
+    ],
+    "metrics": [],
+    "stats": []
+   }
+  ]
+ }
+]

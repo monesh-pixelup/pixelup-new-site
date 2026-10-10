@@ -50,7 +50,6 @@
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 6px;
   background: #151515;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
   transition:
@@ -70,9 +69,7 @@
 }
 .tcard.is-focus .tcard__in,
 .tcard:focus-visible .tcard__in {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.6),
-    0 50px 90px -24px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 50px 90px -24px rgba(0, 0, 0, 0.85);
 }
 .exp-stage.has-focus {
   cursor: pointer;
@@ -113,7 +110,6 @@
 .exp__frame {
   position: absolute;
   inset: 10px;
-  border-radius: 22px;
   background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.5) 85%, rgba(0, 0, 0, 0.85) 100%);
   box-shadow:
     0 0 0 9999px var(--ink),
@@ -139,52 +135,79 @@
   animation: expLineIn 0.6s var(--ease-out) both;
 }
 
-/* --- Cursor caption: rides beside the pointer while a card has focus --- */
-.exp__caption {
+/* --- Selection: the focused card is picked like a layer in a design tool, in the mark's own UI --- */
+.exp__sel {
+  --hs: 7px;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 4;
-  display: grid;
-  gap: 3px;
-  padding: 7px 10px 8px;
-  border-radius: 6px;
-  background: rgba(12, 12, 12, 0.72);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  --select: #2549e6; /* the site's selection colour (see ::selection) */
+  border: 1px solid var(--select);
   color: var(--paper);
   font-size: var(--fs-micro);
-  line-height: 1.2;
+  line-height: 1;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  scale: 0.92;
-  transform-origin: 0 0;
-  transition:
-    opacity 0.25s ease,
-    scale 0.45s var(--ease-out);
+  transition: opacity 0.2s ease;
 }
-.exp__caption.is-shown {
+.exp__sel.is-shown {
   opacity: 1;
+  transition-duration: 0.35s;
+}
+.exp__sel-label {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: -1px;
+  display: flex;
+  gap: 0.45em;
+}
+.exp__sel-slash,
+.exp__sel-kind {
+  color: var(--fog);
+}
+.exp__sel-h {
+  position: absolute;
+  width: var(--hs);
+  height: var(--hs);
+  margin: calc(var(--hs) / -2) 0 0 calc(var(--hs) / -2);
+  border: 1px solid var(--select);
+  background: var(--paper);
+  scale: 0;
+  transition: scale 0.45s var(--ease-out);
+}
+.exp__sel.is-shown .exp__sel-h {
   scale: 1;
 }
-.exp__caption-title {
-  font-size: 1.15em;
-  letter-spacing: -0.01em;
-}
-.exp__caption-meta {
+.exp__sel-h--nw { top: 0; left: 0; }
+.exp__sel-h--n { top: 0; left: 50%; }
+.exp__sel-h--ne { top: 0; left: 100%; }
+.exp__sel-h--e { top: 50%; left: 100%; }
+.exp__sel-h--se { top: 100%; left: 100%; }
+.exp__sel-h--s { top: 100%; left: 50%; }
+.exp__sel-h--sw { top: 100%; left: 0; }
+.exp__sel-h--w { top: 50%; left: 0; }
+.exp__sel-h:nth-of-type(2n) { transition-delay: 40ms; }
+/* Bottom tag, after the mark's size pill: the year, and an arrow when the card links out. */
+.exp__sel-tag {
+  position: absolute;
+  top: calc(100% + 11px);
+  left: 50%;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--fog);
+  gap: 5px;
+  padding: 4px 6px;
+  background: var(--select);
+  color: var(--paper);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  translate: -50% 0;
 }
-@media (hover: none) {
-  .exp__caption {
-    display: none;
-  }
+.exp__sel-tag .arrow-swap {
+  display: none;
+}
+.exp__sel.is-link .exp__sel-tag .arrow-swap {
+  display: inline-flex;
 }
 
 .exp__hud {
@@ -223,7 +246,6 @@
   }
   .exp__frame {
     inset: 6px;
-    border-radius: 14px;
   }
   .exp__hud {
     bottom: 24px;

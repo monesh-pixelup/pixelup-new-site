@@ -102,6 +102,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
   const captionRef = useRef<HTMLDivElement>(null);
   const captionTitleRef = useRef<HTMLSpanElement>(null);
   const captionMetaRef = useRef<HTMLSpanElement>(null);
+  const captionTagRef = useRef<HTMLSpanElement>(null);
   const [nearest, setNearest] = useState(0);
   const [dragging, setDragging] = useState(false);
 
@@ -121,7 +122,8 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     const measure = () => cards.forEach((_, i) => (widths[i] = cardRefs.current[i]?.offsetWidth ?? 0));
     measure();
     let size = { w: stage.clientWidth, h: stage.clientHeight };
-    const caption = { x: 0, y: 0, shown: false };
+    // The selection box springs onto the focused card's projected bounds, like a layer picked in a design tool.
+    const sel = { x: 0, y: 0, w: 0, h: 0, fresh: true };
     let shownNearest = -1;
     let last = performance.now();
     let raf = 0;
@@ -158,13 +160,16 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
       stage.classList.toggle('has-focus', i >= 0);
       if (i < 0) {
         cap?.classList.remove('is-shown');
+        sel.fresh = true;
         return;
       }
       cardRefs.current[i]?.classList.add('is-focus');
       const it = items[cards[i].item];
       cancelAnimationFrame(scramble);
       decode(captionTitleRef.current, it.title, 0);
-      decode(captionMetaRef.current, `${it.kind} · ${it.year}`, 60);
+      decode(captionMetaRef.current, it.kind, 60);
+      decode(captionTagRef.current, String(it.year), 120);
+      cap?.classList.toggle('is-link', Boolean(it.href));
       cap?.classList.add('is-shown');
     };
 
@@ -309,14 +314,20 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         }
       }
 
-      // Caption trails the cursor on a soft spring.
       const cap = captionRef.current;
-      if (cap) {
-        const follow2 = 1 - Math.pow(0.78, d);
+      const focused = s.hover >= 0 ? cardRefs.current[s.hover] : null;
+      if (cap && focused) {
         const r = stage.getBoundingClientRect();
-        caption.x += (s.client.x - r.left + 18 - caption.x) * follow2;
-        caption.y += (s.client.y - r.top + 20 - caption.y) * follow2;
-        cap.style.transform = `translate3d(${caption.x.toFixed(1)}px, ${caption.y.toFixed(1)}px, 0)`;
+        const b = focused.getBoundingClientRect();
+        const k = sel.fresh ? 1 : 1 - Math.pow(0.7, d);
+        sel.fresh = false;
+        sel.x += (b.left - r.left - sel.x) * k;
+        sel.y += (b.top - r.top - sel.y) * k;
+        sel.w += (b.width - sel.w) * k;
+        sel.h += (b.height - sel.h) * k;
+        cap.style.transform = `translate3d(${sel.x.toFixed(1)}px, ${sel.y.toFixed(1)}px, 0)`;
+        cap.style.width = `${sel.w.toFixed(1)}px`;
+        cap.style.height = `${sel.h.toFixed(1)}px`;
       }
 
       if (best !== shownNearest && best >= 0) {
@@ -517,11 +528,18 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         <div className="exp__frame" />
       </div>
 
-      {/* Cursor caption: small, only while a card has focus. Names are on the cards for assistive tech. */}
-      <div ref={captionRef} className="exp__caption" aria-hidden="true">
-        <span ref={captionTitleRef} className="exp__caption-title" />
-        <span className="exp__caption-meta">
-          <span ref={captionMetaRef} />
+      {/* Selection: the focused card is picked like a layer, the way the mark is. Names are on the cards for assistive tech. */}
+      <div ref={captionRef} className="exp__sel" aria-hidden="true">
+        <span className="exp__sel-label">
+          <span ref={captionTitleRef} className="exp__sel-title" />
+          <span className="exp__sel-slash">/</span>
+          <span ref={captionMetaRef} className="exp__sel-kind" />
+        </span>
+        {['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map((h) => (
+          <i key={h} className={`exp__sel-h exp__sel-h--${h}`} />
+        ))}
+        <span className="exp__sel-tag">
+          <span ref={captionTagRef} />
           <ArrowSwap rotate={-45} />
         </span>
       </div>

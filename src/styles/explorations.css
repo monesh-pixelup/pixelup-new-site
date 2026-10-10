@@ -80,6 +80,15 @@
 .tcard:focus-visible {
   outline: none;
 }
+/* Lead cards are the largest paint; they settle in scale only, so they're visible from the first frame. */
+.tcard.is-lead .tcard__in {
+  animation-name: tcardSettle;
+}
+@keyframes tcardSettle {
+  from {
+    transform: scale(0.86);
+  }
+}
 @keyframes tcardIn {
   from {
     opacity: 0;

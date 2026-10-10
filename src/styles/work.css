@@ -513,6 +513,10 @@
 .motion [data-collage='intro'] .collage__item:nth-child(4n + 4) .collage__media {
   animation-name: collageFromLeft;
 }
+/* The first frame is the page's largest paint: it is already there and only settles while the rest unmask around it. */
+.motion [data-collage='intro'] .collage__item:first-child .collage__media {
+  animation: none;
+}
 .motion [data-collage='intro'] .collage__img {
   animation: collageSettle 2s var(--ease-out) var(--collage-delay, 0.25s) both;
 }

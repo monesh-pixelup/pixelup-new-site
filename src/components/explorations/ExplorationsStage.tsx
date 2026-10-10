@@ -66,6 +66,15 @@ const wrap = (v: number, m: number) => ((v % m) + m) % m;
 
 export default function ExplorationsStage({ items }: { items: Exploration[] }) {
   const { cards, length } = useMemo(() => layout(items.length), [items.length]);
+  // The nearest cards of the opening frame are the page's largest paint: fetch them first.
+  const lead = useMemo(() => {
+    const near = cards
+      .map((c, i) => ({ i, u: wrap(c.z + ENTER, length) }))
+      .filter((c) => c.u > 260 && c.u < length * 0.8)
+      .sort((a, b) => b.u - a.u)
+      .slice(0, 3);
+    return new Set(near.map((c) => c.i));
+  }, [cards, length]);
   const stageRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const nav = useRef({
@@ -452,7 +461,7 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
               ref={(el: HTMLElement | null) => {
                 cardRefs.current[i] = el;
               }}
-              className="tcard"
+              className={lead.has(i) ? 'tcard is-lead' : 'tcard'}
               style={
                 {
                   '--size': c.size,
@@ -486,7 +495,8 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
                     sizes="(max-width: 767px) 70vw, 34vw"
                     quality={75}
                     draggable={false}
-                    loading={i < 14 ? 'eager' : 'lazy'}
+                    priority={lead.has(i)}
+                    loading={lead.has(i) ? undefined : i < 14 ? 'eager' : 'lazy'}
                   />
                 )}
               </span>

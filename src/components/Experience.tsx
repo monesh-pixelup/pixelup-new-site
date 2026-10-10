@@ -122,37 +122,27 @@ export default function Experience() {
       window.addEventListener('resize', setUnits);
       ScrollTrigger.addEventListener('refresh', rebuildStops);
 
-      const intro = contextSafe!(() => {
-        const heroSplits = $$('[data-intro="lines"]').map((el) => {
-          const split = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'line' });
-          gsap.set(el, { visibility: 'visible' });
-          return split;
-        });
+      // The mark assembles whenever it's ready; it loads after the page is interactive, so it doesn't gate the text.
+      const markIntro = contextSafe!(() => {
+        gsap
+          .timeline()
+          .fromTo(markState, { handles: 0 }, { handles: 1, duration: 1.1, ease: 'power2.out' }, 0)
+          .fromTo(markState, { intro: 0 }, { intro: 1, duration: 1.8, ease: 'expo.out' }, 0.3)
+          .call(() => void (markState.pulse = Math.max(markState.pulse, 0.11)), [], 0.82);
+      });
 
+      // Header and hero text animate in CSS from the first paint (base.css); this timeline only adds what CSS can't.
+      const intro = contextSafe!(() => {
         const tl = gsap.timeline({
           defaults: { ease: 'pxl' },
           onComplete: () => {
             html.classList.add('is-ready');
-            heroSplits.forEach((s) => s.revert());
             lenis?.start();
           },
         });
-
-        tl.fromTo(markState, { handles: 0 }, { handles: 1, duration: 1.1, ease: 'power2.out' }, 0)
-          .fromTo(markState, { intro: 0 }, { intro: 1, duration: 1.8, ease: 'expo.out' }, 0.3)
-          .call(() => void (markState.pulse = Math.max(markState.pulse, 0.11)), [], 0.82)
-          .fromTo('[data-intro="rise"] > *', { y: 0, yPercent: 130 }, { yPercent: 0, duration: 1.25, stagger: 0.045 }, 0.7);
-        if ($('.hdr__line')) {
-          tl.fromTo('.hdr__line', { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: 'pxl-io', transformOrigin: '0% 50%' }, 1);
-        }
+        tl.set({}, {}, 1.4);
         if ($('[data-count]')) {
-          tl.from('[data-count]', { textContent: 0, snap: { textContent: 1 }, duration: 1.6, ease: 'power3.out', stagger: 0.15 }, 0.9);
-        }
-        heroSplits.forEach((s, i) => {
-          tl.fromTo(s.lines, { yPercent: 115 }, { yPercent: 0, duration: 1.3, stagger: 0.08 }, 1.05 + i * 0.12);
-        });
-        if ($('[data-intro="fade"]')) {
-          tl.fromTo('[data-intro="fade"]', { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 1.3, stagger: 0.1 }, 1.3);
+          tl.from('[data-count]', { textContent: 0, snap: { textContent: 1 }, duration: 1.6, ease: 'power3.out', stagger: 0.15 }, 0.3);
         }
 
         // Work page: the collage frames unmask one after another, each from its own edge.
@@ -276,7 +266,7 @@ export default function Experience() {
                     invalidateOnRefresh: true,
                   },
                 })
-                .fromTo(statement.words, { opacity: 0.12 }, { opacity: 1, duration: 0.5, stagger: 0.12, ease: 'none' })
+                .fromTo(statement.words, { opacity: 0.46 }, { opacity: 1, duration: 0.5, stagger: 0.12, ease: 'none' })
                 .fromTo('.about__body', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.45')
                 .to({}, { duration: 0.5 });
               gsap.fromTo('.about__eyebrow', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1, scrollTrigger: { trigger: '.about', start: 'top 70%', once: true } });
@@ -467,12 +457,10 @@ export default function Experience() {
       });
 
       const fontsReady = document.fonts?.ready ?? Promise.resolve();
-      const markReady =
-        markState.ready || markState.failed
-          ? Promise.resolve()
-          : new Promise<void>((resolve) => window.addEventListener('mark:ready', () => resolve(), { once: true }));
+      if (markState.ready) markIntro();
+      else window.addEventListener('mark:ready', () => alive && markState.ready && markIntro(), { once: true });
 
-      Promise.race([Promise.all([fontsReady, markReady]), wait(2500)]).then(() => {
+      Promise.race([fontsReady, wait(1200)]).then(() => {
         if (!alive) return;
         scenes();
         ScrollTrigger.refresh();

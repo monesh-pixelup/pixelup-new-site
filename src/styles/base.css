@@ -9,7 +9,7 @@
   --panel: #111111;
   --rule: #363636;
   --fog: #a9a9a9;
-  --mute: #5e5e5e;
+  --mute: #7c7c7c; /* 4.6:1 on --ink, the WCAG AA floor for body text */
   --paper: #ffffff;
 
   --vw: 100vw;
@@ -46,7 +46,7 @@
   :root {
     --u: calc(var(--vw) / 390);
     --pad: 16px;
-    --fs-micro: 11px;
+    --fs-micro: 12px;
     --fs-m: 17px;
     --fs-logo: 22px;
     --fs-display: 11.4vw;
@@ -347,17 +347,42 @@ a:hover > .u-link::after {
 /* ---------------------------------------------------------------
    Initial states for the motion layer (only when JS + motion are on)
 ---------------------------------------------------------------- */
-.motion:not(.is-ready) [data-intro='rise'] > * {
-  transform: translateY(130%);
+/* The above-the-fold intro runs in CSS from the first paint, so the headline never waits on JavaScript
+   (it's the page's Largest Contentful Paint). Below-the-fold reveals stay with GSAP. */
+@keyframes introRise {
+  from {
+    transform: translateY(130%);
+  }
 }
-.motion:not(.is-ready) [data-intro='fade'] {
-  opacity: 0;
+@keyframes introFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
-.motion:not(.is-ready) [data-intro='lines'] {
-  visibility: hidden;
+@keyframes introLine {
+  from {
+    transform: scaleX(0);
+  }
 }
-.motion:not(.is-ready) .hdr__line {
-  transform: scaleX(0);
+.motion [data-intro='rise'] > * {
+  animation: introRise 1.25s var(--ease-out) 0.1s both;
+}
+.motion .hdr__nav [data-intro='rise'] > * {
+  animation-delay: 0.18s;
+}
+.motion .hdr__meta [data-intro='rise'] > * {
+  animation-delay: 0.26s;
+}
+.motion [data-intro='lines'] {
+  animation: introFade 1.2s var(--ease-out) 0.05s both;
+}
+.motion [data-intro='fade'] {
+  animation: introFade 1.3s var(--ease-out) 0.4s both;
+}
+.motion .hdr__line {
+  transform-origin: 0% 50%;
+  animation: introLine 1.4s var(--ease-io) 0.5s both;
 }
 .motion [data-reveal='rise'] > * {
   transform: translateY(130%);

@@ -627,7 +627,7 @@
   font-variant-numeric: tabular-nums;
 }
 .news__intro {
-  grid-column: 10 / 14;
+  grid-column: 9 / 14;
   max-width: 36ch;
   color: var(--fog);
 }

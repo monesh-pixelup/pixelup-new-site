@@ -10,15 +10,6 @@ export default function About() {
         </h2>
         <div className="about__foot">
           <p className="about__body">{about.body}</p>
-          <ul className="about__proof">
-            {about.proof.map((p) => (
-              <li key={p.label}>
-                <span className="about__figure">{p.figure}</span>
-                <span className="about__label">{p.label}</span>
-                <span className="about__client">{p.client}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>

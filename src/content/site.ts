@@ -277,11 +277,6 @@ export const clients: { name: string; src: string; w: number; h: number; ink?: [
 export const about = {
   statement: 'Your model is world-class. Your brand should look like it.',
   body: 'PIXELUP is an independent design studio for AI companies. We turn technology that is hard to explain into brands, websites and launch moments people trust on first sight, from the seed deck to the first enterprise contract.',
-  proof: [
-    { figure: '2×', label: 'Demo requests in launch week', client: 'Greptile' },
-    { figure: '26×', label: 'Growth in the 11 months after', client: 'Sully.ai' },
-    { figure: '$25M', label: 'Series A, months after launch', client: 'Greptile' },
-  ],
 };
 
 export const services = [

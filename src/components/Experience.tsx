@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildStops, phase } from '@/lib/docks';
+import { buildStops } from '@/lib/docks';
 import { markState, motion } from '@/lib/markState';
 
 if (typeof window !== 'undefined') {
@@ -257,7 +257,7 @@ export default function Experience() {
                 })
                 .fromTo(statement.words, { opacity: 0.46 }, { opacity: 1, duration: 0.5, stagger: 0.12, ease: 'none' })
                 .fromTo('.about__foot', { '--rule-x': 0 }, { '--rule-x': 1, duration: 0.6, ease: 'power2.inOut' }, '-=0.6')
-                .fromTo(['.about__body', '.about__proof li'], { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }, '-=0.4')
+                .fromTo('.about__body', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4')
                 .to({}, { duration: 0.5 });
               gsap.fromTo('.about__eyebrow', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1, scrollTrigger: { trigger: '.about', start: 'top 70%', once: true } });
             }
@@ -265,11 +265,9 @@ export default function Experience() {
             // Services: pinned; titles roll through a mask and the mark signs whichever one is live.
             const items = $$('.svc');
             if (items.length) {
-              const index = $$('.services__index li');
               const titles = items.map((i) => i.querySelector('.svc__title-inner'));
               const bodies = items.map((i) => i.querySelector('.svc__body'));
               const n = items.length;
-              let live = 0;
               gsap.set(titles[0], { y: 0, yPercent: 0 });
               gsap.set(titles.slice(1), { y: 0, yPercent: 130 });
               gsap.set(bodies[0], { autoAlpha: 1, y: 0 });
@@ -290,17 +288,6 @@ export default function Experience() {
                   pin: true,
                   scrub: 0.5,
                   invalidateOnRefresh: true,
-                  onUpdate: (self) => {
-                    // Each row of the index fills across its hold and the hand-off that follows it.
-                    const u = self.progress * (2 * n - 1);
-                    index.forEach((li, k) => li.style.setProperty('--fill', String(Math.min(1, Math.max(0, (u - 2 * k) / (k === n - 1 ? 1 : 2))))));
-                    const { i, t } = phase(self.progress, n);
-                    const next = t > 0.5 ? i + 1 : i;
-                    if (next === live) return;
-                    index[live]?.classList.remove('is-active');
-                    index[next]?.classList.add('is-active');
-                    live = next;
-                  },
                 },
               });
               for (let k = 1; k < n; k++) {

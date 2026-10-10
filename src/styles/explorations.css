@@ -245,7 +245,7 @@
   pointer-events: none;
 }
 .exp__hud-sep {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 .exp__hud-count {
   font-variant-numeric: tabular-nums;

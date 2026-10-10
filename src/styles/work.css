@@ -473,3 +473,51 @@
     grid-row: 2;
   }
 }
+
+/* Work page intro: the collage frames unmask one after another, each from its own edge. CSS from the first
+   paint, so the first frame (the page's Largest Contentful Paint) never waits on JavaScript. */
+@keyframes collageFromTop {
+  from {
+    clip-path: inset(0% 0% 100% 0%);
+  }
+}
+@keyframes collageFromRight {
+  from {
+    clip-path: inset(0% 100% 0% 0%);
+  }
+}
+@keyframes collageFromBottom {
+  from {
+    clip-path: inset(100% 0% 0% 0%);
+  }
+}
+@keyframes collageFromLeft {
+  from {
+    clip-path: inset(0% 0% 0% 100%);
+  }
+}
+@keyframes collageSettle {
+  from {
+    transform: scale(1.25);
+  }
+}
+.motion [data-collage='intro'] .collage__media {
+  animation: collageFromTop 1.4s var(--ease-io) var(--collage-delay, 0.25s) both;
+}
+.motion [data-collage='intro'] .collage__item:nth-child(4n + 2) .collage__media {
+  animation-name: collageFromRight;
+}
+.motion [data-collage='intro'] .collage__item:nth-child(4n + 3) .collage__media {
+  animation-name: collageFromBottom;
+}
+.motion [data-collage='intro'] .collage__item:nth-child(4n + 4) .collage__media {
+  animation-name: collageFromLeft;
+}
+.motion [data-collage='intro'] .collage__img {
+  animation: collageSettle 2s var(--ease-out) var(--collage-delay, 0.25s) both;
+}
+.motion [data-collage='intro'] .collage__item:nth-child(2) { --collage-delay: 0.34s; }
+.motion [data-collage='intro'] .collage__item:nth-child(3) { --collage-delay: 0.43s; }
+.motion [data-collage='intro'] .collage__item:nth-child(4) { --collage-delay: 0.52s; }
+.motion [data-collage='intro'] .collage__item:nth-child(5) { --collage-delay: 0.61s; }
+.motion [data-collage='intro'] .collage__item:nth-child(6) { --collage-delay: 0.7s; }

@@ -145,17 +145,6 @@ export default function Experience() {
           tl.from('[data-count]', { textContent: 0, snap: { textContent: 1 }, duration: 1.6, ease: 'power3.out', stagger: 0.15 }, 0.3);
         }
 
-        // Work page: the collage frames unmask one after another, each from its own edge.
-        const frames = $$('[data-collage="intro"] .collage__media');
-        if (frames.length) {
-          const edges = ['inset(0% 0% 100% 0%)', 'inset(0% 100% 0% 0%)', 'inset(100% 0% 0% 0%)', 'inset(0% 0% 0% 100%)'];
-          frames.forEach((media, i) => {
-            tl.fromTo(media, { clipPath: edges[i % 4] }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'pxl-io' }, 0.25 + i * 0.09);
-            const img = media.querySelector('img');
-            if (img) tl.fromTo(img, { scale: 1.25 }, { scale: 1, duration: 2, ease: 'pxl', clearProps: 'scale' }, 0.25 + i * 0.09);
-          });
-        }
-
         if (reduced) tl.progress(1);
       });
 
@@ -267,7 +256,8 @@ export default function Experience() {
                   },
                 })
                 .fromTo(statement.words, { opacity: 0.46 }, { opacity: 1, duration: 0.5, stagger: 0.12, ease: 'none' })
-                .fromTo('.about__body', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.45')
+                .fromTo('.about__foot', { '--rule-x': 0 }, { '--rule-x': 1, duration: 0.6, ease: 'power2.inOut' }, '-=0.6')
+                .fromTo(['.about__body', '.about__proof li'], { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }, '-=0.4')
                 .to({}, { duration: 0.5 });
               gsap.fromTo('.about__eyebrow', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1, scrollTrigger: { trigger: '.about', start: 'top 70%', once: true } });
             }
@@ -301,6 +291,9 @@ export default function Experience() {
                   scrub: 0.5,
                   invalidateOnRefresh: true,
                   onUpdate: (self) => {
+                    // Each row of the index fills across its hold and the hand-off that follows it.
+                    const u = self.progress * (2 * n - 1);
+                    index.forEach((li, k) => li.style.setProperty('--fill', String(Math.min(1, Math.max(0, (u - 2 * k) / (k === n - 1 ? 1 : 2))))));
                     const { i, t } = phase(self.progress, n);
                     const next = t > 0.5 ? i + 1 : i;
                     if (next === live) return;

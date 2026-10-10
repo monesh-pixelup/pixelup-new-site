@@ -74,12 +74,18 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     speed: 0, // camera velocity along Z, px per frame
     idle: 0, // eased idle drift, so the tunnel glides to a stop on hover rather than braking
     offset: 0, // added to the camera by the enter / exit tweens
-    hover: -1,
+    hover: -1, // focused card (index into cards), decided in the frame loop
+    pending: -1, // focus candidate waiting out the hysteresis
+    pendingFrames: 0,
+    keyboard: -1, // card focused by Tab, overrides the pointer
+    client: { x: 0, y: 0, inside: false, mouse: true },
     pointer: { x: 0.5, y: 0.5 },
     pointerTarget: { x: 0.5, y: 0.5 },
     drag: { active: false, x: 0, y: 0, origin: 0, moved: 0, lastT: 0, lastTarget: 0, fling: 0 },
   });
-  const [hover, setHover] = useState(-1);
+  const captionRef = useRef<HTMLDivElement>(null);
+  const captionTitleRef = useRef<HTMLSpanElement>(null);
+  const captionMetaRef = useRef<HTMLSpanElement>(null);
   const [nearest, setNearest] = useState(0);
   const [dragging, setDragging] = useState(false);
 
@@ -94,15 +100,57 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     const vel = new Float32Array(n * 2);
     const filters: string[] = [];
     const hidden: boolean[] = new Array(n).fill(true); // matches the CSS default of visibility: hidden
+    const focus = new Float32Array(n);
+    const widths = new Float32Array(n);
+    const measure = () => cards.forEach((_, i) => (widths[i] = cardRefs.current[i]?.offsetWidth ?? 0));
+    measure();
     let size = { w: stage.clientWidth, h: stage.clientHeight };
+    const caption = { x: 0, y: 0, shown: false };
     let shownNearest = -1;
     let last = performance.now();
     let raf = 0;
 
     const ro = new ResizeObserver(() => {
       size = { w: stage.clientWidth, h: stage.clientHeight };
+      measure();
     });
     ro.observe(stage);
+
+    // Caption text resolves left to right out of scrambled glyphs, the way type settles on a split-flap board.
+    const GLYPHS = '/<>=?;:-.@#';
+    let scramble = 0;
+    const decode = (el: HTMLElement | null, text: string, startAt: number) => {
+      if (!el) return;
+      const t0 = performance.now() + startAt;
+      const step = (t: number) => {
+        const p = clamp01((t - t0) / 380);
+        const fixed = Math.floor(p * text.length);
+        el.textContent = [...text]
+          .map((ch, k) => (k < fixed || ch === ' ' ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]))
+          .join('');
+        if (p < 1) scramble = requestAnimationFrame(step);
+      };
+      scramble = requestAnimationFrame(step);
+    };
+
+    const setFocus = (i: number) => {
+      const s = nav.current;
+      if (s.hover >= 0) cardRefs.current[s.hover]?.classList.remove('is-focus');
+      s.hover = i;
+      s.pendingFrames = 0;
+      const cap = captionRef.current;
+      stage.classList.toggle('has-focus', i >= 0);
+      if (i < 0) {
+        cap?.classList.remove('is-shown');
+        return;
+      }
+      cardRefs.current[i]?.classList.add('is-focus');
+      const it = items[cards[i].item];
+      cancelAnimationFrame(scramble);
+      decode(captionTitleRef.current, it.title, 0);
+      decode(captionMetaRef.current, `${it.kind} · ${it.year}`, 60);
+      cap?.classList.add('is-shown');
+    };
 
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
@@ -128,6 +176,22 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         s.current += s.speed * h;
       }
       const camera = s.current + s.offset;
+
+      // Focus is decided here, from what is actually under the pointer, not from pointerenter: cards fly past a
+      // still cursor, and event-driven hover would flip many times a second. A candidate must hold for a few
+      // frames before it takes focus, and focus survives a few frames of nothing, so passing cards can't steal it.
+      let candidate = s.keyboard;
+      if (candidate < 0 && s.client.inside && s.client.mouse && !s.drag.active) {
+        const hit = (document.elementFromPoint(s.client.x, s.client.y) as HTMLElement | null)?.closest<HTMLElement>('.tcard');
+        candidate = hit ? Number(hit.dataset.i) : -1;
+      }
+      if (candidate === s.hover) {
+        s.pendingFrames = 0;
+      } else {
+        s.pendingFrames = candidate === s.pending ? s.pendingFrames + d : d;
+        s.pending = candidate;
+        if (s.pendingFrames >= (candidate < 0 ? 8 : 4)) setFocus(candidate);
+      }
       const follow = 1 - Math.pow(0.95, d);
       s.pointer.x += (s.pointerTarget.x - s.pointer.x) * follow;
       s.pointer.y += (s.pointerTarget.y - s.pointer.y) * follow;
@@ -144,7 +208,10 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         if (!el) continue;
         const c = cards[i];
         const u = wrap(c.z - camera, length); // how far ahead of the camera
-        const tz = FOCAL - u;
+        focus[i] += ((i === s.hover ? 1 : 0) - focus[i]) * (1 - Math.pow(0.86, d));
+        const f = focus[i];
+        // The focused card is drawn out of the stream toward the viewer.
+        const tz = FOCAL - u + f * 120;
         const alpha = clamp01((length - u) / (0.2 * length)) * clamp01(u / 260);
 
         if (alpha <= 0.001) {
@@ -166,6 +233,15 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         const x = w / 2 + c.nx * w * 0.55 + px;
         const y = h / 2 + c.ny * h * 0.55 + py;
         const scale = PERSPECTIVE / (PERSPECTIVE - tz);
+        // Far cards project to a few pixels: too small to read or tap, so they drop out instead of clustering.
+        if (widths[i] * scale < 44 && f < 0.01) {
+          if (!hidden[i]) {
+            hidden[i] = true;
+            el.style.visibility = 'hidden';
+          }
+          prevU[i] = NaN;
+          continue;
+        }
         const sx = (x - w / 2) * scale;
         const sy = (y - h / 2) * scale;
 
@@ -195,12 +271,15 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
 
         el.style.opacity = alpha.toFixed(3);
         el.style.zIndex = String(Math.round(length - u));
-        el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${tz.toFixed(2)}px) rotateX(${c.rx}deg) rotateY(${c.ry}deg)${smear}`;
+        // ...and turns to face them square.
+        const rx = (c.rx * (1 - f)).toFixed(2);
+        const ry = (c.ry * (1 - f)).toFixed(2);
+        el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${tz.toFixed(2)}px) rotateX(${rx}deg) rotateY(${ry}deg)${smear}`;
 
         // Depth of field on the far cards plus motion blur, quantised so the filter isn't rebuilt every frame.
         const far = clamp01((u - 900) / (0.85 * length - 900));
         const dof = 3 * far * far * (3 - 2 * far);
-        const amount = Math.min(10, Math.hypot(dof, Math.min(6, 0.25 * speed)) / scale);
+        const amount = (Math.min(10, Math.hypot(dof, Math.min(6, 0.25 * speed)) / scale)) * (1 - f);
         const q = amount < 0.3 ? 0 : Math.pow(1.2, Math.round(Math.log(amount) / Math.log(1.2)));
         const filter = q > 0 ? `blur(${q.toFixed(2)}px)` : '';
         if (filters[i] !== filter) {
@@ -212,6 +291,16 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
           bestDist = Math.abs(tz);
           best = c.item;
         }
+      }
+
+      // Caption trails the cursor on a soft spring.
+      const cap = captionRef.current;
+      if (cap) {
+        const follow2 = 1 - Math.pow(0.78, d);
+        const r = stage.getBoundingClientRect();
+        caption.x += (s.client.x - r.left + 18 - caption.x) * follow2;
+        caption.y += (s.client.y - r.top + 20 - caption.y) * follow2;
+        cap.style.transform = `translate3d(${caption.x.toFixed(1)}px, ${caption.y.toFixed(1)}px, 0)`;
       }
 
       if (best !== shownNearest && best >= 0) {
@@ -230,6 +319,11 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     };
     const point = (e: PointerEvent) => {
       const r = stage.getBoundingClientRect();
+      const c = nav.current.client;
+      c.x = e.clientX;
+      c.y = e.clientY;
+      c.mouse = e.pointerType === 'mouse' || e.pointerType === 'pen';
+      c.inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
       nav.current.pointerTarget.x = clamp01((e.clientX - r.left) / r.width);
       nav.current.pointerTarget.y = clamp01((e.clientY - r.top) / r.height);
     };
@@ -290,8 +384,22 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
 
+    const onFocusIn = (e: FocusEvent) => {
+      const card = (e.target as HTMLElement).closest<HTMLElement>('.tcard');
+      if (!card) return;
+      const i = Number(card.dataset.i);
+      nav.current.keyboard = i;
+      nav.current.target += wrap(cards[i].z - nav.current.target, length) - FOCAL; // fly to it
+    };
+    const onFocusOut = () => (nav.current.keyboard = -1);
+    stage.addEventListener('focusin', onFocusIn);
+    stage.addEventListener('focusout', onFocusOut);
+
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(scramble);
+      stage.removeEventListener('focusin', onFocusIn);
+      stage.removeEventListener('focusout', onFocusOut);
       ro.disconnect();
       enter?.kill();
       gsap.killTweensOf(nav.current);
@@ -303,22 +411,8 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
     };
-  }, [cards, length]);
+  }, [cards, length, items]);
 
-  const enter = (i: number) => {
-    if (nav.current.drag.active) return;
-    nav.current.hover = i;
-    setHover(i);
-  };
-  const leave = () => {
-    nav.current.hover = -1;
-    setHover(-1);
-  };
-  // Tabbing onto a card flies the camera to it.
-  const flyTo = (i: number) => {
-    const s = nav.current;
-    s.target += wrap(cards[i].z - s.target, length) - FOCAL;
-  };
   const swallowDragClick = (e: React.MouseEvent) => {
     if (nav.current.drag.moved > 6) {
       e.preventDefault();
@@ -326,28 +420,6 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
     }
   };
 
-  // The info panel swaps with an out/in animation. Leaving a card waits a beat before falling back to the
-  // default copy, so sliding from one card to the next doesn't flash it.
-  const [panels, setPanels] = useState([{ id: 0, item: -1, out: false }]);
-  const panelId = useRef(0);
-  useEffect(() => {
-    const item = hover >= 0 ? cards[hover].item : -1;
-    const t = window.setTimeout(
-      () =>
-        setPanels((prev) => {
-          if (prev.find((p) => !p.out)?.item === item) return prev;
-          panelId.current += 1;
-          return [...prev.map((p) => ({ ...p, out: true })), { id: panelId.current, item, out: false }];
-        }),
-      item < 0 ? 220 : 0,
-    );
-    return () => window.clearTimeout(t);
-  }, [hover, cards]);
-  useEffect(() => {
-    if (!panels.some((p) => p.out)) return;
-    const t = window.setTimeout(() => setPanels((prev) => prev.filter((p) => !p.out)), 600);
-    return () => window.clearTimeout(t);
-  }, [panels]);
 
   return (
     <section className="exp" aria-labelledby="exp-title">
@@ -366,9 +438,17 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
           const it = items[c.item];
           const { media } = it;
           const Tag = it.href ? 'a' : 'div';
+          // Server-rendered opening frame: where the dolly starts, in CSS units, so the tunnel paints before
+          // any JavaScript runs. The frame loop picks up from exactly this pose.
+          const u0 = wrap(c.z + ENTER, length);
+          const alpha0 = clamp01((length - u0) / (0.2 * length)) * clamp01(u0 / 260);
+          const scale0 = PERSPECTIVE / (PERSPECTIVE - (FOCAL - u0));
+          const minWidth = Math.min(190 * c.size, 190 * 1.3 * (media.w / media.h));
+          const visible0 = alpha0 > 0.001 && minWidth * scale0 >= 44;
           return (
             <Tag
               key={i}
+              data-i={i}
               ref={(el: HTMLElement | null) => {
                 cardRefs.current[i] = el;
               }}
@@ -377,7 +457,11 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
                 {
                   '--size': c.size,
                   '--ar': media.w / media.h,
-                  '--delay': `${Math.min(i, 24) * 40}ms`,
+                  '--delay': `${Math.min(i, 10) * 25}ms`,
+                  transform: `translate3d(calc(50vw + ${(c.nx * 55).toFixed(3)}vw), calc(50svh + ${(c.ny * 55).toFixed(3)}svh), ${(FOCAL - u0).toFixed(2)}px) rotateX(${c.rx}deg) rotateY(${c.ry}deg)`,
+                  opacity: alpha0.toFixed(3),
+                  zIndex: Math.round(length - u0),
+                  visibility: visible0 ? 'visible' : 'hidden',
                 } as React.CSSProperties
               }
               {...(it.href
@@ -388,13 +472,6 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
                     'aria-label': `${it.title}, ${it.kind}, ${it.year}${it.external ? ' (opens in a new tab)' : ''}`,
                   }
                 : { 'aria-label': `${it.title}, ${it.kind}, ${it.year}` })}
-              onPointerEnter={() => enter(i)}
-              onPointerLeave={leave}
-              onFocus={() => {
-                flyTo(i);
-                enter(i);
-              }}
-              onBlur={leave}
               draggable={false}
             >
               <span className="tcard__in">
@@ -412,9 +489,6 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
                     loading={i < 14 ? 'eager' : 'lazy'}
                   />
                 )}
-                <span className="tcard__label" aria-hidden="true">
-                  {it.title} <i>{it.year}</i>
-                </span>
               </span>
             </Tag>
           );
@@ -426,27 +500,13 @@ export default function ExplorationsStage({ items }: { items: Exploration[] }) {
         <div className="exp__frame" />
       </div>
 
-      <div className="exp__info" aria-live="polite">
-        {panels.map((p) => {
-          const it = p.item >= 0 ? items[p.item] : null;
-          return (
-            <div key={p.id} className={`exp__panel${p.out ? ' is-out' : ''}`} aria-hidden={p.out || undefined}>
-              <span className="exp__line">
-                <span className="exp__info-kicker">{it ? `${it.kind} · ${it.year}` : 'Explorations'}</span>
-              </span>
-              <span className="exp__line">
-                <strong className="exp__info-title">{it ? it.title : 'Concepts we killed, and the ones we shipped.'}</strong>
-              </span>
-              {it?.href && (
-                <span className="exp__line">
-                  <span className="exp__info-cta">
-                    {it.external ? 'Visit site' : 'Open case study'} <ArrowSwap rotate={it.external ? -45 : 0} />
-                  </span>
-                </span>
-              )}
-            </div>
-          );
-        })}
+      {/* Cursor caption: small, only while a card has focus. Names are on the cards for assistive tech. */}
+      <div ref={captionRef} className="exp__caption" aria-hidden="true">
+        <span ref={captionTitleRef} className="exp__caption-title" />
+        <span className="exp__caption-meta">
+          <span ref={captionMetaRef} />
+          <ArrowSwap rotate={-45} />
+        </span>
       </div>
 
       <p className="exp__hud" aria-hidden="true">

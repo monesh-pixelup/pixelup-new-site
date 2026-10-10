@@ -68,48 +68,17 @@
   object-fit: cover;
   pointer-events: none;
 }
-/* Hovering a card lets the rest of the tunnel fall back. */
-.tcard__in {
-  filter: brightness(1) saturate(1);
-}
-.exp-stage:has(.tcard:hover) .tcard:not(:hover) .tcard__in {
-  filter: brightness(0.5) saturate(0.6);
-}
-.tcard:hover .tcard__in,
+.tcard.is-focus .tcard__in,
 .tcard:focus-visible .tcard__in {
-  transform: scale(1.04);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.5),
-    0 40px 80px -20px rgba(0, 0, 0, 0.8);
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 50px 90px -24px rgba(0, 0, 0, 0.85);
+}
+.exp-stage.has-focus {
+  cursor: pointer;
 }
 .tcard:focus-visible {
   outline: none;
-}
-.tcard__label {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  display: flex;
-  gap: 8px;
-  color: var(--paper);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateY(-4px);
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s var(--ease-out);
-}
-.tcard__label i {
-  font-style: normal;
-  color: var(--fog);
-}
-.tcard:hover .tcard__label,
-.tcard:focus-visible .tcard__label {
-  opacity: 1;
-  transform: none;
 }
 @keyframes tcardIn {
   from {
@@ -151,59 +120,9 @@
 }
 
 /* --- Info (bottom left) and HUD (bottom centre) --- */
-.exp__info {
-  position: absolute;
-  left: calc(var(--pad) + 10px);
-  bottom: max(28px, calc(36 * var(--u)));
-  z-index: 3;
-  display: grid;
-  gap: 6px;
-  max-width: min(420px, 40vw);
-  pointer-events: none;
-}
-.exp__panel {
-  grid-area: 1 / 1;
-  display: grid;
-  gap: 6px;
-  align-content: end;
-}
-/* Each line rises out of its own mask on the house ease; the outgoing panel lifts away first. */
-.exp__line {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
-/* The incoming panel waits for the outgoing one to clear, so two titles never share the frame. */
-.exp__line > * {
-  display: block;
-  animation: expLineIn 0.9s var(--ease-out) 0.28s both;
-}
-.exp__line:nth-child(2) > * {
-  animation-delay: 0.33s;
-}
-.exp__line:nth-child(3) > * {
-  animation-delay: 0.38s;
-}
-.exp__panel:only-child .exp__line > * {
-  animation-delay: 0s;
-}
-.exp__panel.is-out .exp__line > * {
-  animation: expLineOut 0.3s var(--ease-io) both;
-}
-.exp__info-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45em;
-}
 @keyframes expLineIn {
   from {
     transform: translateY(105%);
-  }
-}
-@keyframes expLineOut {
-  to {
-    transform: translateY(-105%);
   }
 }
 .exp__hud-num {
@@ -211,21 +130,52 @@
   animation: expLineIn 0.6s var(--ease-out) both;
 }
 
-.exp__info-kicker,
-.exp__info-cta {
-  color: var(--fog);
+/* --- Cursor caption: rides beside the pointer while a card has focus --- */
+.exp__caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  display: grid;
+  gap: 3px;
+  padding: 7px 10px 8px;
+  border-radius: 6px;
+  background: rgba(12, 12, 12, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--paper);
   font-size: var(--fs-micro);
-  letter-spacing: 0.08em;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.92;
+  transform-origin: 0 0;
+  transition:
+    opacity 0.25s ease,
+    scale 0.45s var(--ease-out);
+}
+.exp__caption.is-shown {
+  opacity: 1;
+  scale: 1;
+}
+.exp__caption-title {
+  font-size: 1.15em;
+  letter-spacing: -0.01em;
+}
+.exp__caption-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fog);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.exp__info-title {
-  font-size: clamp(20px, calc(30 * var(--u)), 40px);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-}
-.exp__info-cta {
-  color: var(--paper);
+@media (hover: none) {
+  .exp__caption {
+    display: none;
+  }
 }
 
 .exp__hud {
@@ -266,17 +216,8 @@
     inset: 6px;
     border-radius: 14px;
   }
-  .exp__info {
-    left: var(--pad);
-    right: var(--pad);
-    bottom: 64px;
-    max-width: none;
-  }
   .exp__hud {
     bottom: 24px;
-  }
-  .tcard__label {
-    display: none;
   }
 }
 

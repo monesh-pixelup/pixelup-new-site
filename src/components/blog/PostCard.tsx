@@ -20,9 +20,9 @@ export default function PostCard({ post, shape, priority = false }: { post: Post
         </div>
       </figure>
       <div className="post-card__meta">
-        <h3 className="post-card__title">
+        <h2 className="post-card__title">
           <span>{post.title}</span>
-        </h3>
+        </h2>
         <p className="post-card__info">
           <span>{post.kind}</span>
           <span>{formatDate(post.date)}</span>

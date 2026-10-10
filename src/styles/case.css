@@ -559,6 +559,8 @@
 }
 .article__figure {
   margin: 2em 0;
+  /* The image settles from 1.2× on reveal; clip it so it never widens the page on phones. */
+  overflow: clip;
 }
 .article__figure img {
   width: 100%;

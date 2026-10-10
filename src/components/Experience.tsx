@@ -345,15 +345,17 @@ export default function Experience() {
             // Outro collage: frames start scattered and assemble as the page bottoms out.
             const outro = $('[data-collage="outro"]');
             if (outro) {
+              // The scatter is tuned on the 1440 canvas; phones get a proportionally shorter throw.
+              const throwK = window.innerWidth < 768 ? 0.35 : 1;
               $$<HTMLElement>('[data-collage="outro"] .collage__item').forEach((fig, i) => {
                 const depth = Number(fig.dataset.depth || 0.5);
                 const cx = parseFloat(fig.style.getPropertyValue('--x')) + parseFloat(fig.style.getPropertyValue('--w')) / 2 - 720;
                 const cy = parseFloat(fig.style.getPropertyValue('--y')) + parseFloat(fig.style.getPropertyValue('--h')) / 2 - 430;
                 const len = Math.hypot(cx, cy) || 1;
-                const push = 260 + depth * 260;
+                const push = (260 + depth * 260) * throwK;
                 gsap.fromTo(
                   fig,
-                  { x: (cx / len) * push, y: (cy / len) * push + 120, rotation: (i % 2 ? 1 : -1) * (4 + depth * 4), autoAlpha: 0.2 },
+                  { x: (cx / len) * push, y: (cy / len) * push + 120 * throwK, rotation: (i % 2 ? 1 : -1) * (4 + depth * 4), autoAlpha: 0.2 },
                   {
                     x: 0,
                     y: 0,

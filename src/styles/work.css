@@ -429,13 +429,18 @@
   .index {
     padding: 40px 0 96px;
   }
-  .index__title {
-    grid-column: 1 / 9;
+  /* The two words share the line by their own widths (a half-grid is too narrow for "Archives⁰³"). */
+  .index__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0 12px;
   }
+  .index__title,
   .index__kicker {
-    grid-column: 9 / -1;
-    justify-self: end;
     padding-left: 0;
+    font-size: 8.6vw;
   }
   .index__table thead {
     position: absolute;

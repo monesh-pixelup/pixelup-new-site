@@ -47,9 +47,10 @@ function collageDock(vp: Viewport): Dock {
 
 export function railDock(vp: Viewport): Dock {
   if (vp.mobile) {
-    // Phones: small and half-tucked past the right edge, so it accompanies the content instead of covering it.
-    const g = Math.min(vp.h * 0.085, vp.w * 0.19);
-    return { x: vp.w - g * 0.42, y: vp.h * 0.62, g, gap: 0, rx: 0, ry: -0.3, rz: 0, dots: 0 };
+    // Phones: a small badge parked in the bottom-right corner, clear of the text column.
+    const g = Math.min(vp.h * 0.05, vp.w * 0.1);
+    const half = (GLYPH_ASPECT * g) / 2;
+    return { x: vp.w - 16 - half, y: vp.h - 20 - g / 2, g, gap: 0, rx: 0, ry: -0.3, rz: 0, dots: 0 };
   }
   const g = Math.min(vp.h * 0.19, vp.w * 0.14);
   return { x: vp.w * 0.88, y: vp.h * 0.54, g, gap: 0, rx: 0, ry: -0.24, rz: 0, dots: 0.45 };

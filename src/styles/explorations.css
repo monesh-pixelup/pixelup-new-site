@@ -230,6 +230,9 @@
   opacity: 0.6;
 }
 .exp__hud-count {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
   font-variant-numeric: tabular-nums;
 }
 

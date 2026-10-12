@@ -63,5 +63,9 @@ To re-sync after publishing on the current site (needs `playwright-core` and Goo
 cd scripts/sync-content && npm i playwright-core && node scrape.mjs && node convert.mjs "$(cd ../.. && pwd)"
 ```
 
-Then download any new case-study media listed in `scripts/sync-content/downloads.txt`.
+Then download any new case-study media listed in `scripts/sync-content/downloads.txt`, and record each image's size so its frame takes the image's own aspect ratio instead of cropping it:
+
+```bash
+node scripts/sync-content/measure.mjs
+```
 Sainapse's case study links to `sainapse-staging.webflow.io`, as on the current site; swap in the production URL in `src/content/site.ts`.

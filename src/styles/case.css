@@ -94,9 +94,13 @@
   margin-top: calc(9 * var(--u));
 }
 .mocks__row--half {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
   gap: calc(7 * var(--u));
+}
+/* Each frame's width is proportional to its aspect ratio, so a pair shares one height and neither image is cropped. */
+.mocks__row--half > .frame {
+  flex: var(--grow, 1.05) 1 0;
+  min-width: 0;
 }
 .frame {
   position: relative;
@@ -105,15 +109,15 @@
   background: var(--panel);
 }
 .frame--full {
-  aspect-ratio: 1392 / 835;
+  aspect-ratio: var(--ar, 1392 / 835);
 }
 .frame--half {
-  aspect-ratio: 690 / 656;
+  aspect-ratio: var(--ar, 690 / 656);
 }
 .frame--portrait {
   width: calc(676 * var(--u));
   margin: 0 auto;
-  aspect-ratio: 676 / 843;
+  aspect-ratio: var(--ar, 676 / 843);
 }
 .frame__zoom {
   position: absolute;
@@ -311,7 +315,10 @@
     padding: 0 var(--pad);
   }
   .mocks__row--half {
-    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
+  }
+  .mocks__row--half > .frame {
+    flex: none;
   }
   .frame--portrait {
     width: 100%;

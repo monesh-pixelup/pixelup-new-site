@@ -3,7 +3,8 @@ import cases from './case-studies.json';
 import posts from './blog.json';
 import { projects, type Project } from './site';
 
-export type CaseMedia = { kind: 'image' | 'video'; src: string; alt: string };
+/** `w`/`h` are the image's intrinsic size (scripts/sync-content/measure.mjs); frames take its aspect ratio so nothing is cropped. */
+export type CaseMedia = { kind: 'image' | 'video'; src: string; alt: string; w?: number; h?: number };
 
 export type CaseSection = {
   heading?: string;

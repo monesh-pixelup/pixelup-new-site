@@ -13,7 +13,9 @@
   "hero": {
    "kind": "image",
    "src": "/case-studies/greptile/hero.jpg",
-   "alt": "Glowing green Greptile logo mark on a dark background"
+   "alt": "Glowing green Greptile logo mark on a dark background",
+   "w": 2320,
+   "h": 1392
   },
   "sections": [
    {
@@ -22,17 +24,23 @@
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-1.jpg",
-      "alt": "Greptile brand color palette"
+      "alt": "Greptile brand color palette",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-2.jpg",
-      "alt": "Greptile brand type specimen"
+      "alt": "Greptile brand type specimen",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-3.jpg",
-      "alt": "Greptile 'Ship Faster' billboard mockup on a city street"
+      "alt": "Greptile 'Ship Faster' billboard mockup on a city street",
+      "w": 1790,
+      "h": 1080
      }
     ],
     "items": [
@@ -65,17 +73,23 @@
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-4.jpg",
-      "alt": "Greptile mobile experience mockup held in hand"
+      "alt": "Greptile mobile experience mockup held in hand",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-5.jpg",
-      "alt": "Greptile sign-up screen on a laptop"
+      "alt": "Greptile sign-up screen on a laptop",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-6.jpg",
-      "alt": "Greptile 'Bridge the gap' brand poster"
+      "alt": "Greptile 'Bridge the gap' brand poster",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -104,22 +118,30 @@
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-7.jpg",
-      "alt": "Greptile analytics dashboard on a studio display"
+      "alt": "Greptile analytics dashboard on a studio display",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-8.jpg",
-      "alt": "Greptile subway poster mockup"
+      "alt": "Greptile subway poster mockup",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-9.jpg",
-      "alt": "Greptile Instagram post series"
+      "alt": "Greptile Instagram post series",
+      "w": 2320,
+      "h": 1392
      },
      {
       "kind": "image",
       "src": "/case-studies/greptile/img-10.jpg",
-      "alt": "Greptile product interface on a laptop"
+      "alt": "Greptile product interface on a laptop",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -157,12 +179,16 @@
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/64.avif",
-      "alt": "Henry Labs wordmark over a blue and orange mountain landscape"
+      "alt": "Henry Labs wordmark over a blue and orange mountain landscape",
+      "w": 3840,
+      "h": 2160
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/65.avif",
-      "alt": "Henry Labs positioning posters using the mountain imagery and angular brand mark"
+      "alt": "Henry Labs positioning posters using the mountain imagery and angular brand mark",
+      "w": 3840,
+      "h": 2160
      }
     ],
     "items": [
@@ -194,12 +220,16 @@
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/66.avif",
-      "alt": "Henry Labs execution layer positioning beside an illuminated shopping cart"
+      "alt": "Henry Labs execution layer positioning beside an illuminated shopping cart",
+      "w": 3840,
+      "h": 2160
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/58.avif",
-      "alt": "Henry Labs identity and positioning presented on a large conference screen"
+      "alt": "Henry Labs identity and positioning presented on a large conference screen",
+      "w": 3840,
+      "h": 2160
      }
     ],
     "items": [
@@ -231,12 +261,16 @@
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/figjam-user-personas.jpg",
-      "alt": "Henry Labs FigJam research board mapping partner and shopper personas"
+      "alt": "Henry Labs FigJam research board mapping partner and shopper personas",
+      "w": 2400,
+      "h": 1314
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/figjam-checkout-flow.jpg",
-      "alt": "Henry Labs FigJam board mapping the audited checkout and shopper flows"
+      "alt": "Henry Labs FigJam board mapping the audited checkout and shopper flows",
+      "w": 2400,
+      "h": 1314
      }
     ],
     "items": [
@@ -267,22 +301,30 @@
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/asset-2.avif",
-      "alt": "Henry Labs website hero 'Own your checkout.' over a glowing mountain landscape"
+      "alt": "Henry Labs website hero 'Own your checkout.' over a glowing mountain landscape",
+      "w": 1920,
+      "h": 1080
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/frame-2147244046.avif",
-      "alt": "Henry Labs website displayed on a laptop against a black and silver landscape"
+      "alt": "Henry Labs website displayed on a laptop against a black and silver landscape",
+      "w": 3840,
+      "h": 2160
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/frame-2147244048.avif",
-      "alt": "Henry Labs mobile features section on a phone framed by a torn chain-link fence"
+      "alt": "Henry Labs mobile features section on a phone framed by a torn chain-link fence",
+      "w": 3840,
+      "h": 2160
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/70.avif",
-      "alt": "Henry Labs website feature section for building, monetizing and optimizing agentic commerce"
+      "alt": "Henry Labs website feature section for building, monetizing and optimizing agentic commerce",
+      "w": 3840,
+      "h": 2160
      }
     ],
     "items": [],
@@ -298,7 +340,9 @@
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/68.avif",
-      "alt": "Henry Labs brand posters, positioning and website screens shown as one work wall"
+      "alt": "Henry Labs brand posters, positioning and website screens shown as one work wall",
+      "w": 3840,
+      "h": 2160
      }
     ],
     "items": [],
@@ -318,12 +362,16 @@
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/asset-1.avif",
-      "alt": "Henry Labs mobile website and brand mark over the launch landscape"
+      "alt": "Henry Labs mobile website and brand mark over the launch landscape",
+      "w": 3840,
+      "h": 2160
      },
      {
       "kind": "image",
       "src": "/case-studies/henrylabs/frame-2147244047.avif",
-      "alt": "Henry Labs website use cases displayed on a laptop against an orange landscape"
+      "alt": "Henry Labs website use cases displayed on a laptop against an orange landscape",
+      "w": 3840,
+      "h": 2160
      }
     ],
     "items": [],
@@ -370,7 +418,9 @@
   "hero": {
    "kind": "image",
    "src": "/case-studies/streamline/streamline.jpg",
-   "alt": "Streamline serif wordmark over a collage of legal AI product cards with a woman working at a desk"
+   "alt": "Streamline serif wordmark over a collage of legal AI product cards with a woman working at a desk",
+   "w": 1920,
+   "h": 1080
   },
   "sections": [
    {
@@ -379,12 +429,16 @@
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-5.jpg",
-      "alt": "Streamline website collage with desktop homepage, mobile mockup, and integration tiles"
+      "alt": "Streamline website collage with desktop homepage, mobile mockup, and integration tiles",
+      "w": 2320,
+      "h": 1392
      },
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-2.jpg",
-      "alt": "Streamline 'Built for how modern legal teams work' website section on a green textured background"
+      "alt": "Streamline 'Built for how modern legal teams work' website section on a green textured background",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [
@@ -416,17 +470,23 @@
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-3.jpg",
-      "alt": "Streamline document knowledge graph and Slack AI conversation cards on a green glass background"
+      "alt": "Streamline document knowledge graph and Slack AI conversation cards on a green glass background",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-4.jpg",
-      "alt": "Streamline mobile integrations screen 'We work where your team already works'"
+      "alt": "Streamline mobile integrations screen 'We work where your team already works'",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-6.jpg",
-      "alt": "Streamline integrations strip with Ironclad, Microsoft Teams, Slack, Salesforce, Jira, and DocuSign"
+      "alt": "Streamline integrations strip with Ironclad, Microsoft Teams, Slack, Salesforce, Jira, and DocuSign",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [
@@ -483,12 +543,16 @@
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-7.jpg",
-      "alt": "Streamline 'Built for how modern legal teams work' team page on a tablet held in hands"
+      "alt": "Streamline 'Built for how modern legal teams work' team page on a tablet held in hands",
+      "w": 2320,
+      "h": 1392
      },
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-8.jpg",
-      "alt": "Streamline resources section 'Insight for legal operations leaders' on a green background"
+      "alt": "Streamline resources section 'Insight for legal operations leaders' on a green background",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -504,7 +568,9 @@
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-1.jpg",
-      "alt": "Streamline homepage hero 'In-house legal runs on Streamline' on a tablet held in hands"
+      "alt": "Streamline homepage hero 'In-house legal runs on Streamline' on a tablet held in hands",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -535,7 +601,9 @@
      {
       "kind": "image",
       "src": "/case-studies/streamline/img-9.jpg",
-      "alt": "Streamline resources page on a laptop resting on a stone slab"
+      "alt": "Streamline resources page on a laptop resting on a stone slab",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -584,17 +652,23 @@
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-1.jpg",
-      "alt": "Sainapse brand color palette swatches from dark to lavender"
+      "alt": "Sainapse brand color palette swatches from dark to lavender",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-2.jpg",
-      "alt": "Sainapse Ronzino type specimen with agentic explainable AI tagline"
+      "alt": "Sainapse Ronzino type specimen with agentic explainable AI tagline",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-3.jpg",
-      "alt": "Sainapse Rethink Enterprise Intelligence brand film on a cinema screen"
+      "alt": "Sainapse Rethink Enterprise Intelligence brand film on a cinema screen",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [
@@ -627,17 +701,23 @@
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-4.jpg",
-      "alt": "Sainapse mobile website hero on a phone against red fabric"
+      "alt": "Sainapse mobile website hero on a phone against red fabric",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-5.jpg",
-      "alt": "Sainapse AI customer support whitepaper booklets lying on sand"
+      "alt": "Sainapse AI customer support whitepaper booklets lying on sand",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-6.jpg",
-      "alt": "Sainapse website homepage on a laptop in tall grass"
+      "alt": "Sainapse website homepage on a laptop in tall grass",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -670,27 +750,37 @@
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-7.jpg",
-      "alt": "Sainapse enterprise customer support poster with moody surfer imagery"
+      "alt": "Sainapse enterprise customer support poster with moody surfer imagery",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-8.jpg",
-      "alt": "Sainapse Rethink Enterprise Intelligence tablet screen on a leather sofa"
+      "alt": "Sainapse Rethink Enterprise Intelligence tablet screen on a leather sofa",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-9.jpg",
-      "alt": "Sainapse Rethink Enterprise Intelligence framed billboard poster mockup"
+      "alt": "Sainapse Rethink Enterprise Intelligence framed billboard poster mockup",
+      "w": 2320,
+      "h": 1392
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-10.jpg",
-      "alt": "Sainapse dark product page on a tablet held in hands"
+      "alt": "Sainapse dark product page on a tablet held in hands",
+      "w": 2320,
+      "h": 1392
      },
      {
       "kind": "image",
       "src": "/case-studies/sainapse/img-11.jpg",
-      "alt": "Sainapse dark dashboard UI displayed on a desktop monitor"
+      "alt": "Sainapse dark dashboard UI displayed on a desktop monitor",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -717,7 +807,9 @@
   "hero": {
    "kind": "image",
    "src": "/case-studies/sully/sully.jpg",
-   "alt": "Sully.ai homepage hero on a laptop mockup, website design by PIXELUP LABS"
+   "alt": "Sully.ai homepage hero on a laptop mockup, website design by PIXELUP LABS",
+   "w": 3840,
+   "h": 2160
   },
   "sections": [
    {
@@ -726,17 +818,23 @@
      {
       "kind": "image",
       "src": "/case-studies/sully/img-1.jpg",
-      "alt": "Sully.ai autonomous care network diagram on a floating tablet"
+      "alt": "Sully.ai autonomous care network diagram on a floating tablet",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-2.jpg",
-      "alt": "Sully.ai AI Receptionist features page on a laptop"
+      "alt": "Sully.ai AI Receptionist features page on a laptop",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-3.jpg",
-      "alt": "Sully.ai homepage hero projected on stage before an audience"
+      "alt": "Sully.ai homepage hero projected on stage before an audience",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [
@@ -765,17 +863,23 @@
      {
       "kind": "image",
       "src": "/case-studies/sully/img-4.jpg",
-      "alt": "Sully.ai mobile homepage held in a hand against blue sky"
+      "alt": "Sully.ai mobile homepage held in a hand against blue sky",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-5.jpg",
-      "alt": "Sully.ai appointments booking product page on a dark laptop"
+      "alt": "Sully.ai appointments booking product page on a dark laptop",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-6.jpg",
-      "alt": "Sully.ai scribes-versus-dictation comparison page on a laptop"
+      "alt": "Sully.ai scribes-versus-dictation comparison page on a laptop",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],
@@ -808,22 +912,30 @@
      {
       "kind": "image",
       "src": "/case-studies/sully/img-7.jpg",
-      "alt": "Sully.ai hospital impact stats page on a laptop"
+      "alt": "Sully.ai hospital impact stats page on a laptop",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-8.jpg",
-      "alt": "Sully.ai clinical co-pilot mobile screen on a leather chair"
+      "alt": "Sully.ai clinical co-pilot mobile screen on a leather chair",
+      "w": 1152,
+      "h": 1096
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-9.jpg",
-      "alt": "Sully.ai Partner with Sully Labs page on a phone"
+      "alt": "Sully.ai Partner with Sully Labs page on a phone",
+      "w": 2320,
+      "h": 1392
      },
      {
       "kind": "image",
       "src": "/case-studies/sully/img-10.jpg",
-      "alt": "Sully.ai EPIC and EHR integrations explainer page on a laptop"
+      "alt": "Sully.ai EPIC and EHR integrations explainer page on a laptop",
+      "w": 2320,
+      "h": 1392
      }
     ],
     "items": [],

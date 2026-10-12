@@ -4,7 +4,7 @@ import { projects, site } from '@/content/site';
 import MenuToggle from './MenuToggle';
 import { ArrowSwap, Roll, StatusDots } from './ui';
 
-export default function Header({ current }: { current?: 'work' | 'blog' | 'explorations' } = {}) {
+export default function Header({ current, status = site.status }: { current?: 'work' | 'blog' | 'explorations'; status?: string } = {}) {
   return (
     <header className="hdr">
       <a href="/" className="hdr__brand" aria-label={`${site.name}, back to top`}>
@@ -58,7 +58,7 @@ export default function Header({ current }: { current?: 'work' | 'blog' | 'explo
           <span className="status">
             <StatusDots />
             <i className="status__line" aria-hidden="true" />
-            <span>{site.status}</span>
+            <span>{status}</span>
           </span>
         </span>
         <a href="#contact" className="hdr__contact">

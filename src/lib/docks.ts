@@ -56,6 +56,14 @@ export function railDock(vp: Viewport): Dock {
   return { x: vp.w * 0.88, y: vp.h * 0.54, g, gap: 0, rx: 0, ry: -0.24, rz: 0, dots: 0.45 };
 }
 
+/** Long-read pages (proposals): a small badge in the bottom-right corner, clear of the text columns. */
+function badgeDock(vp: Viewport): Dock {
+  if (vp.mobile) return railDock(vp);
+  const g = Math.min(vp.h * 0.07, vp.w * 0.05);
+  const half = (GLYPH_ASPECT * g) / 2;
+  return { x: vp.w - Math.max(16, vp.w * (24 / 1440)) - half, y: vp.h - 28 - g / 2, g, gap: 0, rx: 0, ry: -0.3, rz: 0, dots: 0 };
+}
+
 /** Stands beside the pinned statement: unfolded and turned at first, assembled once the last word lands. */
 function statementDock(section: HTMLElement, statement: HTMLElement, start: number, end: number) {
   const top = section.getBoundingClientRect().top;
@@ -132,6 +140,12 @@ export function buildStops(vp: Viewport): DockStop[] {
   if (work) stops.push({ at: work.getBoundingClientRect().top + scrollY - vp.h * 0.35, dock: railDock });
   const index = document.querySelector('[data-dock="index"]');
   if (index) stops.push({ at: index.getBoundingClientRect().top + scrollY - vp.h * 0.4, dock: railDock });
+  const badge = document.querySelector('[data-dock="badge"]');
+  if (badge) {
+    // Held through the read, until the footer starts to come up.
+    stops.push({ at: badge.getBoundingClientRect().top + scrollY - vp.h * 0.6, dock: badgeDock });
+    stops.push({ at: limit - vp.h * 1.4, dock: badgeDock });
+  }
 
   const about = document.getElementById('about');
   const statement = document.querySelector<HTMLElement>('.about__statement');

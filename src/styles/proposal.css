@@ -1,0 +1,694 @@
+/* ---------------------------------------------------------------
+   Proposals — built on the case-study type and grid (intro, meta row, section text),
+   with three visuals of their own: the client's week, the sprint timeline and the weekly schedule.
+---------------------------------------------------------------- */
+/* Line icons (components/proposal/icons.tsx): one size everywhere, so they read as a set. */
+.icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+/* Meta row and rules: icon + label as one small heading over the value. */
+.prop-meta dt,
+.prop-rules dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.prop-meta dt .icon,
+.prop-rules dt .icon {
+  color: var(--paper);
+}
+.prop-meta dd {
+  line-height: 1.3;
+}
+.prop-meta__note {
+  display: block;
+  margin-top: 2px;
+  color: var(--fog);
+}
+
+/* Phones: one item per row, icon above its label, value at reading size. */
+@media (max-width: 767px) {
+  .prop-meta {
+    row-gap: 0;
+  }
+  .prop-meta > div {
+    grid-column: 1 / -1;
+    padding: 16px var(--pad);
+    border-top: 1px solid var(--rule);
+  }
+  .prop-meta > div:first-child {
+    border-top: 0;
+    padding-top: 2px;
+  }
+  .prop-meta dt,
+  .prop-rules dt {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .prop-meta dt {
+    margin-bottom: 8px;
+  }
+  .prop-meta dd {
+    font-size: var(--fs-body);
+  }
+  .prop-rules .cs-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 20px 0;
+  }
+  .prop-rules dt {
+    padding-top: 0;
+  }
+}
+
+/* A closing line under a block of copy: paper, not fog, so it reads as the point. */
+.prop-line {
+  padding-top: max(10px, calc(14 * var(--u)));
+  color: var(--paper);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+}
+
+/* ---------------------------------------------------------------
+   Your week — the booking window as a headline between two rules, the ask underneath
+---------------------------------------------------------------- */
+.pw {
+  margin: 0;
+  padding: 0 var(--pad);
+}
+.pw__title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: max(18px, calc(28 * var(--u))) 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--fs-h);
+  line-height: 1.05;
+}
+.pw__title span {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.pw__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px max(18px, calc(28 * var(--u)));
+  margin-top: max(16px, calc(20 * var(--u)));
+  color: var(--fog);
+}
+.pw__caption {
+  margin-left: auto;
+  color: var(--paper);
+}
+
+@media (max-width: 767px) {
+  .pw__legend {
+    flex-direction: column;
+  }
+  .pw__caption {
+    margin: 6px 0 0;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Sprint timeline
+---------------------------------------------------------------- */
+.pt {
+  /* Lane names on the schedule's Week column, bars from its We bring column, ending three columns short of the edge. */
+  display: grid;
+  grid-template-columns: calc(3 / 16 * 100%) repeat(var(--weeks), minmax(0, 1fr)) calc(3 / 16 * 100%);
+  row-gap: 8px;
+  margin: 0 var(--pad);
+  padding-bottom: 44px;
+}
+.pt__week {
+  grid-row: 1;
+  padding: 0 0 10px 8px;
+  border-left: 1px solid var(--rule);
+  color: var(--fog);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pt__week b {
+  color: var(--paper);
+  font-weight: 400;
+}
+.pt__lane {
+  display: contents;
+}
+.pt__name {
+  grid-column: 1;
+  align-self: center;
+  color: var(--paper);
+}
+.pt__bar {
+  display: flex;
+  align-items: center;
+  height: max(30px, calc(40 * var(--u)));
+  padding: 0 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.pt__bar[data-optional] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--fog);
+  color: var(--fog);
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.06) 0 1px, transparent 1px 8px);
+}
+/* The decision point: a dashed rule through both lanes at the end of week 3, with its label beneath. */
+.pt__decide {
+  position: relative;
+  justify-self: end;
+  width: 0;
+  border-right: 1px dashed var(--paper);
+  pointer-events: none;
+}
+.pt__decide span {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  padding: 4px 8px 5px;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateX(50%);
+}
+
+@media (max-width: 767px) {
+  .pt {
+    grid-template-columns: 62px repeat(var(--weeks), minmax(0, 1fr));
+    margin-right: var(--pad);
+  }
+  .pt__week {
+    padding-left: 4px;
+    font-size: 0;
+  }
+  .pt__week b {
+    font-size: var(--fs-micro);
+  }
+  .pt__bar {
+    padding: 0 6px;
+    font-size: 11px;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Weekly schedule — one row per call: the week, what we bring, the decision it ends on.
+   Rows invert on hover like the home News list.
+---------------------------------------------------------------- */
+.ps {
+  /* One timing for every part of a row's hover, so the wipe, text and rule move together. */
+  --ps-t: 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  padding: max(40px, calc(64 * var(--u))) var(--pad) 0;
+}
+.ps__group + .ps__group {
+  margin-top: max(48px, calc(80 * var(--u)));
+}
+.ps__head {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  align-items: end;
+  row-gap: 10px;
+  padding-bottom: max(14px, calc(18 * var(--u)));
+}
+/* Name and badge on the left, the summary on the You decide column, so it lines up with the rows below. */
+.ps__title {
+  grid-column: 1 / 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.ps__name {
+  font-size: var(--fs-h);
+  font-weight: 400;
+  line-height: 1;
+}
+.ps__badge {
+  align-self: center;
+  padding: 4px 8px 5px;
+  border: 1px solid currentColor;
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.ps__sum {
+  grid-column: 10 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  padding-left: 15px; /* the decision rule (1px) + its 14px inset */
+  color: var(--fog);
+}
+.ps__detail {
+  flex-basis: 100%;
+  padding-left: 20px; /* past the 14px icon and its 6px gap */
+}
+/* Collapsed optional sprint: the header is the toggle; a plus turns to a minus when open. */
+.ps__group > summary {
+  list-style: none;
+  cursor: pointer;
+}
+.ps__group > summary::-webkit-details-marker {
+  display: none;
+}
+details.ps__group:not([open]) > summary .ps__head {
+  border-bottom: 1px dashed var(--rule);
+}
+.ps__toggle {
+  grid-column: 1 / 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: start;
+  color: var(--paper);
+}
+.ps__toggle-close,
+details[open] .ps__toggle-open {
+  display: none;
+}
+details[open] .ps__toggle-close {
+  display: inline;
+}
+.ps__plus {
+  position: relative;
+  width: 11px;
+  height: 11px;
+}
+.ps__plus::before,
+.ps__plus::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+.ps__plus::before {
+  top: 5px;
+  left: 0;
+  width: 11px;
+  height: 1px;
+}
+.ps__plus::after {
+  top: 0;
+  left: 5px;
+  width: 1px;
+  height: 11px;
+  transition: transform 0.5s var(--ease-out);
+}
+details[open] .ps__plus::after {
+  transform: scaleY(0);
+}
+@media (hover: hover) {
+  .ps__group > summary:hover .ps__toggle-open,
+  .ps__group > summary:hover .ps__toggle-close {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+.ps__group > summary:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: 6px;
+}
+.ps__list {
+  border-bottom: 1px solid var(--rule);
+}
+.ps__row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  align-items: start;
+  padding: max(18px, calc(26 * var(--u))) 0;
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  transition: color var(--ps-t);
+}
+.ps__row::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(-1 * var(--pad));
+  z-index: -1;
+  background: var(--paper);
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition:
+    transform var(--ps-t),
+    opacity var(--ps-t);
+}
+.ps__wk {
+  grid-column: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ps__num {
+  font-size: var(--fs-h);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  transition: color var(--ps-t);
+}
+.ps__date,
+.ps__label {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  transition: color var(--ps-t);
+}
+.ps__label {
+  display: block;
+  margin-bottom: 8px;
+}
+.ps__bring {
+  grid-column: 4 / 10;
+  padding-right: 32px;
+  color: #cfcfcf;
+  transition: color var(--ps-t);
+}
+/* The decision is what each call is for: set off by a paper rule, at the size of the copy beside it. */
+.ps__decide {
+  grid-column: 10 / -1;
+  padding-left: 14px;
+  border-left: 1px solid var(--paper);
+  transition: border-color var(--ps-t);
+}
+.ps__decision {
+  color: var(--paper);
+  transition: color var(--ps-t);
+}
+.ps__flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 9px 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--fs-micro);
+  line-height: 1.2;
+  transition:
+    background-color var(--ps-t),
+    color var(--ps-t);
+}
+.ps__group[data-optional] .ps__name,
+.ps__group[data-optional] .ps__num {
+  color: #cfcfcf;
+}
+.ps__group[data-optional] .ps__badge {
+  border-style: dashed;
+}
+.ps__group[data-optional] .ps__row {
+  border-top-style: dashed;
+}
+.ps__group[data-optional] .ps__bring {
+  color: var(--fog);
+}
+
+@media (hover: hover) {
+  .ps__row:hover {
+    color: var(--ink);
+  }
+  .ps__row:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  .ps__row:hover .ps__num,
+  .ps__row:hover .ps__bring,
+  .ps__row:hover .ps__decision {
+    color: var(--ink);
+  }
+  .ps__row:hover .ps__decide {
+    border-color: var(--ink);
+  }
+  .ps__row:hover .ps__date,
+  .ps__row:hover .ps__label {
+    color: #6b6b6b;
+  }
+  .ps__row:hover .ps__flag {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+.ps__line {
+  max-width: 52ch;
+  margin-left: calc(9 / 16 * 100%);
+  padding-left: 15px; /* on the decisions' text, past their rule */
+  padding-top: max(18px, calc(24 * var(--u)));
+}
+
+@media (max-width: 767px) {
+  .ps__title,
+  .ps__sum,
+  .ps__toggle {
+    grid-column: 1 / -1;
+  }
+  .ps__sum {
+    padding-left: 0;
+  }
+  .ps__row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 16px;
+  }
+  .ps__wk,
+  .ps__bring,
+  .ps__decide {
+    grid-column: 1;
+    padding-right: 0;
+  }
+  .ps__wk {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .ps__line {
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Deliverables, rules, investment
+---------------------------------------------------------------- */
+.prop-get {
+  gap: max(28px, calc(40 * var(--u)));
+}
+.prop-get__name {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: var(--fs-m);
+  line-height: 1.1;
+}
+.prop-get__name span {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+}
+.prop-get__list {
+  border-bottom: 1px solid var(--rule);
+}
+.prop-get__list li {
+  padding: max(12px, calc(14 * var(--u))) 0;
+  border-top: 1px solid var(--rule);
+  color: #cfcfcf;
+}
+.prop-get__group[data-optional] .prop-get__name {
+  color: #cfcfcf;
+}
+.prop-get__group[data-optional] li {
+  border-top-style: dashed;
+  color: var(--fog);
+}
+
+/* Reference under a deliverable: a small frame of past work and its name. */
+.pr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  margin-top: 12px;
+  color: var(--paper);
+}
+.pr__thumb {
+  position: relative;
+  flex: none;
+  width: max(96px, calc(132 * var(--u)));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--panel);
+}
+.pr__thumb img {
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+.pr__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pr__kind {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+}
+a.pr:hover .pr__thumb img {
+  transform: scale(1.06);
+}
+
+.prop-rules dt {
+  color: var(--paper);
+}
+
+.prop-price {
+  padding-top: max(14px, calc(18 * var(--u)));
+  border-top: 1px solid var(--rule);
+}
+.prop-price + .prop-price {
+  margin-top: max(16px, calc(24 * var(--u)));
+}
+.prop-price__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  color: var(--paper);
+}
+.prop-price__name span {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+}
+.prop-price__num {
+  margin: 0.12em 0 0.18em;
+  font-size: clamp(56px, calc(120 * var(--u)), 200px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+.prop-price--addon {
+  border-top-style: dashed;
+}
+.prop-price--addon .prop-price__name {
+  color: #cfcfcf;
+}
+.prop-price--addon .cs-para {
+  margin-top: 8px;
+  color: var(--fog);
+}
+
+/* ---------------------------------------------------------------
+   Proof — the two marks Mac brought up, as a pair of frames
+---------------------------------------------------------------- */
+.prop-proof__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(7 * var(--u));
+  padding: 0 var(--pad);
+}
+.pp {
+  display: block;
+}
+.pp__media {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--panel);
+}
+.pp__media img {
+  object-fit: cover;
+  transition: transform 1.4s var(--ease-out);
+}
+.pp__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: max(10px, calc(14 * var(--u)));
+}
+.pp__note {
+  color: var(--fog);
+}
+.pp__meta .arrow-swap {
+  align-self: center;
+  margin-left: auto;
+}
+@media (hover: hover) {
+  .pp:hover .pp__media img {
+    transform: scale(1.045);
+  }
+  .prop-proof__row:has(.pp:hover) .pp:not(:hover) {
+    opacity: 0.32;
+  }
+  .pp {
+    transition: opacity 0.7s var(--ease-out);
+  }
+}
+@media (max-width: 767px) {
+  .prop-proof__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+
+/* The footer carries the ask, which runs longer than the usual one-liner. */
+main[data-page='proposal'] + .foot .foot__note {
+  align-items: flex-start;
+  max-width: 64ch;
+  line-height: 1.4;
+}
+main[data-page='proposal'] + .foot .foot__note .status__dots {
+  margin-top: 0.45em;
+}
+/* Same full-width sizing as the site footer, re-measured for "Reserve spot now" plus its arrow (8.02em wide in Switzer). */
+main[data-page='proposal'] + .foot .foot__email {
+  font-size: calc((var(--vw, 100vw) - 2 * var(--pad)) / 8.06);
+}
+.foot__note-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 12px;
+}
+.foot__note-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+/* The deposit button: the big line plus the site arrow, turned to point out of the page. */
+.foot__action {
+  display: inline-flex;
+  align-items: flex-start;
+}
+.foot__action-arrow {
+  margin: 0.08em 0 0 0.04em;
+  font-size: 0.42em;
+}
+@media (max-width: 767px) {
+  .foot__note-link {
+    min-height: 40px;
+  }
+  .foot__note-links {
+    gap: 0 20px;
+    margin-top: 4px;
+  }
+}
+/* Phones: the price is ~3.4em wide, so size it to the column rather than the 390 canvas. */
+@media (max-width: 767px) {
+  .prop-price__num {
+    font-size: min(24vw, 104px);
+  }
+}

@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
 import { site } from '@/content/site';
 import CopyEmail from './CopyEmail';
-import { ArrowSwap, StatusDots } from './ui';
+import FooterGradient from './FooterGradient';
+import { ArrowSwap, Roll, StatusDots } from './ui';
 
 const echo = [
   'Brand, websites and motion for AI companies',
@@ -8,24 +10,63 @@ const echo = [
   `PIXELUP LABS © ${new Date().getFullYear()}, all rights reserved`,
 ];
 
-export default function Footer() {
+type Link = { label: string; href: string; icon?: ReactNode };
+
+type Props = {
+  /** Overrides for pages with their own ask (proposals). */
+  eyebrow?: string;
+  email?: string;
+  note?: string;
+  /** Replaces the big email address with a call to action (e.g. a payment link). */
+  action?: Link;
+  /** Extra links under the note (e.g. a payment link, a PDF). */
+  links?: Link[];
+};
+
+export default function Footer({ eyebrow = 'New business', email = site.email, note = `${site.status} right now. Say hello anyway.`, action, links = [] }: Props = {}) {
   return (
     <footer className="foot" id="contact">
+      <FooterGradient />
       <div className="foot__cta">
         <p className="foot__eyebrow" data-reveal="fade">
-          New business
+          {eyebrow}
         </p>
-        <CopyEmail email={site.email} />
+        {action ? (
+          <a href={action.href} className="foot__email foot__action" data-bracket="email" data-cursor={action.label} target="_blank" rel="noreferrer">
+            <span className="mask foot__email-mask" data-reveal="rise">
+              <span className="foot__email-text">
+                <Roll>{action.label}</Roll>
+              </span>
+            </span>
+            <span className="foot__action-arrow">
+              <ArrowSwap rotate={-45} />
+            </span>
+          </a>
+        ) : (
+          <CopyEmail email={email} />
+        )}
         <p className="foot__note" data-reveal="fade">
           <StatusDots />
-          <span>{site.status} right now. Say hello anyway.</span>
+          <span>
+            {note}
+            {links.length > 0 && (
+              <span className="foot__note-links">
+                {links.map((l) => (
+                  <a key={l.href} href={l.href} className="foot__note-link" target="_blank" rel="noreferrer">
+                    {l.icon}
+                    <span className="u-link">{l.label}</span>
+                  </a>
+                ))}
+              </span>
+            )}
+          </span>
         </p>
       </div>
 
       <div className="foot__bar">
         <div className="foot__links">
-          <a href={`mailto:${site.email}`} className="u-link">
-            {site.email}
+          <a href={`mailto:${email}`} className="u-link">
+            {email}
           </a>
           {site.socials.map((s) => (
             <a key={s.label} href={s.href} className="foot__social" target="_blank" rel="noreferrer">

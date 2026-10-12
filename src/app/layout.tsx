@@ -11,6 +11,7 @@ import '@/styles/sections.css';
 import '@/styles/work.css';
 import '@/styles/case.css';
 import '@/styles/explorations.css';
+import '@/styles/proposal.css';
 
 // Self-hosted so the type never depends on a third-party CDN.
 const switzer = localFont({

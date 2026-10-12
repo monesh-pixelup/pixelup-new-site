@@ -275,8 +275,8 @@ export const clients: { name: string; src: string; w: number; h: number; ink?: [
 ];
 
 export const about = {
-  statement: 'Your model is world-class. Your brand should look like it.',
-  body: 'PIXELUP is an independent design studio for AI companies. We turn technology that is hard to explain into brands, websites and launch moments people trust on first sight, from the seed deck to the first enterprise contract.',
+  statement: 'Your product is enterprise-grade. Your brand still looks like a prototype.',
+  body: 'AI products now ship faster than the brands around them. Buyers and investors judge you on your site and deck before they ever try the product. PIXELUP LABS designs the brands, websites and launches that make hard-to-explain AI products trusted on first sight.',
 };
 
 export const services = [

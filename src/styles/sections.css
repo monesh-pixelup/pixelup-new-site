@@ -731,6 +731,50 @@
   min-height: 100vh;
   min-height: 100svh;
   padding: 0 var(--pad) max(16px, calc(24 * var(--u)));
+  /* Brand gradient, Figma 858:932: #0D0D0D → black 35.7% → #273AFB 66.3% → white.
+     Drawn 1.5× tall with extra black on top, so scrolling to the end (position 100%) shows exactly the Figma frame
+     and the blue rises into view on the way there. */
+  background-color: var(--ink);
+  background-image: linear-gradient(180deg, var(--ink) 0%, var(--ink) 33.33%, #000000 57.13%, #273afb 77.56%, #ffffff 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 150%;
+  background-position: 50% var(--foot-rise, 100%);
+}
+/* Film grain from the Figma frame */
+.foot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.foot > * {
+  position: relative;
+}
+/* WebGL version of the same gradient (FooterGradient): crossfades in over the CSS one, then carries its own grain. */
+.foot > .foot__gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.4s var(--ease-out);
+}
+.foot.has-gl > .foot__gl {
+  opacity: 1;
+}
+.foot::before {
+  transition: opacity 1.4s var(--ease-out);
+}
+.foot.has-gl::before {
+  opacity: 0;
+}
+/* The bar sits on the white end of the gradient */
+.foot__bar {
+  color: var(--ink);
 }
 .foot__cta {
   flex: 1;
@@ -780,7 +824,7 @@
   align-items: center;
   gap: 8px;
   margin-top: max(20px, calc(30 * var(--u)));
-  color: var(--fog);
+  color: rgb(255 255 255 / 0.86); /* sits on the blue band of the gradient */
 }
 .foot__bar {
   position: relative;
@@ -810,12 +854,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: var(--paper);
+  color: var(--ink);
   line-height: 1.04;
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
-  opacity: 0.52; /* lowest that keeps 4.5:1 on --ink */
+  opacity: 0.62; /* keeps 4.5:1 on the white end of the gradient */
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -874,4 +918,16 @@
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+/* Over the brand gradient the difference blend would turn white into yellow (the inverse of blue),
+   so while the footer is on screen the mark, cursor and header stay plain white. */
+.on-foot .mark__canvas,
+.on-foot .mark__ui,
+.on-foot .hdr,
+.on-foot .cursor {
+  mix-blend-mode: normal;
+}
+.on-foot .cursor__dot::before {
+  box-shadow: 0 0 0 1px rgb(12 12 12 / 0.35);
 }

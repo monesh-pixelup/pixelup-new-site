@@ -420,6 +420,23 @@ export default function Experience() {
               });
             });
 
+            // Footer: the brand gradient rises from black to blue to white as the page bottoms out.
+            if ($('.foot')) {
+              ScrollTrigger.create({
+                trigger: '.foot',
+                start: 'top 60%',
+                // Never reached (the footer is last), so the state holds at the very bottom of the page.
+                end: 'bottom top',
+                onToggle: (self) => html.classList.toggle('on-foot', self.isActive),
+              });
+              cleanups.push(() => html.classList.remove('on-foot'));
+              gsap.fromTo(
+                '.foot',
+                { '--foot-rise': '0%' },
+                { '--foot-rise': '100%', ease: 'none', scrollTrigger: { trigger: '.foot', start: 'top bottom', end: 'bottom bottom', scrub: 0.6 } },
+              );
+            }
+
             // Footer: the stacked echo lines fan out into the Figma stagger as the page bottoms out.
             $$('.echo__block').forEach((block, i) => {
               gsap.fromTo(

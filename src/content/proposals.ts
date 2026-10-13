@@ -8,7 +8,7 @@ export type ProposalWeek = { week: number; date?: string; bring: string; decide:
 export type ProposalDeliverable = string | { text: string; reference: { label: string; src: string; alt: string; href?: string } };
 
 /** The page's sections, in the default order. A proposal can reorder or drop them with `order`. */
-export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next';
+export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next' | 'references';
 
 /** An icon list section (the run, the next steps). */
 export type ProposalList = { heading: string; intro?: string; items: { label: string; text: string; icon: IconName }[]; line?: string };
@@ -55,6 +55,14 @@ export type Proposal = {
   deliverables?: { heading: string; groups: { name: string; note: string; optional?: boolean; items: ProposalDeliverable[] }[] };
   rules?: { heading: string; intro: string; items: { label: string; text: string; icon: IconName }[] };
   /** Optional extra sections; shown only when listed in `order`. */
+  /** The client's own references, the thread through them, and screenshots. */
+  references?: {
+    heading: string;
+    intro: string;
+    themes: { label: string; text: string; icon: IconName }[];
+    items: { name: string; note: string; href: string; src: string; alt: string }[];
+    line?: string;
+  };
   run?: ProposalList;
   next?: ProposalList;
   reviews?: { heading: string; body: string; items: { name: string; role: string; quote: string }[]; line?: string };
@@ -227,18 +235,34 @@ export const proposals: Proposal[] = [
   {
     slug: 'nation',
     client: 'Nation',
-    hold: 'Prepared for Nation / Oct 2026',
+    hold: 'Can start next week',
     kicker: 'Proposal · Nation · October 2026',
     title: 'A brand that says one thing: this makes you money.',
-    lede: 'Positioning, identity, a design system and the withnation.ai homepage. Three weeks, built so a first-time seller trusts Nation on the first screen and starts a store on the second.',
+    lede: 'Positioning, identity, a design system and the withnation.ai homepage. Four to five weeks, starting next week, built so a first-time seller trusts Nation on the first screen and starts a store on the second.',
     meta: [
       { label: 'Brand and website sprints', value: '35+', icon: 'layers' },
       { label: 'Raised by clients after their sprint', value: '$300M+', icon: 'tag' },
       { label: 'Rating across every Contra review', value: '5.0', icon: 'users' },
       { label: 'Contra Top 100, October 2026', value: '#4', icon: 'flag' },
     ],
-    order: ['split', 'rules', 'proof', 'reviews', 'run', 'schedule', 'investment', 'next'],
-    labels: { split: 'What we read', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
+    order: ['split', 'references', 'rules', 'run', 'schedule', 'proof', 'reviews', 'investment', 'next'],
+    labels: { split: 'What we read', references: 'Your references', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
+    references: {
+      heading: 'Your references all sell the same thing: the business, not the software.',
+      intro: 'Owner, Toast, GlossGenius and AppLovin look nothing alike, but they make the same three moves. That’s the bar for Nation.',
+      themes: [
+        { icon: 'users', label: 'Real businesses up front', text: 'A chef on the line, a salon front desk, real products on a table. The owner and their work are the hero, never a dashboard.' },
+        { icon: 'message', label: 'One plain promise', text: '“Built for busy.” “Handled.” “Grow your business.” Short, confident, and about the outcome, not the AI.' },
+        { icon: 'flag', label: 'One action, right there', text: 'Your restaurant’s name, your email, launch a campaign. The first step sits in the hero, so starting feels small.' },
+      ],
+      items: [
+        { name: 'Owner', note: 'Promise and proof in one screen', href: 'https://www.owner.com/', src: '/proposals/nation/owner.jpg', alt: 'Owner.com homepage hero with a restaurant website health score' },
+        { name: 'Toast', note: 'A real kitchen, one bold color', href: 'https://pos.toasttab.com/', src: '/proposals/nation/toast.jpg', alt: 'Toast homepage hero: Built For Busy over a chef at work' },
+        { name: 'GlossGenius', note: 'Warm, human, calm', href: 'https://glossgenius.com/', src: '/proposals/nation/glossgenius.jpg', alt: 'GlossGenius homepage hero over a salon front desk' },
+        { name: 'AppLovin', note: 'Real products, real owners', href: 'https://www.applovin.com/', src: '/proposals/nation/applovin.jpg', alt: 'AppLovin homepage collage of small business products and founders' },
+      ],
+      line: 'Nation takes the same three moves further: real sellers and their first sales, one promise (this makes you money), and “start a store” on every screen. Here’s how we’d get there.',
+    },
     split: {
       heading: 'A nation of first-time owners.',
       intro: 'Nation starts a store from one prompt and runs the products, pages, ads and growth. The people using it are not tech people. Many are opening their first business for their family. So the brand has to feel warm like a place you belong, look as serious as a company raising a Series A, and point every scroll at one action: start a store.',
@@ -279,32 +303,32 @@ export const proposals: Proposal[] = [
       line: '$500K+ earned on Contra · Hired 35x · 5.0 across 6 reviews',
     },
     run: {
-      heading: 'Three weeks. Something real every week.',
+      heading: 'Four to five weeks. Something real every week.',
       intro: 'Async in Figma, a short review call twice a week, and one owner on our side the whole way. Words come first, so the identity has something true to say.',
       items: [
-        { icon: 'message', label: 'Days 1 to 3: Positioning', text: 'Kickoff, competitor read (Shopify, Amboras, Whop), then the one-liner, story and descriptor. Output: messaging doc.' },
-        { icon: 'frame', label: 'Week 1 to 2: Identity', text: 'Two directions, you pick one, we refine it into wordmark, symbol, color, type, imagery, voice and motion. Output: brand guidelines.' },
-        { icon: 'layers', label: 'Week 2: Design system', text: 'Tokens and core components built in Figma for both the site and the product. Output: Figma library + tokens.' },
-        { icon: 'flag', label: 'Week 3: Homepage', text: 'The withnation.ai homepage, desktop and mobile, with the launch motion. Output: dev-ready homepage.' },
+        { icon: 'message', label: 'Week 1: Positioning', text: 'Kickoff, competitor read (Shopify, Amboras, Whop), then the one-liner, story and descriptor. Output: messaging doc.' },
+        { icon: 'frame', label: 'Weeks 1 to 3: Identity', text: 'Two directions, you pick one, we refine it into wordmark, symbol, color, type, imagery, voice and motion. Output: brand guidelines.' },
+        { icon: 'layers', label: 'Weeks 3 to 4: Design system', text: 'Tokens and core components built in Figma for both the site and the product. Output: Figma library + tokens.' },
+        { icon: 'flag', label: 'Weeks 4 to 5: Homepage', text: 'The withnation.ai homepage, desktop and mobile, with the launch motion. Output: dev-ready homepage.' },
       ],
     },
     schedule: {
-      heading: 'Brand locked in week two. Homepage in week three.',
-      body: 'If you need to launch sooner, the wordmark and core colors can be ready by the end of week one.',
+      heading: 'Brand locked in week three. Homepage by week five.',
+      body: 'If you need to launch sooner, the wordmark and core colors can be ready by the end of week two.',
       hideRows: true,
       sprints: [
         { name: 'Positioning', note: 'Messaging', from: 1, to: 1, weeks: [{ week: 1, bring: '', decide: '' }] },
-        { name: 'Identity', note: 'Directions to brand locked', from: 1, to: 2, weeks: [{ week: 2, bring: '', decide: '' }] },
-        { name: 'Design system', note: 'Tokens and components', from: 2, to: 3, weeks: [] },
-        { name: 'Homepage', note: 'Dev-ready', from: 3, to: 3, weeks: [{ week: 3, bring: '', decide: '' }] },
+        { name: 'Identity', note: 'Directions to brand locked', from: 1, to: 3, weeks: [{ week: 2, bring: '', decide: '' }, { week: 3, bring: '', decide: '' }] },
+        { name: 'Design system', note: 'Tokens and components', from: 3, to: 4, weeks: [{ week: 4, bring: '', decide: '' }] },
+        { name: 'Homepage', note: 'Dev-ready', from: 4, to: 5, weeks: [{ week: 5, bring: '', decide: '' }] },
       ],
-      line: 'Week 1: messaging and identity direction picked. Week 2: brand guidelines delivered. Week 3: system and homepage handed over.',
+      line: 'Week 1: messaging signed off. Week 2: identity direction picked. Week 3: brand guidelines delivered. Week 5: system and homepage handed over.',
     },
     investment: {
       heading: 'Investment: TBD.',
       lead: {
         name: 'Full sprint',
-        terms: '3 weeks · two rounds of revisions at every stage',
+        terms: '4 to 5 weeks · starts next week · two rounds of revisions at every stage',
         price: 'TBD',
         includes: 'Positioning and messaging, full brand identity and guidelines, a design system in Figma, and the withnation.ai homepage, desktop and mobile.',
       },
@@ -316,7 +340,7 @@ export const proposals: Proposal[] = [
       items: [
         { icon: 'users', label: 'Step 1: Quick call', text: '20 minutes on the launch date, sellers we can feature, and what stays from the current site.' },
         { icon: 'download', label: 'Step 2: Share access', text: 'Product, current Figma, any seller stories and sales numbers.' },
-        { icon: 'calendar', label: 'Step 3: Kick off', text: 'Messaging in your hands within three days.' },
+        { icon: 'calendar', label: 'Step 3: Kick off', text: 'We can start next week. Messaging in your hands within the first week.' },
       ],
     },
     cta: {

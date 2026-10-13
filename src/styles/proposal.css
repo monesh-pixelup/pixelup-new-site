@@ -692,3 +692,28 @@ main[data-page='proposal'] + .foot .foot__email {
     font-size: min(24vw, 104px);
   }
 }
+
+/* ---------------------------------------------------------------
+   Your references — the client's own picks, shown as tall phone crops
+---------------------------------------------------------------- */
+.prop-refs__row {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(4 * var(--u));
+  margin-bottom: max(24px, calc(32 * var(--u)));
+}
+.prop-refs .pp__media {
+  aspect-ratio: 4 / 5;
+}
+.prop-refs .pp__media img {
+  object-position: top;
+}
+.prop-refs .pp__meta {
+  flex-direction: column;
+  gap: 4px;
+}
+@media (max-width: 767px) {
+  .prop-refs__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}

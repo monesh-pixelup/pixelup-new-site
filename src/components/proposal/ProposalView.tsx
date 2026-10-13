@@ -372,6 +372,53 @@ export default function ProposalView({ p }: { p: Proposal }) {
         </div>
       </section>
     ),
+    references: p.references && (
+      <section className="cs-section prop-proof prop-refs">
+        <div className="cs-text">
+          <Head n={num('references')} label={label('references', 'Your references')} heading={p.references.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {p.references.intro}
+            </p>
+            <dl className="cs-items prop-rules">
+              {p.references.themes.map((it) => (
+                <div key={it.label} className="cs-item" data-reveal="fade">
+                  <dt>
+                    <Icon name={it.icon} />
+                    {it.label}
+                  </dt>
+                  <dd>{it.text}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+        <div className="prop-proof__row prop-refs__row">
+          {p.references.items.map((it) => (
+            <a key={it.name} href={it.href} target="_blank" rel="noreferrer" className="pp" data-cursor="Visit">
+              <figure className="pp__media" data-media>
+                <div className="frame__zoom">
+                  <Image src={it.src} alt={it.alt} fill sizes="(min-width: 768px) 24vw, 50vw" quality={85} draggable={false} />
+                </div>
+              </figure>
+              <span className="pp__meta">
+                <span className="pp__client">{it.name}</span>
+                <span className="pp__note">{it.note}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+        {p.references.line && (
+          <div className="cs-text">
+            <div className="cs-text__body">
+              <p className="prop-line" data-reveal="fade">
+                {p.references.line}
+              </p>
+            </div>
+          </div>
+        )}
+      </section>
+    ),
     run: p.run && <ItemSection n={num('run')} label={label('run', 'How we’d run it')} list={p.run} />,
     next: p.next && <ItemSection n={num('next')} label={label('next', 'Next steps')} list={p.next} />,
     reviews: p.reviews && (

@@ -205,4 +205,135 @@ export const proposals: Proposal[] = [
       reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/oPgYnpcQ-general-knowledge-brand-sprint-50percent-deposit' },
     },
   },
+  {
+    slug: 'nation',
+    client: 'Nation',
+    hold: 'Can start Thu 15 Oct',
+    kicker: 'Proposal · Nation · October 2026',
+    title: 'A brand that says one thing: this makes you money.',
+    lede: 'Nation’s sellers aren’t tech people. Many are opening their first business, for their family. So the brand has to feel warm, look as serious as a company raising a Series A, and point every scroll at one action: start a store. Positioning, identity, a design system and the homepage, in four weeks.',
+    meta: [
+      { label: 'Prepared for', value: 'Ira, Nation', note: '13 October 2026', icon: 'calendar' },
+      { label: 'Your time', value: '45 min / week', note: '30 min call + 15 min async', icon: 'clock' },
+      { label: 'Engagement', value: 'Brand + Website Sprint', note: '4 weeks, start to handover', icon: 'layers' },
+      { label: 'Investment', value: 'TBD', note: 'Confirmed after a quick call', icon: 'tag' },
+    ],
+    week: {
+      heading: 'One slot of your choosing. Same time, every week.',
+      body: 'Pick a 30-minute slot anywhere between 10:00 and 18:00 New York time and keep it every week. Then spend 15 minutes leaving feedback in Figma whenever suits you.',
+      tz: 'New York time',
+      window: [10, 18],
+      call: 30,
+      review: 15,
+      caption: 'You’re launching. We keep the ask small so the build doesn’t slow down.',
+    },
+    split: {
+      heading: 'You make the calls. We do the work.',
+      items: [
+        { label: 'You', text: 'Join one 30-minute call a week and make one decision on it. Share real sellers, real stores and real sales so the brand can show them.' },
+        {
+          label: 'Us',
+          text: 'Competitor teardown, positioning, copy, identity, the design system and the homepage. Daksh leads every call, and 2–3 senior designers do the work behind it.',
+        },
+      ],
+      line: 'No sparkles, no glowing orbs, no “powered by AI” badges. Real stores and real money, made bold.',
+    },
+    schedule: {
+      heading: 'Every call ends in a decision.',
+      body: 'Words come first, so the identity has something true to say. The brand locks in week 3 and the homepage is designed on top of it, overlapping the end of the brand work.',
+      sprints: [
+        {
+          name: 'Brand Sprint',
+          note: 'Where we start',
+          from: 1,
+          to: 3,
+          weeks: [
+            { week: 1, date: '15 Oct', bring: 'Onboarding call, a teardown of Shopify, Amboras and Whop, and the one-line positioning, story and descriptor', decide: 'Lock the line next to the name' },
+            { week: 2, date: '22 Oct', bring: 'Two identity directions, each shown on a storefront, an ad and a seller’s phone', decide: 'Pick one' },
+            { week: 3, date: '29 Oct', bring: 'Refined wordmark, symbol, color, type, imagery, voice and motion, plus core tokens', decide: 'Approve the brand' },
+          ],
+        },
+        {
+          name: 'Website Sprint',
+          note: 'Homepage',
+          from: 3,
+          to: 4,
+          weeks: [
+            { week: 3, date: '29 Oct', bring: 'Homepage structure and copy, in the same call as the brand approval', decide: 'Approve the messaging' },
+            { week: 4, date: '5 Nov', bring: 'withnation.ai homepage, desktop and mobile, plus the design system handover', decide: 'Launch date' },
+          ],
+        },
+      ],
+      decideBy: { week: 3, label: 'Brand locked 29 Oct' },
+      line: 'Even when the sprints overlap, it’s still one 30-minute call a week. If you need to launch sooner, the wordmark and core colors can be ready by week 2.',
+    },
+    deliverables: {
+      heading: 'What you get.',
+      groups: [
+        {
+          name: 'Brand Sprint',
+          note: '3 weeks',
+          items: [
+            'Positioning and messaging: the one-liner, the Nation story and the descriptor next to the name',
+            'A wordmark and symbol, with color, type, imagery, voice and motion',
+            {
+              text: 'A design system of tokens and core components, shared by the site and the product',
+              reference: { label: 'Replay design system', src: '/projects/replay.jpg', alt: 'Replay wordmark on a deep blue textured field', href: 'https://replay-brand-guidelines.vercel.app/#/in-action' },
+            },
+          ],
+        },
+        {
+          name: 'Website Sprint',
+          note: 'Weeks 3 to 4',
+          items: [
+            'The withnation.ai homepage narrative: whole product, Toast-level clear, ending in “start a store”',
+            'Homepage design, desktop and mobile, ready for your team to build',
+            'Component docs, so your team can extend the site and product without us',
+          ],
+        },
+      ],
+    },
+    rules: {
+      heading: 'It stays fast because the structure doesn’t bend.',
+      intro: 'Here’s what it depends on.',
+      items: [
+        { icon: 'frame', label: 'Proof over promise', text: 'Real stores, real products and real first sales carry the brand. Send us what you have and we’ll design around it.' },
+        { icon: 'clock', label: 'The same slot', text: 'You choose it between 10:00 and 18:00 New York time, and it ends at 30 minutes.' },
+        { icon: 'message', label: 'Async by default', text: 'Work arrives as a Figma link and a short Loom. You review it in 15 minutes and comment where it matters.' },
+        { icon: 'flag', label: 'Launch first', text: 'If you go live on the current site this week, we swap the new brand in after. Nothing waits on us.' },
+        { icon: 'contact', label: 'One point of contact', text: 'Daksh.' },
+      ],
+    },
+    investment: {
+      heading: 'Scoped together.',
+      lead: {
+        name: 'Brand + Website Sprint',
+        terms: '4 weeks · ~3 hours of your time',
+        price: 'TBD',
+        includes: 'Positioning and messaging, the full identity, a design system for site and product, and the withnation.ai homepage.',
+      },
+      addon: {
+        name: 'Homepage build',
+        terms: 'Optional',
+        includes: 'If you want us to build the homepage too, in Next.js, Webflow or Framer, we’ll scope it with you on the call.',
+      },
+      line: 'We’ll confirm a fixed price after a quick call on scope and your launch date.',
+    },
+    proof: {
+      heading: 'Commerce, shoppers and products that make money.',
+      body: 'Picked for Nation: checkout, real shoppers, new revenue, and hard products made simple.',
+      items: [
+        { client: 'Henry Labs', note: 'Embedded checkout for agentic commerce', href: '/case-studies/henrylabs', src: '/work/henry-labs.jpg', alt: 'Henry Labs brand on stage' },
+        { client: 'Replay', note: 'Data as growth capital', href: 'https://www.replay.ai/', src: '/projects/replay.jpg', alt: 'Replay wordmark on a deep blue textured field' },
+        { client: 'Pogo', note: 'Talk to verified shoppers', href: 'https://www.joinpogo.com/', src: '/projects/pogo.jpg', alt: 'Pogo app on a phone held against a lilac backdrop' },
+        { client: 'CTGT', note: 'Interpretability for regulated industries', href: 'https://www.ctgt.ai/', src: '/projects/ctgt.jpg', alt: 'CTGT website hero over a misty mountain range' },
+      ],
+    },
+    cta: {
+      eyebrow: 'Let’s give Nation its flag',
+      email: 'daksh@pixeluplabs.com',
+      note: 'Book a 20-minute call on your launch date, the sellers we can feature and what stays from the current site. We can start Thursday, 15 Oct, with positioning in your hands within three days.',
+      reserve: { label: 'Book a call', href: 'https://cal.com/pixelup/discovery' },
+    },
+  },
 ];

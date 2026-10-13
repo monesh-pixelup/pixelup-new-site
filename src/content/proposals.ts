@@ -2,12 +2,22 @@
 // Each one is written for a single reader; copy is agreed with Daksh before it ships.
 import type { IconName } from '@/components/proposal/icons';
 
-export type ProposalWeek = { week: number; date: string; bring: string; decide: string; flag?: string };
+export type ProposalWeek = { week: number; date?: string; bring: string; decide: string; flag?: string };
 
 /** A deliverable line, optionally with past work that shows what it looks like. */
 export type ProposalDeliverable = string | { text: string; reference: { label: string; src: string; alt: string; href?: string } };
 
+/** The page's sections, in the default order. A proposal can reorder or drop them with `order`. */
+export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next';
+
+/** An icon list section (the run, the next steps). */
+export type ProposalList = { heading: string; intro?: string; items: { label: string; text: string; icon: IconName }[]; line?: string };
+
 export type Proposal = {
+  /** Section order; omitted sections are not shown. Defaults to all seven in the usual order. */
+  order?: ProposalSection[];
+  /** Override a section's eyebrow label. */
+  labels?: Partial<Record<ProposalSection, string>>;
   slug: string;
   client: string;
   /** Shown in the header status and the footer CTA. */
@@ -17,7 +27,7 @@ export type Proposal = {
   lede: string;
   meta: { label: string; value: string; note?: string; icon: IconName }[];
   /** The weekly time ask: the window the client books the call in (hours in their timezone), and the minutes it takes. */
-  week: {
+  week?: {
     heading: string;
     body: string;
     tz: string;
@@ -27,22 +37,31 @@ export type Proposal = {
     review: number;
     caption: string;
   };
-  split: { heading: string; items: { label: string; text: string }[]; line: string };
+  split: { heading: string; intro?: string; items: { label: string; text: string }[]; line?: string };
   schedule: {
     heading: string;
     body: string;
     /** `note` is the short badge; `detail` an optional line under it. */
-    sprints: { name: string; note: string; detail?: string; from: number; to: number; optional?: boolean; weeks: ProposalWeek[] }[];
+    /** Column labels for each week row; default "We bring" / "You decide". */
+    labels?: { bring: string; decide: string };
+    /** `sum` replaces the calls/hours summary. */
+    sprints: { name: string; note: string; detail?: string; sum?: string; from: number; to: number; optional?: boolean; weeks: ProposalWeek[] }[];
     /** Week whose call decides the optional sprint. */
-    decideBy: { week: number; label: string };
+    decideBy?: { week: number; label: string };
+    /** Show only the timeline bars, not the week-by-week rows. */
+    hideRows?: boolean;
     line: string;
   };
-  deliverables: { heading: string; groups: { name: string; note: string; optional?: boolean; items: ProposalDeliverable[] }[] };
-  rules: { heading: string; intro: string; items: { label: string; text: string; icon: IconName }[] };
+  deliverables?: { heading: string; groups: { name: string; note: string; optional?: boolean; items: ProposalDeliverable[] }[] };
+  rules?: { heading: string; intro: string; items: { label: string; text: string; icon: IconName }[] };
+  /** Optional extra sections; shown only when listed in `order`. */
+  run?: ProposalList;
+  next?: ProposalList;
+  reviews?: { heading: string; body: string; items: { name: string; role: string; quote: string }[]; line?: string };
   investment: {
     heading: string;
     lead: { name: string; terms: string; price: string; includes: string };
-    addon: { name: string; terms: string; includes: string };
+    addon?: { name: string; terms: string; includes: string };
     line: string;
   };
   proof: { heading: string; body: string; items: { client: string; note: string; href: string; src: string; alt: string }[] };
@@ -208,120 +227,39 @@ export const proposals: Proposal[] = [
   {
     slug: 'nation',
     client: 'Nation',
-    hold: 'Can start Thu 15 Oct',
+    hold: 'Prepared for Nation / Oct 2026',
     kicker: 'Proposal · Nation · October 2026',
     title: 'A brand that says one thing: this makes you money.',
-    lede: 'Nation’s sellers aren’t tech people. Many are opening their first business, for their family. So the brand has to feel warm, look as serious as a company raising a Series A, and point every scroll at one action: start a store. Positioning, identity, a design system and the homepage, in four weeks.',
+    lede: 'Positioning, identity, a design system and the withnation.ai homepage. Three weeks, built so a first-time seller trusts Nation on the first screen and starts a store on the second.',
     meta: [
-      { label: 'Prepared for', value: 'Ira, Nation', note: '13 October 2026', icon: 'calendar' },
-      { label: 'Your time', value: '45 min / week', note: '30 min call + 15 min async', icon: 'clock' },
-      { label: 'Engagement', value: 'Brand + Website Sprint', note: '4 weeks, start to handover', icon: 'layers' },
-      { label: 'Investment', value: 'TBD', note: 'Confirmed after a quick call', icon: 'tag' },
+      { label: 'Brand and website sprints', value: '35+', icon: 'layers' },
+      { label: 'Raised by clients after their sprint', value: '$300M+', icon: 'tag' },
+      { label: 'Rating across every Contra review', value: '5.0', icon: 'users' },
+      { label: 'Contra Top 100, October 2026', value: '#4', icon: 'flag' },
     ],
-    week: {
-      heading: 'One slot of your choosing. Same time, every week.',
-      body: 'Pick a 30-minute slot anywhere between 10:00 and 18:00 New York time and keep it every week. Then spend 15 minutes leaving feedback in Figma whenever suits you.',
-      tz: 'New York time',
-      window: [10, 18],
-      call: 30,
-      review: 15,
-      caption: 'You’re launching. We keep the ask small so the build doesn’t slow down.',
-    },
+    order: ['split', 'rules', 'proof', 'reviews', 'run', 'schedule', 'investment', 'next'],
+    labels: { split: 'What we read', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
     split: {
-      heading: 'You make the calls. We do the work.',
+      heading: 'A nation of first-time owners.',
+      intro: 'Nation starts a store from one prompt and runs the products, pages, ads and growth. The people using it are not tech people. Many are opening their first business for their family. So the brand has to feel warm like a place you belong, look as serious as a company raising a Series A, and point every scroll at one action: start a store.',
       items: [
-        { label: 'You', text: 'Join one 30-minute call a week and make one decision on it. Share real sellers, real stores and real sales so the brand can show them.' },
-        {
-          label: 'Us',
-          text: 'Competitor teardown, positioning, copy, identity, the design system and the homepage. Daksh leads every call, and 2–3 senior designers do the work behind it.',
-        },
-      ],
-      line: 'No sparkles, no glowing orbs, no “powered by AI” badges. Real stores and real money, made bold.',
-    },
-    schedule: {
-      heading: 'Every call ends in a decision.',
-      body: 'Words come first, so the identity has something true to say. The brand locks in week 3 and the homepage is designed on top of it, overlapping the end of the brand work.',
-      sprints: [
-        {
-          name: 'Brand Sprint',
-          note: 'Where we start',
-          from: 1,
-          to: 3,
-          weeks: [
-            { week: 1, date: '15 Oct', bring: 'Onboarding call, a teardown of Shopify, Amboras and Whop, and the one-line positioning, story and descriptor', decide: 'Lock the line next to the name' },
-            { week: 2, date: '22 Oct', bring: 'Two identity directions, each shown on a storefront, an ad and a seller’s phone', decide: 'Pick one' },
-            { week: 3, date: '29 Oct', bring: 'Refined wordmark, symbol, color, type, imagery, voice and motion, plus core tokens', decide: 'Approve the brand' },
-          ],
-        },
-        {
-          name: 'Website Sprint',
-          note: 'Homepage',
-          from: 3,
-          to: 4,
-          weeks: [
-            { week: 3, date: '29 Oct', bring: 'Homepage structure and copy, in the same call as the brand approval', decide: 'Approve the messaging' },
-            { week: 4, date: '5 Nov', bring: 'withnation.ai homepage, desktop and mobile, plus the design system handover', decide: 'Launch date' },
-          ],
-        },
-      ],
-      decideBy: { week: 3, label: 'Brand locked 29 Oct' },
-      line: 'Even when the sprints overlap, it’s still one 30-minute call a week. If you need to launch sooner, the wordmark and core colors can be ready by week 2.',
-    },
-    deliverables: {
-      heading: 'What you get.',
-      groups: [
-        {
-          name: 'Brand Sprint',
-          note: '3 weeks',
-          items: [
-            'Positioning and messaging: the one-liner, the Nation story and the descriptor next to the name',
-            'A wordmark and symbol, with color, type, imagery, voice and motion',
-            {
-              text: 'A design system of tokens and core components, shared by the site and the product',
-              reference: { label: 'Replay design system', src: '/projects/replay.jpg', alt: 'Replay wordmark on a deep blue textured field', href: 'https://replay-brand-guidelines.vercel.app/#/in-action' },
-            },
-          ],
-        },
-        {
-          name: 'Website Sprint',
-          note: 'Weeks 3 to 4',
-          items: [
-            'The withnation.ai homepage narrative: whole product, Toast-level clear, ending in “start a store”',
-            'Homepage design, desktop and mobile, ready for your team to build',
-            'Component docs, so your team can extend the site and product without us',
-          ],
-        },
+        { label: 'Positioning: The line and the story', text: 'One-line positioning, the Nation story, and the descriptor that sits next to the name.' },
+        { label: 'Identity: Wordmark and symbol', text: 'Color, type, imagery, voice and motion. Bold enough to spot in an ad feed.' },
+        { label: 'System: Design system', text: 'Tokens and core components shared by the site and the product.' },
+        { label: 'Website: withnation.ai homepage', text: 'One page that explains the whole product, Toast-level clear, and ends in “start a store.”' },
       ],
     },
     rules: {
-      heading: 'It stays fast because the structure doesn’t bend.',
-      intro: 'Here’s what it depends on.',
+      heading: 'Show the money. Skip the AI magic.',
+      intro: 'Your sellers don’t care that it’s AI. They care that it sells. The proof is real stores, real products and real sales, and the brand should be built around that. Owner.com is clear but plain. We’d keep the clarity and add the character of Toast and Clay.',
       items: [
-        { icon: 'frame', label: 'Proof over promise', text: 'Real stores, real products and real first sales carry the brand. Send us what you have and we’ll design around it.' },
-        { icon: 'clock', label: 'The same slot', text: 'You choose it between 10:00 and 18:00 New York time, and it ends at 30 minutes.' },
-        { icon: 'message', label: 'Async by default', text: 'Work arrives as a Figma link and a short Loom. You review it in 15 minutes and comment where it matters.' },
-        { icon: 'flag', label: 'Launch first', text: 'If you go live on the current site this week, we swap the new brand in after. Nothing waits on us.' },
-        { icon: 'contact', label: 'One point of contact', text: 'Daksh.' },
+        { icon: 'flag', label: 'Leave out', text: 'Sparkles, glows and “powered by AI” badges. Generic SaaS dashboards. Stock photos of smiling founders.' },
+        { icon: 'frame', label: 'Bring in', text: 'Real stores, real products, real first sales. Nation cues (flag, passport, citizens) done warm, not kitsch. One ownable color people remember. A voice like a friend who has already done it.' },
       ],
-    },
-    investment: {
-      heading: 'Scoped together.',
-      lead: {
-        name: 'Brand + Website Sprint',
-        terms: '4 weeks · ~3 hours of your time',
-        price: 'TBD',
-        includes: 'Positioning and messaging, the full identity, a design system for site and product, and the withnation.ai homepage.',
-      },
-      addon: {
-        name: 'Homepage build',
-        terms: 'Optional',
-        includes: 'If you want us to build the homepage too, in Next.js, Webflow or Framer, we’ll scope it with you on the call.',
-      },
-      line: 'We’ll confirm a fixed price after a quick call on scope and your launch date.',
     },
     proof: {
       heading: 'Commerce, shoppers and products that make money.',
-      body: 'Picked for Nation: checkout, real shoppers, new revenue, and hard products made simple.',
+      body: 'Picked for Nation: checkout, real shoppers, new revenue, and complex products made simple.',
       items: [
         { client: 'Henry Labs', note: 'Embedded checkout for agentic commerce', href: '/case-studies/henrylabs', src: '/work/henry-labs.jpg', alt: 'Henry Labs brand on stage' },
         { client: 'Replay', note: 'Data as growth capital', href: 'https://www.replay.ai/', src: '/projects/replay.jpg', alt: 'Replay wordmark on a deep blue textured field' },
@@ -329,11 +267,63 @@ export const proposals: Proposal[] = [
         { client: 'CTGT', note: 'Interpretability for regulated industries', href: 'https://www.ctgt.ai/', src: '/projects/ctgt.jpg', alt: 'CTGT website hero over a misty mountain range' },
       ],
     },
+    reviews: {
+      heading: '5.0 on every review. Verified on Contra.',
+      body: 'PIXELUP LABS is a Verified Studio on Contra and ranked #4 on its Top 100 this month. Every quote below is a verified client review.',
+      items: [
+        { name: 'Daksh Gupta', role: 'Founder, Greptile', quote: 'Daksh is a tier-1 designer, with great taste, attention-to-detail, and strong product intuition. I highly recommend working with him.' },
+        { name: 'Sahitya S', role: 'SynthioLabs', quote: 'They not only get timelines (a rarity!) but truly understand the vision and story we, as founders, want to tell.' },
+        { name: 'Faaris Hussain', role: 'Co-Founder, Henry Labs', quote: 'They handled our landing page redesign and core product design, and the output speaks for itself. Fast, thoughtful, and easy to work with.' },
+        { name: 'Alli Minetti', role: 'Contra Labs', quote: 'Great experience with reliable communication, fast iteration, and implementing feedback quickly.' },
+      ],
+      line: '$500K+ earned on Contra · Hired 35x · 5.0 across 6 reviews',
+    },
+    run: {
+      heading: 'Three weeks. Something real every week.',
+      intro: 'Async in Figma, a short review call twice a week, and one owner on our side the whole way. Words come first, so the identity has something true to say.',
+      items: [
+        { icon: 'message', label: 'Days 1 to 3: Positioning', text: 'Kickoff, competitor read (Shopify, Amboras, Whop), then the one-liner, story and descriptor. Output: messaging doc.' },
+        { icon: 'frame', label: 'Week 1 to 2: Identity', text: 'Two directions, you pick one, we refine it into wordmark, symbol, color, type, imagery, voice and motion. Output: brand guidelines.' },
+        { icon: 'layers', label: 'Week 2: Design system', text: 'Tokens and core components built in Figma for both the site and the product. Output: Figma library + tokens.' },
+        { icon: 'flag', label: 'Week 3: Homepage', text: 'The withnation.ai homepage, desktop and mobile, with the launch motion. Output: dev-ready homepage.' },
+      ],
+    },
+    schedule: {
+      heading: 'Brand locked in week two. Homepage in week three.',
+      body: 'If you need to launch sooner, the wordmark and core colors can be ready by the end of week one.',
+      hideRows: true,
+      sprints: [
+        { name: 'Positioning', note: 'Messaging', from: 1, to: 1, weeks: [{ week: 1, bring: '', decide: '' }] },
+        { name: 'Identity', note: 'Directions to brand locked', from: 1, to: 2, weeks: [{ week: 2, bring: '', decide: '' }] },
+        { name: 'Design system', note: 'Tokens and components', from: 2, to: 3, weeks: [] },
+        { name: 'Homepage', note: 'Dev-ready', from: 3, to: 3, weeks: [{ week: 3, bring: '', decide: '' }] },
+      ],
+      line: 'Week 1: messaging and identity direction picked. Week 2: brand guidelines delivered. Week 3: system and homepage handed over.',
+    },
+    investment: {
+      heading: 'Investment: TBD.',
+      lead: {
+        name: 'Full sprint',
+        terms: '3 weeks · two rounds of revisions at every stage',
+        price: 'TBD',
+        includes: 'Positioning and messaging, full brand identity and guidelines, a design system in Figma, and the withnation.ai homepage, desktop and mobile.',
+      },
+      addon: { name: 'Ownership', terms: '100%', includes: 'All source files are yours on handover.' },
+      line: 'We’ll confirm a fixed price after a quick call on scope and launch date.',
+    },
+    next: {
+      heading: 'Let’s give Nation its flag.',
+      items: [
+        { icon: 'users', label: 'Step 1: Quick call', text: '20 minutes on the launch date, sellers we can feature, and what stays from the current site.' },
+        { icon: 'download', label: 'Step 2: Share access', text: 'Product, current Figma, any seller stories and sales numbers.' },
+        { icon: 'calendar', label: 'Step 3: Kick off', text: 'Messaging in your hands within three days.' },
+      ],
+    },
     cta: {
-      eyebrow: 'Let’s give Nation its flag',
-      email: 'daksh@pixeluplabs.com',
-      note: 'Book a 20-minute call on your launch date, the sellers we can feature and what stays from the current site. We can start Thursday, 15 Oct, with positioning in your hands within three days.',
-      reserve: { label: 'Book a call', href: 'https://cal.com/pixelup/discovery' },
+      eyebrow: 'Let’s give Nation its flag.',
+      email: 'hello@pixeluplabs.com',
+      note: 'Book a quick call: 20 minutes on the launch date, sellers we can feature, and what stays from the current site.',
+      reserve: { label: 'Book a quick call', href: 'https://cal.com/pixelup/discovery' },
     },
   },
 ];

@@ -1,6 +1,9 @@
 import Image from 'next/image';
-import type { CSSProperties } from 'react';
-import type { Proposal, ProposalDeliverable } from '@/content/proposals';
+import { Fragment } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import type { Proposal, ProposalDeliverable, ProposalSection } from '@/content/proposals';
+
+const DEFAULT_ORDER: ProposalSection[] = ['week', 'split', 'schedule', 'deliverables', 'rules', 'investment', 'proof'];
 import { ArrowSwap } from '../ui';
 import Collapse from './Collapse';
 import { Icon } from './icons';
@@ -22,6 +25,42 @@ function Head({ n, label, heading }: { n: number; label: string; heading: string
         {heading}
       </h2>
     </div>
+  );
+}
+
+type ItemList = NonNullable<Proposal['run']>;
+
+/** A titled section with an intro and an icon list: used for the approach, the run and the next steps. */
+function ItemSection({ n, label, list }: { n: number; label: string; list: ItemList }) {
+  return (
+    <section className="cs-section">
+      <div className="cs-text">
+        <Head n={n} label={label} heading={list.heading} />
+        <div className="cs-text__body">
+          {list.intro && (
+            <p className="cs-para" data-reveal="fade">
+              {list.intro}
+            </p>
+          )}
+          <dl className="cs-items prop-rules">
+            {list.items.map((it) => (
+              <div key={it.label} className="cs-item" data-reveal="fade">
+                <dt>
+                  <Icon name={it.icon} />
+                  {it.label}
+                </dt>
+                <dd>{it.text}</dd>
+              </div>
+            ))}
+          </dl>
+          {list.line && (
+            <p className="prop-line" data-reveal="fade">
+              {list.line}
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -55,7 +94,7 @@ function Deliverable({ item }: { item: Exclude<ProposalDeliverable, string> }) {
 }
 
 /** The booking window as a headline, with the two parts of the weekly ask under it. No slot is placed: the client picks it. */
-function WeekWindow({ week }: { week: Proposal['week'] }) {
+function WeekWindow({ week }: { week: NonNullable<Proposal['week']> }) {
   return (
     <figure className="pw" data-reveal="fade">
       <p className="pw__title">
@@ -73,15 +112,14 @@ function WeekWindow({ week }: { week: Proposal['week'] }) {
 
 /** Both sprints on one week axis, so the overlap and the decision point read at a glance. */
 function Timeline({ schedule }: { schedule: Proposal['schedule'] }) {
-  const dates = new Map<number, string>();
+  const dates = new Map<number, string | undefined>();
   schedule.sprints.forEach((s) => s.weeks.forEach((w) => dates.set(w.week, w.date)));
   const weeks = Array.from(dates.keys()).sort((a, b) => a - b);
-  const d = schedule.decideBy.week;
   return (
     <div className="pt" style={{ '--weeks': weeks.length } as Vars} data-reveal="fade" aria-hidden="true">
       {weeks.map((w) => (
         <span key={w} className="pt__week" style={{ gridColumn: w + 1 }}>
-          <b>W{w}</b> {dates.get(w)}
+          <b>W{w}</b> {dates.get(w) ?? ''}
         </span>
       ))}
       {schedule.sprints.map((s, i) => (
@@ -94,14 +132,276 @@ function Timeline({ schedule }: { schedule: Proposal['schedule'] }) {
           </span>
         </div>
       ))}
-      <span className="pt__decide" style={{ gridColumn: d + 1, gridRow: `2 / span ${schedule.sprints.length}` }}>
-        <span>{schedule.decideBy.label}</span>
-      </span>
+      {schedule.decideBy && (
+        <span className="pt__decide" style={{ gridColumn: schedule.decideBy.week + 1, gridRow: `2 / span ${schedule.sprints.length}` }}>
+          <span>{schedule.decideBy.label}</span>
+        </span>
+      )}
     </div>
   );
 }
 
 export default function ProposalView({ p }: { p: Proposal }) {
+  const order = p.order ?? DEFAULT_ORDER;
+  const num = (k: ProposalSection) => order.indexOf(k) + 1;
+  const label = (k: ProposalSection, d: string) => p.labels?.[k] ?? d;
+  const sections: Record<ProposalSection, ReactNode> = {
+    week: p.week && ((week) => (      <section className="cs-section prop-week" data-dock="badge">
+        <div className="cs-text">
+          <Head n={num('week')} label={label('week', 'Your week')} heading={week.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {week.body}
+            </p>
+          </div>
+        </div>
+        <WeekWindow week={week} />
+      </section>
+    ))(p.week),
+    split: (
+      <section className="cs-section">
+        <div className="cs-text">
+          <Head n={num('split')} label={label('split', 'How we split it')} heading={p.split.heading} />
+          <div className="cs-text__body">
+            {p.split.intro && (
+              <p className="cs-para" data-reveal="fade">
+                {p.split.intro}
+              </p>
+            )}
+            <dl className="cs-items prop-split">
+              {p.split.items.map((it) => (
+                <div key={it.label} className="cs-item" data-reveal="fade">
+                  <dt>{it.label}</dt>
+                  <dd>{it.text}</dd>
+                </div>
+              ))}
+            </dl>
+            {p.split.line && (
+              <p className="prop-line" data-reveal="fade">
+                {p.split.line}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    ),
+    schedule: (
+      <section className="cs-section prop-schedule">
+        <div className="cs-text">
+          <Head n={num('schedule')} label={label('schedule', 'How the weeks run')} heading={p.schedule.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {p.schedule.body}
+            </p>
+          </div>
+        </div>
+
+        <Timeline schedule={p.schedule} />
+
+        {!p.schedule.hideRows && (
+        <div className="ps">
+          {p.schedule.sprints.map((s) => {
+            // An optional sprint starts collapsed to its header; its rows skip the scroll reveal,
+            // which would measure them while hidden.
+            const reveal = s.optional ? undefined : 'fade';
+            const head = (
+              <div className="ps__head" data-reveal={reveal}>
+                <span className="ps__title">
+                  <h3 className="ps__name">{s.name}</h3>
+                  <span className="ps__badge">{s.note}</span>
+                </span>
+                <span className="ps__sum">
+                  <Icon name="clock" />
+                  {s.sum ?? `${s.weeks.length} calls · ~${(s.weeks.length * 45) / 60} hours of your time`}
+                  {s.detail && <span className="ps__detail">{s.detail}</span>}
+                </span>
+                {s.optional && (
+                  <span className="ps__toggle" aria-hidden="true">
+                    <span className="ps__toggle-open">Show the {s.weeks.length} weeks</span>
+                    <span className="ps__toggle-close">Hide the weeks</span>
+                    <i className="ps__plus" />
+                  </span>
+                )}
+              </div>
+            );
+            const list = (
+              <ol className="ps__list">
+                {s.weeks.map((w) => (
+                  <li key={w.week} className="ps__row" data-reveal={reveal}>
+                    <span className="ps__wk">
+                      <span className="ps__num">{pad(w.week)}</span>
+                      <span className="ps__date">{w.date ? `Week · ${w.date}` : `Week ${w.week}`}</span>
+                    </span>
+                    <div className="ps__bring">
+                      <span className="ps__label">{p.schedule.labels?.bring ?? 'We bring'}</span>
+                      <p>{w.bring}</p>
+                    </div>
+                    <div className="ps__decide">
+                      <span className="ps__label">{p.schedule.labels?.decide ?? 'You decide'}</span>
+                      <p className="ps__decision">{w.decide}</p>
+                      {w.flag && (
+                        <p className="ps__flag">
+                          <Icon name="flag" />
+                          {w.flag}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            );
+            return s.optional ? (
+              <Collapse key={s.name} className="ps__group" data-optional summary={head}>
+                {list}
+              </Collapse>
+            ) : (
+              <div key={s.name} className="ps__group">
+                {head}
+                {list}
+              </div>
+            );
+          })}
+          <p className="prop-line ps__line" data-reveal="fade">
+            {p.schedule.line}
+          </p>
+        </div>
+        )}
+        {p.schedule.hideRows && (
+          <p className="prop-line ps__line" data-reveal="fade">
+            {p.schedule.line}
+          </p>
+        )}
+      </section>
+    ),
+    deliverables: p.deliverables && ((deliverables) => (      <section className="cs-section">
+        <div className="cs-text">
+          <Head n={num('deliverables')} label={label('deliverables', 'Deliverables')} heading={deliverables.heading} />
+          <div className="cs-text__body prop-get">
+            {deliverables.groups.map((g) => (
+              <div key={g.name} className="prop-get__group" data-optional={g.optional || undefined}>
+                <p className="prop-get__name" data-reveal="fade">
+                  {g.name} <span>{g.note}</span>
+                </p>
+                <ul className="prop-get__list">
+                  {g.items.map((it) => (
+                    <li key={typeof it === 'string' ? it : it.text} data-reveal="fade">
+                      {typeof it === 'string' ? it : <Deliverable item={it} />}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))(p.deliverables),
+    rules: p.rules && ((rules) => (      <section className="cs-section">
+        <div className="cs-text">
+          <Head n={num('rules')} label={label('rules', 'Why it works')} heading={rules.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {rules.intro}
+            </p>
+            <dl className="cs-items prop-rules">
+              {rules.items.map((it) => (
+                <div key={it.label} className="cs-item" data-reveal="fade">
+                  <dt>
+                    <Icon name={it.icon} />
+                    {it.label}
+                  </dt>
+                  <dd>{it.text}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
+    ))(p.rules),
+    investment: (
+      <section className="cs-section prop-invest">
+        <div className="cs-text">
+          <Head n={num('investment')} label={label('investment', 'Investment')} heading={p.investment.heading} />
+          <div className="cs-text__body">
+            <div className="prop-price" data-reveal="fade">
+              <p className="prop-price__name">
+                {p.investment.lead.name} <span>{p.investment.lead.terms}</span>
+              </p>
+              <p className="prop-price__num">{p.investment.lead.price}</p>
+              <p className="cs-para">{p.investment.lead.includes}</p>
+            </div>
+            {p.investment.addon && ((addon) => (
+            <div className="prop-price prop-price--addon" data-reveal="fade">
+              <p className="prop-price__name">
+                {addon.name} <span>{addon.terms}</span>
+              </p>
+              <p className="cs-para">{addon.includes}</p>
+            </div>
+            ))(p.investment.addon)}
+            <p className="prop-line" data-reveal="fade">
+              {p.investment.line}
+            </p>
+          </div>
+        </div>
+      </section>
+    ),
+    proof: (
+      <section className="cs-section prop-proof">
+        <div className="cs-text">
+          <Head n={num('proof')} label={label('proof', 'Proof')} heading={p.proof.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {p.proof.body}
+            </p>
+          </div>
+        </div>
+        <div className="prop-proof__row">
+          {p.proof.items.map((it) => (
+            <a key={it.client} href={it.href} className="pp" data-cursor="View case study">
+              <figure className="pp__media" data-media>
+                <div className="frame__zoom">
+                  <Image src={it.src} alt={it.alt} fill sizes="(min-width: 768px) 48vw, 100vw" quality={80} draggable={false} />
+                </div>
+              </figure>
+              <span className="pp__meta">
+                <span className="pp__client">{it.client}</span>
+                <span className="pp__note">{it.note}</span>
+                <ArrowSwap rotate={-45} />
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ),
+    run: p.run && <ItemSection n={num('run')} label={label('run', 'How we’d run it')} list={p.run} />,
+    next: p.next && <ItemSection n={num('next')} label={label('next', 'Next steps')} list={p.next} />,
+    reviews: p.reviews && (
+      <section className="cs-section">
+        <div className="cs-text">
+          <Head n={num('reviews')} label={label('reviews', 'Reviews')} heading={p.reviews.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {p.reviews.body}
+            </p>
+            <dl className="cs-items prop-split">
+              {p.reviews.items.map((it) => (
+                <div key={it.name} className="cs-item" data-reveal="fade">
+                  <dt>
+                    {it.name}, {it.role}
+                  </dt>
+                  <dd>“{it.quote}”</dd>
+                </div>
+              ))}
+            </dl>
+            {p.reviews.line && (
+              <p className="prop-line" data-reveal="fade">
+                {p.reviews.line}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    ),
+  };
   return (
     <>
       <section className="cs-intro prop-intro" aria-labelledby="prop-title">
@@ -130,211 +430,9 @@ export default function ProposalView({ p }: { p: Proposal }) {
         </dl>
       </section>
 
-      <section className="cs-section prop-week" data-dock="badge">
-        <div className="cs-text">
-          <Head n={1} label="Your week" heading={p.week.heading} />
-          <div className="cs-text__body">
-            <p className="cs-para" data-reveal="fade">
-              {p.week.body}
-            </p>
-          </div>
-        </div>
-        <WeekWindow week={p.week} />
-      </section>
-
-      <section className="cs-section">
-        <div className="cs-text">
-          <Head n={2} label="How we split it" heading={p.split.heading} />
-          <div className="cs-text__body">
-            <dl className="cs-items prop-split">
-              {p.split.items.map((it) => (
-                <div key={it.label} className="cs-item" data-reveal="fade">
-                  <dt>{it.label}</dt>
-                  <dd>{it.text}</dd>
-                </div>
-              ))}
-            </dl>
-            <p className="prop-line" data-reveal="fade">
-              {p.split.line}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="cs-section prop-schedule">
-        <div className="cs-text">
-          <Head n={3} label="How the weeks run" heading={p.schedule.heading} />
-          <div className="cs-text__body">
-            <p className="cs-para" data-reveal="fade">
-              {p.schedule.body}
-            </p>
-          </div>
-        </div>
-
-        <Timeline schedule={p.schedule} />
-
-        <div className="ps">
-          {p.schedule.sprints.map((s) => {
-            // An optional sprint starts collapsed to its header; its rows skip the scroll reveal,
-            // which would measure them while hidden.
-            const reveal = s.optional ? undefined : 'fade';
-            const head = (
-              <div className="ps__head" data-reveal={reveal}>
-                <span className="ps__title">
-                  <h3 className="ps__name">{s.name}</h3>
-                  <span className="ps__badge">{s.note}</span>
-                </span>
-                <span className="ps__sum">
-                  <Icon name="clock" />
-                  {s.weeks.length} calls · ~{(s.weeks.length * 45) / 60} hours of your time
-                  {s.detail && <span className="ps__detail">{s.detail}</span>}
-                </span>
-                {s.optional && (
-                  <span className="ps__toggle" aria-hidden="true">
-                    <span className="ps__toggle-open">Show the {s.weeks.length} weeks</span>
-                    <span className="ps__toggle-close">Hide the weeks</span>
-                    <i className="ps__plus" />
-                  </span>
-                )}
-              </div>
-            );
-            const list = (
-              <ol className="ps__list">
-                {s.weeks.map((w) => (
-                  <li key={w.week} className="ps__row" data-reveal={reveal}>
-                    <span className="ps__wk">
-                      <span className="ps__num">{pad(w.week)}</span>
-                      <span className="ps__date">Week · {w.date}</span>
-                    </span>
-                    <div className="ps__bring">
-                      <span className="ps__label">We bring</span>
-                      <p>{w.bring}</p>
-                    </div>
-                    <div className="ps__decide">
-                      <span className="ps__label">You decide</span>
-                      <p className="ps__decision">{w.decide}</p>
-                      {w.flag && (
-                        <p className="ps__flag">
-                          <Icon name="flag" />
-                          {w.flag}
-                        </p>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            );
-            return s.optional ? (
-              <Collapse key={s.name} className="ps__group" data-optional summary={head}>
-                {list}
-              </Collapse>
-            ) : (
-              <div key={s.name} className="ps__group">
-                {head}
-                {list}
-              </div>
-            );
-          })}
-          <p className="prop-line ps__line" data-reveal="fade">
-            {p.schedule.line}
-          </p>
-        </div>
-      </section>
-
-      <section className="cs-section">
-        <div className="cs-text">
-          <Head n={4} label="Deliverables" heading={p.deliverables.heading} />
-          <div className="cs-text__body prop-get">
-            {p.deliverables.groups.map((g) => (
-              <div key={g.name} className="prop-get__group" data-optional={g.optional || undefined}>
-                <p className="prop-get__name" data-reveal="fade">
-                  {g.name} <span>{g.note}</span>
-                </p>
-                <ul className="prop-get__list">
-                  {g.items.map((it) => (
-                    <li key={typeof it === 'string' ? it : it.text} data-reveal="fade">
-                      {typeof it === 'string' ? it : <Deliverable item={it} />}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="cs-section">
-        <div className="cs-text">
-          <Head n={5} label="Why it works" heading={p.rules.heading} />
-          <div className="cs-text__body">
-            <p className="cs-para" data-reveal="fade">
-              {p.rules.intro}
-            </p>
-            <dl className="cs-items prop-rules">
-              {p.rules.items.map((it) => (
-                <div key={it.label} className="cs-item" data-reveal="fade">
-                  <dt>
-                    <Icon name={it.icon} />
-                    {it.label}
-                  </dt>
-                  <dd>{it.text}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </section>
-
-      <section className="cs-section prop-invest">
-        <div className="cs-text">
-          <Head n={6} label="Investment" heading={p.investment.heading} />
-          <div className="cs-text__body">
-            <div className="prop-price" data-reveal="fade">
-              <p className="prop-price__name">
-                {p.investment.lead.name} <span>{p.investment.lead.terms}</span>
-              </p>
-              <p className="prop-price__num">{p.investment.lead.price}</p>
-              <p className="cs-para">{p.investment.lead.includes}</p>
-            </div>
-            <div className="prop-price prop-price--addon" data-reveal="fade">
-              <p className="prop-price__name">
-                {p.investment.addon.name} <span>{p.investment.addon.terms}</span>
-              </p>
-              <p className="cs-para">{p.investment.addon.includes}</p>
-            </div>
-            <p className="prop-line" data-reveal="fade">
-              {p.investment.line}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="cs-section prop-proof">
-        <div className="cs-text">
-          <Head n={7} label="Proof" heading={p.proof.heading} />
-          <div className="cs-text__body">
-            <p className="cs-para" data-reveal="fade">
-              {p.proof.body}
-            </p>
-          </div>
-        </div>
-        <div className="prop-proof__row">
-          {p.proof.items.map((it) => (
-            <a key={it.client} href={it.href} className="pp" data-cursor="View case study">
-              <figure className="pp__media" data-media>
-                <div className="frame__zoom">
-                  <Image src={it.src} alt={it.alt} fill sizes="(min-width: 768px) 48vw, 100vw" quality={80} draggable={false} />
-                </div>
-              </figure>
-              <span className="pp__meta">
-                <span className="pp__client">{it.client}</span>
-                <span className="pp__note">{it.note}</span>
-                <ArrowSwap rotate={-45} />
-              </span>
-            </a>
-          ))}
-        </div>
-      </section>
+      {order.map((k) => (
+        <Fragment key={k}>{sections[k]}</Fragment>
+      ))}
     </>
   );
 }

@@ -42,6 +42,21 @@ const SIZES: Record<string, [number, number]> = {
   '/work/openai-poster.jpg': [1080, 1350],
   '/work/openai-system.jpg': [1138, 640],
   '/work/sainapse-monitor.jpg': [2320, 1392],
+  // Studies posted on X (@dakshpixelup), picked by Daksh, 13 Oct 2026
+  '/explorations/x/pogo-site-hero.jpg': [1800, 1638],
+  '/explorations/x/pogo-site-voices.jpg': [1800, 1534],
+  '/explorations/x/pogo-site-use-cases.jpg': [1800, 1366],
+  '/explorations/x/leads-landing-study.jpg': [1800, 1012],
+  '/explorations/x/early-web-exploration.jpg': [1800, 1800],
+  '/explorations/x/replay-brand-film.mp4': [540, 675],
+  '/explorations/x/replay-rejected-1.jpg': [1170, 1560],
+  '/explorations/x/replay-rejected-2.jpg': [1170, 1560],
+  '/explorations/x/replay-rejected-3.jpg': [1170, 1560],
+  '/explorations/x/replay-rejected-4.jpg': [1170, 1560],
+  '/explorations/x/sculpted-lion.jpg': [448, 657],
+  '/explorations/x/flattened-lion.jpg': [448, 657],
+  '/explorations/x/corrupt-mono.jpg': [1443, 1800],
+  '/explorations/x/corrupt-red.jpg': [1443, 1800],
 };
 
 // Studies that live in the work collage rather than a project gallery.
@@ -52,7 +67,21 @@ const EXTRA: Record<string, string[]> = {
 
 type Source = { title: string; kind: string; year: number; href?: string; alt: string; srcs: string[] };
 
+// Posts from X, first in the tunnel. Each card opens the original post.
+const x = (id: string) => `https://x.com/dakshpixelup/status/${id}`;
+const X = (name: string) => `/explorations/x/${name}`;
+const posts: Source[] = [
+  { title: 'Replay', kind: 'Brand film', year: 2026, href: x('2104821180394099043'), alt: 'Replay brand system in motion: posters, cards and the winged-horse mark', srcs: [X('replay-brand-film.mp4')] },
+  { title: 'Sculpted, then flattened', kind: 'Identity study', year: 2026, href: x('2108218399746920755'), alt: 'A lion mark rendered in sculpted gold, then flattened to a single colour, over Frontier Intelligence type', srcs: [X('sculpted-lion.jpg'), X('flattened-lion.jpg')] },
+  { title: 'Pogo', kind: 'Website', year: 2026, href: x('2069743275255431498'), alt: 'Pogo website explorations made with the team after their $32M raise', srcs: [X('pogo-site-hero.jpg'), X('pogo-site-voices.jpg'), X('pogo-site-use-cases.jpg')] },
+  { title: 'Corrupt', kind: 'Poster study', year: 2026, href: x('2108514834090430903'), alt: 'Real data, corrupt: glitched statue posters with a data record panel', srcs: [X('corrupt-mono.jpg'), X('corrupt-red.jpg')] },
+  { title: 'Replay', kind: 'Rejected concepts', year: 2026, href: x('2104156349429133671'), alt: 'Rejected Replay website concepts with engraved landscapes and a winged-horse statue', srcs: [X('replay-rejected-2.jpg'), X('replay-rejected-3.jpg'), X('replay-rejected-4.jpg'), X('replay-rejected-1.jpg')] },
+  { title: 'Early exploration', kind: 'Website', year: 2026, href: x('2080629335946674471'), alt: 'Early website exploration with a modular how-it-works layout', srcs: [X('early-web-exploration.jpg')] },
+  { title: 'High-intent leads', kind: 'Landing study', year: 2026, href: x('2071536655627067730'), alt: 'Landing page study: AI that finds high-intent leads, surrounded by a collage of product cards', srcs: [X('leads-landing-study.jpg')] },
+];
+
 const sources: Source[] = [
+  ...posts,
   ...projects.map((p) => ({
     title: p.client,
     kind: p.industry,

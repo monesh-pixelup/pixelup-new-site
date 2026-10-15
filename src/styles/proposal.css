@@ -697,12 +697,19 @@ main[data-page='proposal'] + .foot .foot__email {
    Your references — the client's own picks, shown as tall phone crops
 ---------------------------------------------------------------- */
 .prop-refs__row {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: calc(4 * var(--u));
   margin-bottom: max(24px, calc(32 * var(--u)));
 }
 .prop-refs .pp__media {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 5 / 3;
+}
+/* Seven references: the lead one runs full width, then three rows of two. */
+.prop-refs__row .pp:first-child {
+  grid-column: 1 / -1;
+}
+.prop-refs__row .pp:first-child .pp__media {
+  aspect-ratio: 12 / 5;
 }
 .prop-refs .pp__media img {
   object-position: top;
@@ -713,7 +720,15 @@ main[data-page='proposal'] + .foot .foot__email {
 }
 @media (max-width: 767px) {
   .prop-refs__row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
   }
+  .prop-refs__row .pp:first-child .pp__media {
+    aspect-ratio: 5 / 3;
+  }
+}
+
+/* Proposals are read top to bottom: no mark over the copy. */
+body:has([data-page='proposal']) .mark {
+  display: none;
 }

@@ -8,6 +8,9 @@ import { clamp, lerpDock, smoothstep } from './math';
 
 const still = { rx: 0, ry: 0, rz: 0 };
 
+/** When false, the mark stays in the hero and scrolls away instead of docking to every section. */
+const STICKY = false;
+
 /** Every page except the home hero: the original placement, bottom right of the first screen. */
 function cornerDock(vp: Viewport): Dock {
   if (vp.mobile) {
@@ -129,7 +132,12 @@ export function buildStops(vp: Viewport): DockStop[] {
   const collage = document.querySelector('[data-dock="collage"]');
   const intro = document.querySelector('.cs-intro, .blog-intro');
   const home = document.querySelector('.hero');
-  const stops: DockStop[] = [{ at: 0, dock: collage ? collageDock : intro ? introDock : home ? heroDock : cornerDock }];
+  const first = collage ? collageDock : intro ? introDock : home ? heroDock : cornerDock;
+  if (!STICKY) {
+    // The mark belongs to the hero: it keeps its hero pose and scrolls away with the page.
+    return [{ at: 0, dock: (v, scroll) => { const d = first(v); return { ...d, y: d.y - scroll }; } }];
+  }
+  const stops: DockStop[] = [{ at: 0, dock: first }];
   const scrollY = window.scrollY;
   const work = document.getElementById('work');
   const news = document.getElementById('news');

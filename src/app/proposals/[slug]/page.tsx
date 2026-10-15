@@ -32,7 +32,7 @@ export default async function ProposalPage({ params }: Props) {
   return (
     <>
       <Header status={p.hold} />
-      <main data-page="proposal">
+      <main data-page="proposal" data-smooth={p.smoothScroll === false ? 'off' : undefined}>
         <ProposalView p={p} />
       </main>
       <Footer

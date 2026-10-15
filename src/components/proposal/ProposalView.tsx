@@ -334,6 +334,7 @@ export default function ProposalView({ p }: { p: Proposal }) {
               <p className="prop-price__name">
                 {addon.name} <span>{addon.terms}</span>
               </p>
+              {addon.price && <p className="prop-price__num">{addon.price}</p>}
               <p className="cs-para">{addon.includes}</p>
             </div>
             ))(p.investment.addon)}
@@ -398,7 +399,7 @@ export default function ProposalView({ p }: { p: Proposal }) {
             <a key={it.name} href={it.href} target="_blank" rel="noreferrer" className="pp" data-cursor="Visit">
               <figure className="pp__media" data-media>
                 <div className="frame__zoom">
-                  <Image src={it.src} alt={it.alt} fill sizes="(min-width: 768px) 24vw, 50vw" quality={85} draggable={false} />
+                  <Image src={it.src} alt={it.alt} fill sizes="(min-width: 768px) 50vw, 100vw" quality={85} draggable={false} />
                 </div>
               </figure>
               <span className="pp__meta">
@@ -421,6 +422,7 @@ export default function ProposalView({ p }: { p: Proposal }) {
     ),
     run: p.run && <ItemSection n={num('run')} label={label('run', 'How we’d run it')} list={p.run} />,
     next: p.next && <ItemSection n={num('next')} label={label('next', 'Next steps')} list={p.next} />,
+    extras: p.extras && <ItemSection n={num('extras')} label={label('extras', 'Also available')} list={p.extras} />,
     reviews: p.reviews && (
       <section className="cs-section">
         <div className="cs-text">

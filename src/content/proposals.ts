@@ -8,7 +8,7 @@ export type ProposalWeek = { week: number; date?: string; bring: string; decide:
 export type ProposalDeliverable = string | { text: string; reference: { label: string; src: string; alt: string; href?: string } };
 
 /** The page's sections, in the default order. A proposal can reorder or drop them with `order`. */
-export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next' | 'references';
+export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next' | 'references' | 'extras';
 
 /** An icon list section (the run, the next steps). */
 export type ProposalList = { heading: string; intro?: string; items: { label: string; text: string; icon: IconName }[]; line?: string };
@@ -20,6 +20,8 @@ export type Proposal = {
   labels?: Partial<Record<ProposalSection, string>>;
   slug: string;
   client: string;
+  /** Set false to turn off smooth (Lenis) scrolling on this proposal. */
+  smoothScroll?: boolean;
   /** Shown in the header status and the footer CTA. */
   hold: string;
   kicker: string;
@@ -65,11 +67,13 @@ export type Proposal = {
   };
   run?: ProposalList;
   next?: ProposalList;
+  /** Extra services offered alongside the sprint (launch videos, AEO and so on). */
+  extras?: ProposalList;
   reviews?: { heading: string; body: string; items: { name: string; role: string; quote: string }[]; line?: string };
   investment: {
     heading: string;
     lead: { name: string; terms: string; price: string; includes: string };
-    addon?: { name: string; terms: string; includes: string };
+    addon?: { name: string; terms: string; price?: string; includes: string };
     line: string;
   };
   proof: { heading: string; body: string; items: { client: string; note: string; href: string; src: string; alt: string }[] };
@@ -248,17 +252,20 @@ export const proposals: Proposal[] = [
     order: ['split', 'references', 'rules', 'run', 'schedule', 'proof', 'reviews', 'investment', 'next'],
     labels: { split: 'What we read', references: 'Your references', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
     references: {
-      heading: 'Your references all sell the same thing: the business, not the software.',
-      intro: 'Owner, Toast, GlossGenius and AppLovin look nothing alike, but they make the same three moves. That’s the bar for Nation.',
+      heading: 'Your references all sell the business, not the software.',
+      intro: 'Shopify, Squarespace, Owner, Toast, GlossGenius, Propel and AppLovin look nothing alike. But they all make the same three moves, and that’s the bar for Nation.',
       themes: [
-        { icon: 'users', label: 'Real businesses up front', text: 'A chef on the line, a salon front desk, real products on a table. The owner and their work are the hero, never a dashboard.' },
-        { icon: 'message', label: 'One plain promise', text: '“Built for busy.” “Handled.” “Grow your business.” Short, confident, and about the outcome, not the AI.' },
-        { icon: 'flag', label: 'One action, right there', text: 'Your restaurant’s name, your email, launch a campaign. The first step sits in the hero, so starting feels small.' },
+        { icon: 'users', label: 'Real people up front', text: 'A founder at work, a chef on the line, a salon front desk, a shopper on her phone. The owner and their work are the hero, never a dashboard.' },
+        { icon: 'message', label: 'One plain promise', text: '“Be the next household name.” “Built for busy.” “Handled.” “Grow your business.” Short, confident, about the outcome, not the AI.' },
+        { icon: 'flag', label: 'One action, right there', text: 'Start for free, your email, your restaurant’s name. The first step sits in the hero, so starting feels small.' },
       ],
       items: [
-        { name: 'Owner', note: 'Promise and proof in one screen', href: 'https://www.owner.com/', src: '/proposals/nation/owner.jpg', alt: 'Owner.com homepage hero with a restaurant website health score' },
+        { name: 'Shopify', note: 'Be the next household name', href: 'https://www.shopify.com/', src: '/proposals/nation/shopify.jpg', alt: 'Shopify homepage hero: Be the next household name' },
+        { name: 'Squarespace', note: 'Real small businesses as the product shot', href: 'https://www.squarespace.com/', src: '/proposals/nation/squarespace.jpg', alt: 'Squarespace homepage showing real small business websites' },
+        { name: 'Owner', note: 'Promise and proof in one screen', href: 'https://www.owner.com/', src: '/proposals/nation/owner.jpg', alt: 'Owner.com homepage hero with a restaurant search and phone' },
         { name: 'Toast', note: 'A real kitchen, one bold color', href: 'https://pos.toasttab.com/', src: '/proposals/nation/toast.jpg', alt: 'Toast homepage hero: Built For Busy over a chef at work' },
-        { name: 'GlossGenius', note: 'Warm, human, calm', href: 'https://glossgenius.com/', src: '/proposals/nation/glossgenius.jpg', alt: 'GlossGenius homepage hero over a salon front desk' },
+        { name: 'GlossGenius', note: 'Warm, human, calm', href: 'https://glossgenius.com/', src: '/proposals/nation/glossgenius.jpg', alt: 'GlossGenius homepage hero: Scheduling, payments, and admin. Handled.' },
+        { name: 'Propel', note: 'Everyday people, everyday money', href: 'https://www.propel.app/', src: '/proposals/nation/propel.jpg', alt: 'Propel homepage hero: a shopper checking her phone outside a store' },
         { name: 'AppLovin', note: 'Real products, real owners', href: 'https://www.applovin.com/', src: '/proposals/nation/applovin.jpg', alt: 'AppLovin homepage collage of small business products and founders' },
       ],
       line: 'Nation takes the same three moves further: real sellers and their first sales, one promise (this makes you money), and “start a store” on every screen. Here’s how we’d get there.',
@@ -348,6 +355,123 @@ export const proposals: Proposal[] = [
       email: 'hello@pixeluplabs.com',
       note: 'Book a quick call: 20 minutes on the launch date, sellers we can feature, and what stays from the current site.',
       reserve: { label: 'Book a quick call', href: 'https://cal.com/pixelup/discovery' },
+    },
+  },
+  {
+    slug: 'peak',
+    client: 'Peak',
+    smoothScroll: false,
+    hold: 'Can start next week',
+    kicker: 'Proposal · Peak · October 2026',
+    title: 'A brand engineers trust on the first read.',
+    lede: 'Positioning, identity, a design foundation your engineers can build from, and a launch site: a landing page plus 3 to 4 pages. About eight weeks, starting next week, so Peak leaves stealth looking like the company it already is.',
+    meta: [
+      { label: 'Brand projects shipped', value: '40+', icon: 'layers' },
+      { label: 'Raised by clients after their sprint', value: '$300M+', icon: 'tag' },
+      { label: 'Rating across every Contra review', value: '5.0', icon: 'users' },
+      { label: 'Project slots left this quarter', value: '2', icon: 'calendar' },
+    ],
+    order: ['split', 'rules', 'run', 'schedule', 'proof', 'reviews', 'investment', 'extras', 'next'],
+    labels: { split: 'What we heard', rules: 'How we’d approach it', run: 'How we’d run it', schedule: 'Timeline', proof: 'Selected work', reviews: 'Proof', extras: 'For launch day', next: 'Next steps' },
+    split: {
+      heading: 'Real customers. Temporary brand.',
+      intro: 'Peak is a month old and already running for teams like Catalyst. It sells to infrastructure, platform and DevX engineers at well-funded Series A to C companies that ship a lot of code, in the same space as Modal, Depot, Blacksmith and Buildkite. The product is ahead of the brand. The job is to close that gap before you exit stealth and start the sales push.',
+      items: [
+        { label: 'Positioning: Where Peak wins', text: 'A one-line position, the Peak story and messaging, set against Modal, Depot, Blacksmith and Buildkite.' },
+        { label: 'Identity: Wordmark and symbol', text: 'Color, type, imagery, voice and motion. Distinct in one glance on a crowded shelf.' },
+        { label: 'Design foundation: Built to build from', text: 'A design language and framework your engineers can build the product and docs from directly.' },
+        { label: 'Website: The launch site', text: 'A landing page plus 3 to 4 pages, designed and built end to end, ready for the day you go public.' },
+      ],
+    },
+    rules: {
+      heading: 'Show the speed. Skip the hype.',
+      intro: 'Engineers tune out marketing. They read the docs before the homepage and trust numbers over adjectives. The brand should feel like the product: fast, precise and honest about what it does, with proof on every page.',
+      items: [
+        { icon: 'flag', label: 'Leave out', text: 'Neon gradients and rocket metaphors. Vague “10x faster” claims with no numbers. Stock dev illustrations and fake dashboards.' },
+        { icon: 'frame', label: 'Bring in', text: 'Real terminal output, configs and pipelines. Build and benchmark data that reads in one glance. Docs-grade typography on a tight grid. One system across site, docs, product and launch.' },
+      ],
+    },
+    run: {
+      heading: 'Eight weeks. 45 minutes a week from you.',
+      intro: 'You work directly with Daksh as creative director, with no account or project managers. Two senior designers join: one on brand strategy, one on web. Each week is a 30-minute review and 15 minutes of Figma feedback, plus Slack for quick questions.',
+      items: [
+        { icon: 'message', label: 'Week 1: Discovery', text: 'Your product, your vision for Peak, and the landscape: where Modal, Depot, Blacksmith and Buildkite sit, and where Peak wins. Output: positioning brief.' },
+        { icon: 'frame', label: 'Weeks 1 to 3: Brand strategy and direction', text: 'Close collaboration to validate direction early: positioning, visuals and messaging in one strategy deck. Output: design strategy deck.' },
+        { icon: 'layers', label: 'Weeks 3 to 5: Design foundation', text: 'Identity, type, color, components and motion, polished through milestone reviews into a framework engineers build from. Output: brand system in Figma.' },
+        { icon: 'flag', label: 'Weeks 6 to 8: Website', text: 'A landing page plus 3 to 4 pages, end to end: structure, all assets, motion design and development. Output: live launch site.' },
+      ],
+    },
+    schedule: {
+      heading: 'Brand locked in week five. Site live by week eight.',
+      body: 'Direction is validated in the first two to three weeks, so everything after it is polish, not rework.',
+      hideRows: true,
+      sprints: [
+        { name: 'Discovery', note: 'Positioning brief', from: 1, to: 1, weeks: [{ week: 1, bring: '', decide: '' }] },
+        { name: 'Brand strategy', note: 'Direction validated', from: 1, to: 3, weeks: [{ week: 2, bring: '', decide: '' }, { week: 3, bring: '', decide: '' }] },
+        { name: 'Design foundation', note: 'Brand system', from: 3, to: 5, weeks: [{ week: 4, bring: '', decide: '' }, { week: 5, bring: '', decide: '' }] },
+        { name: 'Website', note: 'Launch site', from: 6, to: 8, weeks: [{ week: 6, bring: '', decide: '' }, { week: 7, bring: '', decide: '' }, { week: 8, bring: '', decide: '' }] },
+      ],
+      line: 'Week 1: positioning brief. Week 3: brand direction signed off. Week 5: brand system handed over. Week 8: website live, ready to exit stealth.',
+    },
+    proof: {
+      heading: 'Technical products, made to look credible.',
+      body: 'We work only with B2B companies heading to Series B and upmarket. Picked for Peak: developer tools and infrastructure sold to technical buyers.',
+      items: [
+        { client: 'Greptile', note: 'AI code review, then a $25M Series A', href: '/case-studies/greptile', src: '/projects/greptile.jpg', alt: 'Greptile mark rendered as a glowing green glass object' },
+        { client: 'Replay', note: 'Working with the biggest frontier labs', href: 'https://www.replay.ai/', src: '/projects/replay.jpg', alt: 'Replay wordmark on a deep blue textured field' },
+        { client: 'Reducto', note: 'Document AI infrastructure, $75M raised', href: 'https://reducto.ai/', src: '/projects/reducto.jpg', alt: 'Reducto wordmark on a light grid with pixel patterns' },
+        { client: 'CTGT', note: 'Now serving Fortune 100 companies', href: 'https://www.ctgt.ai/', src: '/projects/ctgt.jpg', alt: 'CTGT website hero over a misty mountain range' },
+      ],
+    },
+    reviews: {
+      heading: '5.0 on every review. Verified on Contra.',
+      body: 'PIXELUP LABS is a Verified Studio on Contra and ranked #4 on its Top 100 this month. Every quote below is a verified client review.',
+      items: [
+        { name: 'Daksh Gupta', role: 'Founder, Greptile', quote: 'Daksh is a tier-1 designer, with great taste, attention-to-detail, and strong product intuition. I highly recommend working with him.' },
+        { name: 'Sahitya S', role: 'SynthioLabs', quote: 'They not only get timelines (a rarity!) but truly understand the vision and story we, as founders, want to tell.' },
+        { name: 'Faaris Hussain', role: 'Co-Founder, Henry Labs', quote: 'They handled our landing page redesign and core product design, and the output speaks for itself. Fast, thoughtful, and easy to work with.' },
+        { name: 'Alli Minetti', role: 'Contra Labs', quote: 'Great experience with reliable communication, fast iteration, and implementing feedback quickly.' },
+      ],
+      line: '$500K+ earned on Contra · Hired 35x · 5.0 across 6 reviews',
+    },
+    investment: {
+      heading: 'Brand + Website: $20,576.',
+      lead: {
+        name: 'Brand Sprint',
+        terms: '4 to 5 weeks · starts next week',
+        price: '$11,977',
+        includes: 'Discovery and competitive landscape, a design strategy deck covering positioning, visuals and messaging, the full identity, and a design foundation your engineers build from.',
+      },
+      addon: {
+        name: 'Website Sprint',
+        terms: '3 weeks · with the Brand Sprint',
+        price: '$8,599',
+        includes: 'A landing page plus 3 to 4 pages, designed and built end to end, with all assets and motion. $12,977 as a standalone Website Sprint.',
+      },
+      line: 'Together: $20,576 for about eight weeks. The website costs less on top of the Brand Sprint because the system, assets and messaging already exist. All source files are yours on handover.',
+    },
+    extras: {
+      heading: 'We also cover launch videos and AEO.',
+      intro: 'When Peak comes out of stealth, we can help with the launch itself, built on the same brand. Scoped and priced separately, whenever you need them.',
+      items: [
+        { icon: 'play', label: 'Launch videos', text: 'Motion-led launch films and product walkthroughs for the announcement, X and LinkedIn, in the new brand.' },
+        { icon: 'search', label: 'AEO support: search result visibility', text: 'So Peak shows up when engineers ask ChatGPT, Claude, Perplexity and Google about CI and build infrastructure.' },
+      ],
+    },
+    next: {
+      heading: 'Let’s get Peak ready to leave stealth.',
+      intro: 'We have two project slots left this quarter. Confirm this week and we start next week.',
+      items: [
+        { icon: 'message', label: 'Step 1: Reply to confirm', text: 'Reply to the email and tell us you’re in.' },
+        { icon: 'users', label: 'Step 2: Slack and contract', text: 'We set up a shared Slack and send the contract.' },
+        { icon: 'calendar', label: 'Step 3: Kick off next week', text: 'Discovery starts, with brand direction in your hands within the first two weeks.' },
+      ],
+    },
+    cta: {
+      eyebrow: 'Let’s get Peak ready to leave stealth.',
+      email: 'daksh@pixelup.in',
+      note: 'Two project slots left this quarter. Confirm this week and we start next week, with a shared Slack and the contract the same day.',
+      reserve: { label: 'Reply to confirm', href: 'mailto:daksh@pixelup.in?subject=Peak%20x%20PIXELUP%20LABS%3A%20let%E2%80%99s%20go' },
     },
   },
 ];

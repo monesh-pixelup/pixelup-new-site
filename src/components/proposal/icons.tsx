@@ -2,7 +2,7 @@
 // site's sharp corners. Every icon renders at one fixed size, set in proposal.css.
 import type { ReactNode } from 'react';
 
-export type IconName = 'calendar' | 'clock' | 'layers' | 'tag' | 'frame' | 'message' | 'flag' | 'users' | 'contact' | 'download';
+export type IconName = 'calendar' | 'clock' | 'layers' | 'tag' | 'frame' | 'message' | 'flag' | 'users' | 'contact' | 'download' | 'play' | 'search';
 
 const paths: Record<IconName, ReactNode> = {
   calendar: (
@@ -21,6 +21,8 @@ const paths: Record<IconName, ReactNode> = {
   users: <path d="M2.5 5.5h7v7h-7ZM6.5 3.5h7v7" />,
   contact: <path d="M8 1.5v4M8 10.5v4M1.5 8h4M10.5 8h4M6.5 6.5h3v3h-3Z" />,
   download: <path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M2.5 13.5h11" />,
+  play: <path d="M2.5 3.5h11v9h-11ZM6.5 6v4l3.5-2Z" />,
+  search: <path d="M2.5 2.5h7v7h-7ZM9.5 9.5l4 4" />,
 };
 
 export function Icon({ name }: { name: IconName }) {

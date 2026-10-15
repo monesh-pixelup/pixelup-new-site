@@ -56,7 +56,9 @@ export default function Experience() {
       const onNativeScroll = () => {
         motion.scroll = window.scrollY;
       };
-      if (reduced) {
+      // A page can opt out of smooth scrolling (e.g. a proposal) with data-smooth="off".
+      const nativeScroll = reduced || !!$('[data-smooth="off"]');
+      if (nativeScroll) {
         window.addEventListener('scroll', onNativeScroll, { passive: true });
       } else {
         lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 0.95, touchMultiplier: 1.4 });

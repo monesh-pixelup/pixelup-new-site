@@ -361,7 +361,7 @@ export const proposals: Proposal[] = [
     slug: 'peak',
     client: 'Peak',
     smoothScroll: false,
-    hold: 'Can start next week',
+    hold: 'Slots may run out by Mon 19 Oct',
     kicker: 'Proposal · Peak · October 2026',
     title: 'A brand engineers trust on the first read.',
     lede: 'Positioning, identity, a design foundation your engineers can build from, and a launch site: a landing page plus 3 to 4 pages. About eight weeks, starting next week, so Peak leaves stealth looking like the company it already is.',
@@ -438,7 +438,7 @@ export const proposals: Proposal[] = [
       heading: 'Brand + Website: $20,576.',
       lead: {
         name: 'Brand Sprint',
-        terms: '4 to 5 weeks · starts next week',
+        terms: '4 to 5 weeks · starts next week · 50% deposit reserves the slot',
         price: '$11,977',
         includes: 'Discovery and competitive landscape, a design strategy deck covering positioning, visuals and messaging, the full identity, and a design foundation your engineers build from.',
       },
@@ -460,18 +460,18 @@ export const proposals: Proposal[] = [
     },
     next: {
       heading: 'Let’s get Peak ready to leave stealth.',
-      intro: 'We have two project slots left this quarter. Confirm this week and we start next week.',
+      intro: 'We have two project slots left this quarter, and we might run out by Monday. Reserve yours with a 50% deposit on the Brand Sprint and we start next week.',
       items: [
-        { icon: 'message', label: 'Step 1: Reply to confirm', text: 'Reply to the email and tell us you’re in.' },
+        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 50% Brand Sprint deposit of $5,988.50 through Contra, using the button below.' },
         { icon: 'users', label: 'Step 2: Slack and contract', text: 'We set up a shared Slack and send the contract.' },
         { icon: 'calendar', label: 'Step 3: Kick off next week', text: 'Discovery starts, with brand direction in your hands within the first two weeks.' },
       ],
     },
     cta: {
-      eyebrow: 'Let’s get Peak ready to leave stealth.',
+      eyebrow: 'Reserve the Brand Sprint before Monday, 19 Oct',
       email: 'daksh@pixelup.in',
-      note: 'Two project slots left this quarter. Confirm this week and we start next week, with a shared Slack and the contract the same day.',
-      reserve: { label: 'Reply to confirm', href: 'mailto:daksh@pixelup.in?subject=Peak%20x%20PIXELUP%20LABS%3A%20let%E2%80%99s%20go' },
+      note: 'Reserve your slot with a 50% deposit of $5,988.50 on the Brand Sprint, through Contra. We have two slots left this quarter and might run out by Monday. Once it’s in, we set up a shared Slack, send the contract and kick off next week.',
+      reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/Jx4fRODL-peak-brand-sprint-50percent-deposit' },
     },
   },
 ];

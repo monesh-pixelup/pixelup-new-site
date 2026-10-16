@@ -75,7 +75,16 @@ export type Proposal = {
   investment: {
     heading: string;
     /** A per-stage breakdown shown above the lead price. `was` is the standalone price, struck through. */
-    items?: { name: string; terms: string; price: string; was?: string; includes: string; option?: boolean }[];
+    items?: {
+      name: string;
+      terms: string;
+      price?: string;
+      was?: string;
+      includes: string;
+      option?: boolean;
+      /** Two or more ways to buy the same stage, shown side by side instead of one price. */
+      options?: { label: string; price: string; was?: string; note?: string }[];
+    }[];
     lead: { name: string; terms: string; price: string; includes: string };
     addon?: { name: string; terms: string; price?: string; includes: string };
     line: string;
@@ -243,7 +252,7 @@ export const proposals: Proposal[] = [
   {
     slug: 'nation',
     client: 'Nation',
-    hold: 'Can start Mon 19 Oct',
+    hold: 'Slot held until Sat 17 Oct',
     kicker: 'Proposal · Nation · October 2026',
     title: 'A brand that says one thing: this makes you money.',
     lede: 'Branding, a mascot, the withnation.ai landing page designed and built, a product reskin and a one-minute launch film. Six weeks from Monday 19 October, with the brand and landing page first, so a first-time seller trusts Nation on the first screen and starts a store on the second.',
@@ -254,7 +263,7 @@ export const proposals: Proposal[] = [
       { label: 'Contra Top 100, October 2026', value: '#4', icon: 'flag' },
     ],
     order: ['split', 'embed', 'references', 'rules', 'run', 'schedule', 'proof', 'reviews', 'investment', 'next'],
-    labels: { split: 'What we read', embed: 'Where we started', references: 'Your references', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
+    labels: { split: 'What we read', embed: 'Where we started', references: 'Your references', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'Working together', schedule: 'Timeline', next: 'Next steps' },
     embed: {
       heading: 'The concepts that got us here.',
       intro: 'Before our call we built three live directions for the withnation.ai hero: Citizens, Unboxed and Darkroom. On the call you liked the second one, where the box opens. It’s interactive, so switch between all three with the tabs at the bottom, type into the prompt and drag things around.',
@@ -323,13 +332,14 @@ export const proposals: Proposal[] = [
       line: '$500K+ earned on Contra · Hired 35x · 5.0 across 6 reviews',
     },
     run: {
-      heading: 'One team, start to launch.',
-      intro: 'Daksh leads as creative director, with senior designers on brand, web, product and motion. Work lands in Figma with a short Loom, and we talk on WhatsApp in between.',
+      heading: 'How we’ll work together.',
+      intro: 'Daksh leads as creative director, with senior designers on brand, web, product and motion. A few simple rules keep six weeks of work moving without anyone waiting on anyone.',
       items: [
-        { icon: 'flag', label: 'Brand and landing first', text: 'They unblock everything else, so they start on day one and get the most hands.' },
-        { icon: 'clock', label: 'Two reviews a week', text: 'Short calls on fixed days. Each one ends in a decision, so nothing waits on the next meeting.' },
-        { icon: 'message', label: 'Async by default', text: 'Comment in Figma or reply on WhatsApp whenever suits you. No workshops or questionnaires.' },
-        { icon: 'contact', label: 'One point of contact', text: 'Daksh, on every call and in the WhatsApp group.' },
+        { icon: 'message', label: 'One Slack channel', text: 'A shared Slack channel for the whole project, so every decision, file and question lives in one place instead of scattered threads.' },
+        { icon: 'clock', label: 'A 30-minute review every week', text: 'One standing review call a week to keep us unblocked. Work lands in Figma with a short Loom in between, and you comment whenever suits you.' },
+        { icon: 'layers', label: 'A dashboard from day one', text: 'Once your team is onboarded, you get a dashboard to track progress and timelines, with every document and Figma link in one place.' },
+        { icon: 'calendar', label: 'Your hours, covered', text: 'Our team is remote, with a strong overlap with yours: 6 AM to 1 PM PST, every weekday.' },
+        { icon: 'contact', label: 'One point of contact', text: 'Daksh, on every review and in the Slack channel.' },
       ],
     },
     schedule: {
@@ -405,33 +415,41 @@ export const proposals: Proposal[] = [
       items: [
         { name: 'Branding', terms: '3 weeks', was: '$18,511', price: '$12,958', includes: 'Positioning, the full identity, brand guide and the design system for the site and product.' },
         { name: 'Mascot', terms: '3 weeks · alongside branding', was: '$6,529', price: '$4,570', includes: 'The Nation character, with a main pose plus poses and expressions for site, product and social.' },
-        { name: 'Landing page design and development', terms: '3 weeks', was: '$12,854', price: '$8,998', includes: 'The withnation.ai homepage, desktop and mobile, built to production and live on withnation.ai.' },
-        { name: 'Or: website package', terms: 'Landing page + 7 to 8 pages', was: '$24,271', price: '$16,990', includes: 'Instead of the landing page only: the homepage plus 7 to 8 inner pages, designed and built. The inner pages follow the homepage and add about two weeks.', option: true },
+        {
+          name: 'Landing page design and development',
+          terms: '3 weeks · two ways to buy it',
+          includes: 'Designed in the new brand, built to production and live on withnation.ai, desktop and mobile.',
+          options: [
+            { label: 'Landing page', was: '$12,854', price: '$8,998', note: 'The withnation.ai homepage.' },
+            { label: 'Landing page + 7 to 8 pages', was: '$24,271', price: '$16,990', note: 'The homepage plus 7 to 8 inner pages, which follow the homepage and add about two weeks.' },
+          ],
+        },
         { name: 'Product design reskin', terms: '2 weeks', was: '$12,839', price: '$8,987', includes: 'The new brand and design system applied to Nation’s existing core screens, ready for your engineers. A visual reskin only, not a UX sprint: flows and layouts stay as they are.' },
         { name: 'Launch video', terms: '1 minute · 3 weeks', was: '$21,243', price: '$14,870', includes: 'A one-minute launch film in the @MarkKnd style, made from product recordings you provide.' },
       ],
       lead: {
         name: 'All five together',
-        terms: '6 weeks · 30% off the standalone prices',
+        terms: '6 weeks · 30% off the standalone prices · 10% deposit reserves the slot',
         price: '$50,383',
-        includes: 'Booked separately, the same work is $71,976, so you save $21,593. With the website package instead of the landing page only, everything comes to $58,375 (from $83,393).',
+        includes: 'Booked separately, the same work is $71,976, so you save $21,593. With the full website (landing page + 7 to 8 pages) instead of the landing page only, everything comes to $58,375 (from $83,393).',
       },
       addon: { name: 'Ownership', terms: '100%', includes: 'All source files are yours on handover.' },
       line: 'Seller milestone gifts (from the brief) aren’t in this quote. We’ll scope them once the brand is locked.',
     },
     next: {
       heading: 'Let’s give Nation its flag.',
+      intro: 'We’ve blocked your slot for Monday 19 October and can hold it until Saturday 17 October, 12 noon PST. After that we can’t guarantee our availability.',
       items: [
-        { icon: 'tag', label: 'Step 1: Approve the scope', text: 'Share this page with your investors and team. Any questions, ask us on WhatsApp.' },
-        { icon: 'download', label: 'Step 2: Send the inputs', text: 'Your revised wireframe, product access and any seller stories or sales numbers.' },
-        { icon: 'calendar', label: 'Step 3: Kick off Monday 19 Oct', text: 'Positioning and identity directions in your hands by the end of week one.' },
+        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 10% deposit of $5,038.30 through Contra, using the button below, by Saturday 12 noon PST.' },
+        { icon: 'message', label: 'Step 2: Onboard', text: 'We open a shared Slack channel and send a short onboarding form for files and access: your revised wireframe, product access and any seller stories or sales numbers.' },
+        { icon: 'calendar', label: 'Step 3: Kick off Monday 19 Oct', text: 'A kickoff call to meet the team and walk through your dashboard and timeline. Positioning and identity directions follow by the end of week one.' },
       ],
     },
     cta: {
-      eyebrow: 'Start Monday, 19 October.',
+      eyebrow: 'Reserve your slot by Saturday, 17 Oct',
       email: 'hello@pixeluplabs.com',
-      note: 'Approve the scope and we kick off Monday 19 October, with the brand and landing page first. Questions? Book a quick call or message us on WhatsApp.',
-      reserve: { label: 'Book a quick call', href: 'https://cal.com/pixelup/discovery' },
+      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a 10% deposit of $5,038.30 through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
+      reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/G33mcapB-nation-full-project-10percent-deposit' },
     },
   },
   {

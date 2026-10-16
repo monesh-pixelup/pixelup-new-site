@@ -330,12 +330,28 @@ export default function ProposalView({ p }: { p: Proposal }) {
                       <p className="prop-stage__name">
                         {it.name} <span>{it.terms}</span>
                       </p>
-                      <p className="prop-stage__price">
-                        {it.was && <s aria-label={`Standalone ${it.was}`}>{it.was}</s>}
-                        {it.price}
-                      </p>
+                      {it.price && (
+                        <p className="prop-stage__price">
+                          {it.was && <s aria-label={`Standalone ${it.was}`}>{it.was}</s>}
+                          {it.price}
+                        </p>
+                      )}
                     </div>
                     <p className="cs-para">{it.includes}</p>
+                    {it.options && (
+                      <div className="prop-stage__opts">
+                        {it.options.map((o) => (
+                          <div key={o.label} className="prop-opt">
+                            <p className="prop-opt__label">{o.label}</p>
+                            <p className="prop-stage__price prop-opt__price">
+                              {o.was && <s aria-label={`Standalone ${o.was}`}>{o.was}</s>}
+                              {o.price}
+                            </p>
+                            {o.note && <p className="prop-opt__note">{o.note}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

@@ -830,3 +830,36 @@ body:has([data-page='proposal']) .mark {
 .prop-stage--option .prop-stage__price {
   color: #cfcfcf;
 }
+
+/* A stage sold two ways: the options sit side by side under the stage */
+.prop-stage__opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: max(12px, calc(16 * var(--u)));
+  margin-top: max(14px, calc(18 * var(--u)));
+}
+.prop-opt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: max(14px, calc(20 * var(--u)));
+  border: 1px solid var(--rule);
+}
+.prop-opt__label {
+  margin: 0;
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+}
+.prop-opt__price {
+  justify-content: flex-start;
+}
+.prop-opt__note {
+  margin: 0;
+  color: var(--fog);
+}
+@media (max-width: 767px) {
+  .prop-stage__opts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

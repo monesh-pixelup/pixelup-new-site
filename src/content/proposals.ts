@@ -452,7 +452,7 @@ export const proposals: Proposal[] = [
       ],
       lead: {
         name: 'Everything together',
-        terms: '6 weeks · 10% deposit reserves the slot',
+        terms: '6 weeks · 50% deposit reserves the slot',
         price: '$59,341',
         includes: 'The five design stages at 30% off the standalone prices ($50,383, from $71,976, so you save $21,593), plus $8,958 for the seller milestone gifts. With the full website (landing page + 7 to 8 pages) instead of the landing page only, everything comes to $67,333.',
       },
@@ -463,7 +463,7 @@ export const proposals: Proposal[] = [
       heading: 'Let’s give Nation its flag.',
       intro: 'We’ve blocked your slot for Monday 19 October and can hold it until Saturday 17 October, 12 noon PST. After that we can’t guarantee our availability.',
       items: [
-        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 10% deposit of $5,934.10 through Contra, using the button below, by Saturday 12 noon PST.' },
+        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 50% deposit of $29,670.50 through Contra, using the button below, by Saturday 12 noon PST.' },
         { icon: 'message', label: 'Step 2: Onboard', text: 'We open a shared Slack channel and send a short onboarding form for files and access: your revised wireframe, product access and any seller stories or sales numbers.' },
         { icon: 'calendar', label: 'Step 3: Kick off Monday 19 Oct', text: 'A kickoff call to meet the team and walk through your dashboard and timeline. Positioning and identity directions follow by the end of week one.' },
       ],
@@ -471,8 +471,8 @@ export const proposals: Proposal[] = [
     cta: {
       eyebrow: 'Reserve your slot by Saturday, 17 Oct',
       email: 'hello@pixeluplabs.com',
-      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a 10% deposit of $5,934.10 through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
-      reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/G33mcapB-nation-full-project-10percent-deposit' },
+      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a 50% deposit of $29,670.50 through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
+      reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/KLeSawvu-nation-full-project-deposit' },
     },
   },
   {

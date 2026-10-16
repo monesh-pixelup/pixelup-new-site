@@ -325,7 +325,7 @@ export default function ProposalView({ p }: { p: Proposal }) {
             {p.investment.items && (
               <div className="prop-stages">
                 {p.investment.items.map((it) => (
-                  <div key={it.name} className="prop-stage" data-reveal="fade">
+                  <div key={it.name} className={`prop-stage${it.option ? ' prop-stage--option' : ''}`} data-reveal="fade">
                     <div className="prop-stage__head">
                       <p className="prop-stage__name">
                         {it.name} <span>{it.terms}</span>
@@ -433,6 +433,38 @@ export default function ProposalView({ p }: { p: Proposal }) {
               <p className="prop-line" data-reveal="fade">
                 {p.references.line}
               </p>
+            </div>
+          </div>
+        )}
+      </section>
+    ),
+    embed: p.embed && (
+      <section className="cs-section prop-embed">
+        <div className="cs-text">
+          <Head n={num('embed')} label={label('embed', 'Where we started')} heading={p.embed.heading} />
+          <div className="cs-text__body">
+            <p className="cs-para" data-reveal="fade">
+              {p.embed.intro}
+            </p>
+          </div>
+        </div>
+        <div className="prop-embed__frame" data-reveal="fade">
+          <iframe src={p.embed.src} title={p.embed.title} loading="lazy" allow="fullscreen" />
+        </div>
+        {(p.embed.line || p.embed.open) && (
+          <div className="cs-text">
+            <div className="cs-text__body">
+              {p.embed.line && (
+                <p className="prop-line" data-reveal="fade">
+                  {p.embed.line}
+                </p>
+              )}
+              {p.embed.open && (
+                <a className="prop-embed__open" href={p.embed.open.href} target="_blank" rel="noreferrer" data-reveal="fade">
+                  {p.embed.open.label}
+                  <ArrowSwap rotate={-45} />
+                </a>
+              )}
             </div>
           </div>
         )}

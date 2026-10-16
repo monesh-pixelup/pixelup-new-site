@@ -790,3 +790,43 @@ body:has([data-page='proposal']) .mark {
     align-items: flex-start;
   }
 }
+
+/* ---------------------------------------------------------------
+   Embed — a live piece of work in a frame (the pitch concepts)
+---------------------------------------------------------------- */
+.prop-embed__frame {
+  padding: 0 var(--pad);
+  margin-bottom: max(24px, calc(32 * var(--u)));
+}
+.prop-embed__frame iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 12 / 7;
+  border: 0;
+  border-radius: max(8px, calc(10 * var(--u)));
+  background: #06080b;
+}
+.prop-embed__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: max(12px, calc(16 * var(--u)));
+  color: var(--paper);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+@media (max-width: 767px) {
+  .prop-embed__frame iframe {
+    aspect-ratio: 43 / 86;
+  }
+}
+
+/* An alternative to the stage above it (e.g. a bigger site instead of one page) */
+.prop-stage--option {
+  border-top-style: dashed;
+}
+.prop-stage--option .prop-stage__name,
+.prop-stage--option .prop-stage__price {
+  color: #cfcfcf;
+}

@@ -8,7 +8,7 @@ export type ProposalWeek = { week: number; date?: string; bring: string; decide:
 export type ProposalDeliverable = string | { text: string; reference: { label: string; src: string; alt: string; href?: string } };
 
 /** The page's sections, in the default order. A proposal can reorder or drop them with `order`. */
-export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next' | 'references' | 'extras';
+export type ProposalSection = 'week' | 'split' | 'schedule' | 'deliverables' | 'rules' | 'investment' | 'proof' | 'run' | 'reviews' | 'next' | 'references' | 'extras' | 'embed';
 
 /** An icon list section (the run, the next steps). */
 export type ProposalList = { heading: string; intro?: string; items: { label: string; text: string; icon: IconName }[]; line?: string };
@@ -65,6 +65,8 @@ export type Proposal = {
     items: { name: string; note: string; href: string; src: string; alt: string }[];
     line?: string;
   };
+  /** A live piece of work shown in a frame, such as the concepts that won the pitch. `src` is a page in public/. */
+  embed?: { heading: string; intro: string; src: string; title: string; line?: string; open?: { label: string; href: string } };
   run?: ProposalList;
   next?: ProposalList;
   /** Extra services offered alongside the sprint (launch videos, AEO and so on). */
@@ -73,7 +75,7 @@ export type Proposal = {
   investment: {
     heading: string;
     /** A per-stage breakdown shown above the lead price. `was` is the standalone price, struck through. */
-    items?: { name: string; terms: string; price: string; was?: string; includes: string }[];
+    items?: { name: string; terms: string; price: string; was?: string; includes: string; option?: boolean }[];
     lead: { name: string; terms: string; price: string; includes: string };
     addon?: { name: string; terms: string; price?: string; includes: string };
     line: string;
@@ -251,8 +253,16 @@ export const proposals: Proposal[] = [
       { label: 'Rating across every Contra review', value: '5.0', icon: 'users' },
       { label: 'Contra Top 100, October 2026', value: '#4', icon: 'flag' },
     ],
-    order: ['split', 'references', 'rules', 'run', 'schedule', 'proof', 'reviews', 'investment', 'next'],
-    labels: { split: 'What we read', references: 'Your references', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
+    order: ['split', 'embed', 'references', 'rules', 'run', 'schedule', 'proof', 'reviews', 'investment', 'next'],
+    labels: { split: 'What we read', embed: 'Where we started', references: 'Your references', rules: 'How we’d approach it', proof: 'Selected work', reviews: 'Proof', run: 'How we’d run it', schedule: 'Timeline', next: 'Next steps' },
+    embed: {
+      heading: 'The concepts that got us here.',
+      intro: 'Before our call we built three live directions for the withnation.ai hero: Citizens, Unboxed and Darkroom. On the call you liked the second one, where the box opens. It’s interactive, so switch between all three with the tabs at the bottom, type into the prompt and drag things around.',
+      src: '/proposals/nation/concepts/index.html#unboxed',
+      title: 'Nation hero concepts: Citizens, Unboxed and Darkroom',
+      line: 'These came before the expanded brief. The final direction comes out of week one, with your feedback on these as the starting point.',
+      open: { label: 'Open full screen', href: '/proposals/nation/concepts/index.html#unboxed' },
+    },
     references: {
       heading: 'Your references all sell the business, not the software.',
       intro: 'Shopify, Squarespace, Owner, Toast, GlossGenius, Propel and AppLovin look nothing alike. But they all make the same three moves, and that’s the bar for Nation.',
@@ -277,9 +287,9 @@ export const proposals: Proposal[] = [
       intro: 'Nation starts a store from one prompt and runs the products, pages, ads and growth. The people using it are not tech people. Many are opening their first business for their family. So the brand has to feel warm like a place you belong, look as serious as a company raising a Series A, and point every scroll at one action: start a store. From the expanded brief and our call, here is the full scope.',
       items: [
         { label: 'Branding: Positioning and identity', text: 'The positioning line and the descriptor next to the name. Wordmark and symbol, color, type, imagery, voice and motion, delivered as a brand guide and a design system shared by the site and the product.' },
-        { label: 'Mascot: A Nation character', text: 'A main pose, plus poses and expressions for the site, the product and social.' },
-        { label: 'Landing page: Designed and built', text: 'The withnation.ai homepage on your wireframe, desktop and mobile. Built to production: responsive, animated, fast and live on withnation.ai.' },
-        { label: 'Product design: A two-week reskin', text: 'The new brand and design system applied to Nation’s core product screens.' },
+        { label: 'Mascot: A Nation character', text: 'Part of the brand, made alongside it. A main pose, plus poses and expressions for the site, the product and social.' },
+        { label: 'Landing page: Designed and built', text: 'The withnation.ai homepage on your wireframe, desktop and mobile. Built to production: responsive, animated, fast and live on withnation.ai. Or the full website package: the landing page plus 7 to 8 pages.' },
+        { label: 'Product design: A two-week reskin', text: 'The new brand and design system applied to Nation’s existing core screens. A visual reskin, not a UX sprint: flows and layouts stay as they are.' },
         { label: 'Launch video: One minute', text: 'A short launch film in the style of @MarkKnd, cut from your product recordings.' },
       ],
     },
@@ -324,7 +334,7 @@ export const proposals: Proposal[] = [
     },
     schedule: {
       heading: 'Six weeks, start to launch.',
-      body: 'Branding and the landing page come first, because everything else is built on them. The mascot runs alongside the brand, the product reskin starts once the design system exists, and the launch video comes last, made from the finished brand, mascot and product.',
+      body: 'The mascot is part of the brand, so it runs the same three weeks. The landing page starts in week two, as the identity locks, so it’s live soon after the brand is done. The product reskin and the launch video start the moment branding wraps, built from the finished brand and mascot.',
       labels: { bring: 'What we do', decide: 'What you get' },
       sprints: [
         {
@@ -341,41 +351,42 @@ export const proposals: Proposal[] = [
         },
         {
           name: 'Mascot',
-          note: 'Alongside the brand',
-          sum: '2 weeks · 26 Oct to 6 Nov',
-          from: 2,
+          note: 'Part of the brand',
+          sum: '3 weeks · 19 Oct to 6 Nov',
+          from: 1,
           to: 3,
           weeks: [
-            { week: 2, date: '26 Oct', bring: 'Three character concepts built on the chosen identity', decide: 'Pick one' },
-            { week: 3, date: '2 Nov', bring: 'The main pose, plus poses and expressions for the site, the product and social', decide: 'Mascot set, ready to use everywhere' },
+            { week: 1, date: '19 Oct', bring: 'Character sketches explored alongside the identity directions', decide: 'A character direction picked' },
+            { week: 2, date: '26 Oct', bring: 'The chosen character refined in the locked identity: shape, color and personality', decide: 'The Nation mascot approved' },
+            { week: 3, date: '2 Nov', bring: 'The main pose, plus poses and expressions for the site, the product and social, added to the brand guide', decide: 'Mascot set, ready to use everywhere' },
           ],
         },
         {
           name: 'Landing page',
-          note: 'Design and development',
+          note: 'Starts in week two',
           sum: '3 weeks · 26 Oct to 13 Nov',
           from: 2,
           to: 4,
           weeks: [
-            { week: 2, date: '26 Oct', bring: 'Homepage design on your revised wireframe, in the new identity', decide: 'Desktop design to review' },
-            { week: 3, date: '2 Nov', bring: 'Mobile, motion and final polish, with the build starting on staging', decide: 'Approved design, live on staging' },
+            { week: 2, date: '26 Oct', bring: 'Homepage design on your revised wireframe, in the identity as it locks', decide: 'Desktop design to review' },
+            { week: 3, date: '2 Nov', bring: 'Mobile, motion and the mascot in place, with the build starting on staging', decide: 'Approved design, live on staging' },
             { week: 4, date: '9 Nov', bring: 'Production build: responsive, animated and fast, then QA across devices', decide: 'Live on withnation.ai' },
           ],
         },
         {
           name: 'Product reskin',
-          note: 'Once the system exists',
+          note: 'Starts when branding is done',
           sum: '2 weeks · 9 Nov to 20 Nov',
           from: 4,
           to: 5,
           weeks: [
-            { week: 4, date: '9 Nov', bring: 'A walkthrough of the product from sign-up to a live store, then the system applied to the first core screens', decide: 'First screens reskinned' },
+            { week: 4, date: '9 Nov', bring: 'A walkthrough of the product from sign-up to a live store, then the new brand applied to the first core screens. Flows and layouts stay as they are', decide: 'First screens reskinned' },
             { week: 5, date: '16 Nov', bring: 'The remaining core screens and their states, prepared for your engineers', decide: 'Reskinned core screens and handoff' },
           ],
         },
         {
           name: 'Launch video',
-          note: 'Made from the finished work',
+          note: 'Starts when branding is done',
           sum: '3 weeks · 9 Nov to 25 Nov',
           from: 4,
           to: 6,
@@ -387,22 +398,23 @@ export const proposals: Proposal[] = [
         },
       ],
       decideBy: { week: 2, label: 'Identity locked 30 Oct' },
-      line: 'The landing page is live on withnation.ai by 13 November, and everything is delivered by 25 November, before Thanksgiving. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
+      line: 'The brand and mascot are done by 6 November, the landing page is live on withnation.ai by 13 November, and everything is delivered by 25 November, before Thanksgiving. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
     },
     investment: {
       heading: 'Five stages. One price for all of them.',
       items: [
         { name: 'Branding', terms: '3 weeks', was: '$18,511', price: '$12,958', includes: 'Positioning, the full identity, brand guide and the design system for the site and product.' },
-        { name: 'Mascot', terms: '2 weeks', was: '$6,529', price: '$4,570', includes: 'The Nation character, with a main pose plus poses and expressions for site, product and social.' },
-        { name: 'Landing page design and development', terms: '3 weeks', was: '$14,270', price: '$9,989', includes: 'The withnation.ai homepage, desktop and mobile, built to production and live on withnation.ai.' },
-        { name: 'Product design reskin', terms: '2 weeks', was: '$12,839', price: '$8,987', includes: 'The new brand and design system applied to Nation’s core product screens, ready for your engineers.' },
+        { name: 'Mascot', terms: '3 weeks · alongside branding', was: '$6,529', price: '$4,570', includes: 'The Nation character, with a main pose plus poses and expressions for site, product and social.' },
+        { name: 'Landing page design and development', terms: '3 weeks', was: '$12,854', price: '$8,998', includes: 'The withnation.ai homepage, desktop and mobile, built to production and live on withnation.ai.' },
+        { name: 'Or: website package', terms: 'Landing page + 7 to 8 pages', was: '$24,271', price: '$16,990', includes: 'Instead of the landing page only: the homepage plus 7 to 8 inner pages, designed and built. The inner pages follow the homepage and add about two weeks.', option: true },
+        { name: 'Product design reskin', terms: '2 weeks', was: '$12,839', price: '$8,987', includes: 'The new brand and design system applied to Nation’s existing core screens, ready for your engineers. A visual reskin only, not a UX sprint: flows and layouts stay as they are.' },
         { name: 'Launch video', terms: '1 minute · 3 weeks', was: '$21,243', price: '$14,870', includes: 'A one-minute launch film in the @MarkKnd style, made from product recordings you provide.' },
       ],
       lead: {
         name: 'All five together',
         terms: '6 weeks · 30% off the standalone prices',
-        price: '$51,374',
-        includes: 'Booked separately, the same work is $73,392. Taking all five together saves $22,018, because the brand, mascot and system are made once and reused across the site, product and video.',
+        price: '$50,383',
+        includes: 'Booked separately, the same work is $71,976, so you save $21,593. With the website package instead of the landing page only, everything comes to $58,375 (from $83,393).',
       },
       addon: { name: 'Ownership', terms: '100%', includes: 'All source files are yours on handover.' },
       line: 'Seller milestone gifts (from the brief) aren’t in this quote. We’ll scope them once the brand is locked.',

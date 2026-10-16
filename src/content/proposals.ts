@@ -255,7 +255,7 @@ export const proposals: Proposal[] = [
     hold: 'Slot held until Sat 17 Oct',
     kicker: 'Proposal · Nation · October 2026',
     title: 'A brand that says one thing: this makes you money.',
-    lede: 'Branding, a mascot, the withnation.ai landing page designed and built, a product reskin, a one-minute launch film and seller milestone gifts. Six weeks from Monday 19 October, with the brand and landing page first, so a first-time seller trusts Nation on the first screen and starts a store on the second.',
+    lede: 'Branding, a mascot, the withnation.ai landing page designed and built, a product reskin, a one-minute launch film and a seller milestone gift idea. Six weeks from Monday 19 October, with the brand and landing page first, so a first-time seller trusts Nation on the first screen and starts a store on the second.',
     meta: [
       { label: 'Brand and website sprints', value: '35+', icon: 'layers' },
       { label: 'Raised by clients after their sprint', value: '$300M+', icon: 'tag' },
@@ -300,7 +300,7 @@ export const proposals: Proposal[] = [
         { label: 'Landing page: Designed and built', text: 'The withnation.ai homepage on your wireframe, desktop and mobile. Built to production: responsive, animated, fast and live on withnation.ai. Or the full website package: the landing page plus 7 to 8 pages.' },
         { label: 'Product design: A two-week reskin', text: 'The new brand and design system applied to Nation’s existing core screens. A visual reskin, not a UX sprint: flows and layouts stay as they are.' },
         { label: 'Launch video: One minute', text: 'A short launch film in the style of @MarkKnd, cut from your product recordings.' },
-        { label: 'Milestone gifts: Worth posting', text: 'The gift a seller gets at a milestone, the way Shopify sellers post theirs. We work out what it is, its shape and materials, then design the object, the packaging, the card inside and a shareable digital badge.' },
+        { label: 'Milestone gifts: Worth posting', text: 'The gift a seller gets at a milestone, the way Shopify sellers post theirs. We work out what it should be, its shape and materials. It’s an idea, shown with AI-generated photos, not a final product or packaging design.' },
       ],
     },
     rules: {
@@ -345,7 +345,7 @@ export const proposals: Proposal[] = [
     },
     schedule: {
       heading: 'Six weeks, start to launch.',
-      body: 'The mascot is part of the brand, so it runs the same three weeks. The landing page starts in week two, as the identity locks, so it’s live soon after the brand is done. The product reskin and the launch video start the moment branding wraps, built from the finished brand and mascot. Gift ideation starts once the identity locks, so the design is ready while you line up a manufacturer.',
+      body: 'The mascot is part of the brand, so it runs the same three weeks. The landing page starts in week two, as the identity locks, so it’s live soon after the brand is done. The product reskin and the launch video start the moment branding wraps, built from the finished brand and mascot. Gift ideation starts once the identity locks, so you have the idea in hand to take to a manufacturer.',
       labels: { bring: 'What we do', decide: 'What you get' },
       sprints: [
         {
@@ -410,19 +410,17 @@ export const proposals: Proposal[] = [
         {
           name: 'Milestone gifts',
           note: 'Once the identity locks',
-          sum: '4 weeks · 2 Nov to 25 Nov',
+          sum: '2 weeks · 2 Nov to 13 Nov',
           from: 3,
-          to: 6,
+          to: 4,
           weeks: [
-            { week: 3, date: '2 Nov', bring: 'Research into milestone gifts sellers love to post, Shopify’s included, then three gift concepts: the object, its shape and materials, and the unboxing', decide: 'Concepts to review' },
-            { week: 4, date: '9 Nov', bring: 'The chosen concept refined, with materials and finishes a manufacturer can quote on', decide: 'The gift picked, ready for manufacturer quotes' },
-            { week: 5, date: '16 Nov', bring: 'The award object, the packaging and the card inside, designed in the new brand', decide: 'Gift and packaging designs' },
-            { week: 6, date: '23 Nov', bring: 'The shareable digital badge, plus production files sized to your manufacturer’s dimensions', decide: 'Print-ready files and the badge' },
+            { week: 3, date: '2 Nov', bring: 'Research into milestone gifts sellers love to post, Shopify’s included, then three gift ideas: the object, its shape and materials, and the unboxing', decide: 'Ideas to review' },
+            { week: 4, date: '9 Nov', bring: 'The chosen idea refined and shown with AI-generated photos, so you can see it before anything is made', decide: 'The gift idea, ready to take to a manufacturer' },
           ],
         },
       ],
       decideBy: { week: 2, label: 'Identity locked 30 Oct' },
-      line: 'The brand and mascot are done by 6 November, the landing page is live on withnation.ai by 13 November, and everything is delivered by 25 November, before Thanksgiving. Gift production files need your manufacturer’s dimensions by 16 November. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
+      line: 'The brand and mascot are done by 6 November, the landing page is live on withnation.ai by 13 November, and everything is delivered by 25 November, before Thanksgiving. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
     },
     investment: {
       heading: 'Six stages. One price for all of them.',
@@ -440,30 +438,22 @@ export const proposals: Proposal[] = [
         },
         { name: 'Product design reskin', terms: '2 weeks', was: '$12,839', price: '$8,987', includes: 'The new brand and design system applied to Nation’s existing core screens, ready for your engineers. A visual reskin only, not a UX sprint: flows and layouts stay as they are.' },
         { name: 'Launch video', terms: '1 minute · 3 weeks', was: '$21,243', price: '$14,870', includes: 'A one-minute launch film in the @MarkKnd style, made from product recordings you provide.' },
-        {
-          name: 'Seller milestone gifts',
-          terms: '4 weeks · from week 3',
-          includes: 'Two parts that run back to back, priced now so you can approve the whole project at once.',
-          options: [
-            { label: 'Part 1: Gift research and ideation', price: '$2,000', note: 'What the gift should be, its shape and materials, so sellers proudly post it.' },
-            { label: 'Part 2: Gift and packaging design', price: '$6,958', note: 'The award object, packaging, card and digital badge. Final cost depends on the gift we land on, and won’t go much beyond this.' },
-          ],
-        },
+        { name: 'Seller milestone gift idea', terms: '2 weeks · from week 3', price: '$2,000', includes: 'Gift research and ideation: what the gift should be, its shape and materials, so sellers proudly post it. It’s an idea, shown with AI-generated photos.' },
       ],
       lead: {
         name: 'Everything together',
         terms: '6 weeks · 50% deposit reserves the slot',
-        price: '$59,341',
-        includes: 'The five design stages at 30% off the standalone prices ($50,383, from $71,976, so you save $21,593), plus $8,958 for the seller milestone gifts. With the full website (landing page + 7 to 8 pages) instead of the landing page only, everything comes to $67,333.',
+        price: '$52,383',
+        includes: 'The five design stages at 30% off the standalone prices ($50,383, from $71,976, so you save $21,593), plus $2,000 for the seller milestone gift idea. With the full website (landing page + 7 to 8 pages) instead of the landing page only, everything comes to $60,375.',
       },
       addon: { name: 'Ownership', terms: '100%', includes: 'All source files are yours on handover.' },
-      line: 'Gift and packaging design needs dimensions from your manufacturer. We’ll design to them as soon as you have them.',
+      line: 'The milestone gift is priced as an idea only, shown with AI-generated photos. Designing the final gift and its packaging is not included in this total.',
     },
     next: {
       heading: 'Let’s give Nation its flag.',
       intro: 'We’ve blocked your slot for Monday 19 October and can hold it until Saturday 17 October, 12 noon PST. After that we can’t guarantee our availability.',
       items: [
-        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 50% deposit of $29,670.50 through Contra, using the button below, by Saturday 12 noon PST.' },
+        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 50% deposit of $26,191.50 through Contra, using the button below, by Saturday 12 noon PST.' },
         { icon: 'message', label: 'Step 2: Onboard', text: 'We open a shared Slack channel and send a short onboarding form for files and access: your revised wireframe, product access and any seller stories or sales numbers.' },
         { icon: 'calendar', label: 'Step 3: Kick off Monday 19 Oct', text: 'A kickoff call to meet the team and walk through your dashboard and timeline. Positioning and identity directions follow by the end of week one.' },
       ],
@@ -471,7 +461,7 @@ export const proposals: Proposal[] = [
     cta: {
       eyebrow: 'Reserve your slot by Saturday, 17 Oct',
       email: 'hello@pixeluplabs.com',
-      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a 50% deposit of $29,670.50 through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
+      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a 50% deposit of $26,191.50 through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
       reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/KLeSawvu-nation-full-project-deposit' },
     },
   },

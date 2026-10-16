@@ -72,6 +72,8 @@ export type Proposal = {
   reviews?: { heading: string; body: string; items: { name: string; role: string; quote: string }[]; line?: string };
   investment: {
     heading: string;
+    /** A per-stage breakdown shown above the lead price. `was` is the standalone price, struck through. */
+    items?: { name: string; terms: string; price: string; was?: string; includes: string }[];
     lead: { name: string; terms: string; price: string; includes: string };
     addon?: { name: string; terms: string; price?: string; includes: string };
     line: string;
@@ -239,10 +241,10 @@ export const proposals: Proposal[] = [
   {
     slug: 'nation',
     client: 'Nation',
-    hold: 'Can start next week',
+    hold: 'Can start Mon 19 Oct',
     kicker: 'Proposal · Nation · October 2026',
     title: 'A brand that says one thing: this makes you money.',
-    lede: 'Positioning, identity, a design system and the withnation.ai homepage. Four to five weeks, starting next week, built so a first-time seller trusts Nation on the first screen and starts a store on the second.',
+    lede: 'Branding, a mascot, the withnation.ai landing page designed and built, a product reskin and a one-minute launch film. Six weeks from Monday 19 October, with the brand and landing page first, so a first-time seller trusts Nation on the first screen and starts a store on the second.',
     meta: [
       { label: 'Brand and website sprints', value: '35+', icon: 'layers' },
       { label: 'Raised by clients after their sprint', value: '$300M+', icon: 'tag' },
@@ -272,12 +274,13 @@ export const proposals: Proposal[] = [
     },
     split: {
       heading: 'A nation of first-time owners.',
-      intro: 'Nation starts a store from one prompt and runs the products, pages, ads and growth. The people using it are not tech people. Many are opening their first business for their family. So the brand has to feel warm like a place you belong, look as serious as a company raising a Series A, and point every scroll at one action: start a store.',
+      intro: 'Nation starts a store from one prompt and runs the products, pages, ads and growth. The people using it are not tech people. Many are opening their first business for their family. So the brand has to feel warm like a place you belong, look as serious as a company raising a Series A, and point every scroll at one action: start a store. From the expanded brief and our call, here is the full scope.',
       items: [
-        { label: 'Positioning: The line and the story', text: 'One-line positioning, the Nation story, and the descriptor that sits next to the name.' },
-        { label: 'Identity: Wordmark and symbol', text: 'Color, type, imagery, voice and motion. Bold enough to spot in an ad feed.' },
-        { label: 'System: Design system', text: 'Tokens and core components shared by the site and the product.' },
-        { label: 'Website: withnation.ai homepage', text: 'One page that explains the whole product, Toast-level clear, and ends in “start a store.”' },
+        { label: 'Branding: Positioning and identity', text: 'The positioning line and the descriptor next to the name. Wordmark and symbol, color, type, imagery, voice and motion, delivered as a brand guide and a design system shared by the site and the product.' },
+        { label: 'Mascot: A Nation character', text: 'A main pose, plus poses and expressions for the site, the product and social.' },
+        { label: 'Landing page: Designed and built', text: 'The withnation.ai homepage on your wireframe, desktop and mobile. Built to production: responsive, animated, fast and live on withnation.ai.' },
+        { label: 'Product design: A two-week reskin', text: 'The new brand and design system applied to Nation’s core product screens.' },
+        { label: 'Launch video: One minute', text: 'A short launch film in the style of @MarkKnd, cut from your product recordings.' },
       ],
     },
     rules: {
@@ -310,50 +313,112 @@ export const proposals: Proposal[] = [
       line: '$500K+ earned on Contra · Hired 35x · 5.0 across 6 reviews',
     },
     run: {
-      heading: 'Four to five weeks. Something real every week.',
-      intro: 'Async in Figma, a short review call twice a week, and one owner on our side the whole way. Words come first, so the identity has something true to say.',
+      heading: 'One team, start to launch.',
+      intro: 'Daksh leads as creative director, with senior designers on brand, web, product and motion. Work lands in Figma with a short Loom, and we talk on WhatsApp in between.',
       items: [
-        { icon: 'message', label: 'Week 1: Positioning', text: 'Kickoff, competitor read (Shopify, Amboras, Whop), then the one-liner, story and descriptor. Output: messaging doc.' },
-        { icon: 'frame', label: 'Weeks 1 to 3: Identity', text: 'Two directions, you pick one, we refine it into wordmark, symbol, color, type, imagery, voice and motion. Output: brand guidelines.' },
-        { icon: 'layers', label: 'Weeks 3 to 4: Design system', text: 'Tokens and core components built in Figma for both the site and the product. Output: Figma library + tokens.' },
-        { icon: 'flag', label: 'Weeks 4 to 5: Homepage', text: 'The withnation.ai homepage, desktop and mobile, with the launch motion. Output: dev-ready homepage.' },
+        { icon: 'flag', label: 'Brand and landing first', text: 'They unblock everything else, so they start on day one and get the most hands.' },
+        { icon: 'clock', label: 'Two reviews a week', text: 'Short calls on fixed days. Each one ends in a decision, so nothing waits on the next meeting.' },
+        { icon: 'message', label: 'Async by default', text: 'Comment in Figma or reply on WhatsApp whenever suits you. No workshops or questionnaires.' },
+        { icon: 'contact', label: 'One point of contact', text: 'Daksh, on every call and in the WhatsApp group.' },
       ],
     },
     schedule: {
-      heading: 'Brand locked in week three. Homepage by week five.',
-      body: 'If you need to launch sooner, the wordmark and core colors can be ready by the end of week two.',
-      hideRows: true,
+      heading: 'Six weeks, start to launch.',
+      body: 'Branding and the landing page come first, because everything else is built on them. The mascot runs alongside the brand, the product reskin starts once the design system exists, and the launch video comes last, made from the finished brand, mascot and product.',
+      labels: { bring: 'What we do', decide: 'What you get' },
       sprints: [
-        { name: 'Positioning', note: 'Messaging', from: 1, to: 1, weeks: [{ week: 1, bring: '', decide: '' }] },
-        { name: 'Identity', note: 'Directions to brand locked', from: 1, to: 3, weeks: [{ week: 2, bring: '', decide: '' }, { week: 3, bring: '', decide: '' }] },
-        { name: 'Design system', note: 'Tokens and components', from: 3, to: 4, weeks: [{ week: 4, bring: '', decide: '' }] },
-        { name: 'Homepage', note: 'Dev-ready', from: 4, to: 5, weeks: [{ week: 5, bring: '', decide: '' }] },
+        {
+          name: 'Branding',
+          note: 'Starts day one',
+          sum: '3 weeks · 19 Oct to 6 Nov',
+          from: 1,
+          to: 3,
+          weeks: [
+            { week: 1, date: '19 Oct', bring: 'Kickoff and stakeholder interviews, a teardown of Shopify, Amboras and Whop, the positioning line and descriptor, then two to three identity directions', decide: 'Positioning signed off and a direction picked' },
+            { week: 2, date: '26 Oct', bring: 'The chosen direction refined into wordmark, symbol, color, type, imagery and voice', decide: 'Core identity locked, so the landing page can use it' },
+            { week: 3, date: '2 Nov', bring: 'Motion, the brand guide, and the design system: tokens and core components for the site and the product', decide: 'Brand guide and Figma design system' },
+          ],
+        },
+        {
+          name: 'Mascot',
+          note: 'Alongside the brand',
+          sum: '2 weeks · 26 Oct to 6 Nov',
+          from: 2,
+          to: 3,
+          weeks: [
+            { week: 2, date: '26 Oct', bring: 'Three character concepts built on the chosen identity', decide: 'Pick one' },
+            { week: 3, date: '2 Nov', bring: 'The main pose, plus poses and expressions for the site, the product and social', decide: 'Mascot set, ready to use everywhere' },
+          ],
+        },
+        {
+          name: 'Landing page',
+          note: 'Design and development',
+          sum: '3 weeks · 26 Oct to 13 Nov',
+          from: 2,
+          to: 4,
+          weeks: [
+            { week: 2, date: '26 Oct', bring: 'Homepage design on your revised wireframe, in the new identity', decide: 'Desktop design to review' },
+            { week: 3, date: '2 Nov', bring: 'Mobile, motion and final polish, with the build starting on staging', decide: 'Approved design, live on staging' },
+            { week: 4, date: '9 Nov', bring: 'Production build: responsive, animated and fast, then QA across devices', decide: 'Live on withnation.ai' },
+          ],
+        },
+        {
+          name: 'Product reskin',
+          note: 'Once the system exists',
+          sum: '2 weeks · 9 Nov to 20 Nov',
+          from: 4,
+          to: 5,
+          weeks: [
+            { week: 4, date: '9 Nov', bring: 'A walkthrough of the product from sign-up to a live store, then the system applied to the first core screens', decide: 'First screens reskinned' },
+            { week: 5, date: '16 Nov', bring: 'The remaining core screens and their states, prepared for your engineers', decide: 'Reskinned core screens and handoff' },
+          ],
+        },
+        {
+          name: 'Launch video',
+          note: 'Made from the finished work',
+          sum: '3 weeks · 9 Nov to 25 Nov',
+          from: 4,
+          to: 6,
+          weeks: [
+            { week: 4, date: '9 Nov', bring: 'Script and storyboard in the @MarkKnd style, using the product recordings you send', decide: 'Storyboard approved' },
+            { week: 5, date: '16 Nov', bring: 'Animation with the new brand, the mascot and the reskinned product', decide: 'First cut' },
+            { week: 6, date: '23 Nov', bring: 'Sound, polish and final exports for site and social', decide: 'One-minute launch film by Wed 25 Nov' },
+          ],
+        },
       ],
-      line: 'Week 1: messaging signed off. Week 2: identity direction picked. Week 3: brand guidelines delivered. Week 5: system and homepage handed over.',
+      decideBy: { week: 2, label: 'Identity locked 30 Oct' },
+      line: 'The landing page is live on withnation.ai by 13 November, and everything is delivered by 25 November, before Thanksgiving. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
     },
     investment: {
-      heading: 'Investment: TBD.',
+      heading: 'Five stages. One price for all of them.',
+      items: [
+        { name: 'Branding', terms: '3 weeks', was: '$18,511', price: '$12,958', includes: 'Positioning, the full identity, brand guide and the design system for the site and product.' },
+        { name: 'Mascot', terms: '2 weeks', was: '$6,529', price: '$4,570', includes: 'The Nation character, with a main pose plus poses and expressions for site, product and social.' },
+        { name: 'Landing page design and development', terms: '3 weeks', was: '$14,270', price: '$9,989', includes: 'The withnation.ai homepage, desktop and mobile, built to production and live on withnation.ai.' },
+        { name: 'Product design reskin', terms: '2 weeks', was: '$12,839', price: '$8,987', includes: 'The new brand and design system applied to Nation’s core product screens, ready for your engineers.' },
+        { name: 'Launch video', terms: '1 minute · 3 weeks', was: '$21,243', price: '$14,870', includes: 'A one-minute launch film in the @MarkKnd style, made from product recordings you provide.' },
+      ],
       lead: {
-        name: 'Full sprint',
-        terms: '4 to 5 weeks · starts next week · two rounds of revisions at every stage',
-        price: 'TBD',
-        includes: 'Positioning and messaging, full brand identity and guidelines, a design system in Figma, and the withnation.ai homepage, desktop and mobile.',
+        name: 'All five together',
+        terms: '6 weeks · 30% off the standalone prices',
+        price: '$51,374',
+        includes: 'Booked separately, the same work is $73,392. Taking all five together saves $22,018, because the brand, mascot and system are made once and reused across the site, product and video.',
       },
       addon: { name: 'Ownership', terms: '100%', includes: 'All source files are yours on handover.' },
-      line: 'We’ll confirm a fixed price after a quick call on scope and launch date.',
+      line: 'Seller milestone gifts (from the brief) aren’t in this quote. We’ll scope them once the brand is locked.',
     },
     next: {
       heading: 'Let’s give Nation its flag.',
       items: [
-        { icon: 'users', label: 'Step 1: Quick call', text: '20 minutes on the launch date, sellers we can feature, and what stays from the current site.' },
-        { icon: 'download', label: 'Step 2: Share access', text: 'Product, current Figma, any seller stories and sales numbers.' },
-        { icon: 'calendar', label: 'Step 3: Kick off', text: 'We can start next week. Messaging in your hands within the first week.' },
+        { icon: 'tag', label: 'Step 1: Approve the scope', text: 'Share this page with your investors and team. Any questions, ask us on WhatsApp.' },
+        { icon: 'download', label: 'Step 2: Send the inputs', text: 'Your revised wireframe, product access and any seller stories or sales numbers.' },
+        { icon: 'calendar', label: 'Step 3: Kick off Monday 19 Oct', text: 'Positioning and identity directions in your hands by the end of week one.' },
       ],
     },
     cta: {
-      eyebrow: 'Let’s give Nation its flag.',
+      eyebrow: 'Start Monday, 19 October.',
       email: 'hello@pixeluplabs.com',
-      note: 'Book a quick call: 20 minutes on the launch date, sellers we can feature, and what stays from the current site.',
+      note: 'Approve the scope and we kick off Monday 19 October, with the brand and landing page first. Questions? Book a quick call or message us on WhatsApp.',
       reserve: { label: 'Book a quick call', href: 'https://cal.com/pixelup/discovery' },
     },
   },

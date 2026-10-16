@@ -322,6 +322,24 @@ export default function ProposalView({ p }: { p: Proposal }) {
         <div className="cs-text">
           <Head n={num('investment')} label={label('investment', 'Investment')} heading={p.investment.heading} />
           <div className="cs-text__body">
+            {p.investment.items && (
+              <div className="prop-stages">
+                {p.investment.items.map((it) => (
+                  <div key={it.name} className="prop-stage" data-reveal="fade">
+                    <div className="prop-stage__head">
+                      <p className="prop-stage__name">
+                        {it.name} <span>{it.terms}</span>
+                      </p>
+                      <p className="prop-stage__price">
+                        {it.was && <s aria-label={`Standalone ${it.was}`}>{it.was}</s>}
+                        {it.price}
+                      </p>
+                    </div>
+                    <p className="cs-para">{it.includes}</p>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="prop-price" data-reveal="fade">
               <p className="prop-price__name">
                 {p.investment.lead.name} <span>{p.investment.lead.terms}</span>

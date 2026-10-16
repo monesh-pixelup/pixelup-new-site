@@ -732,3 +732,61 @@ main[data-page='proposal'] + .foot .foot__email {
 body:has([data-page='proposal']) .mark {
   display: none;
 }
+
+/* ---------------------------------------------------------------
+   Investment by stage — one row per stage, standalone price struck
+---------------------------------------------------------------- */
+.prop-stages {
+  margin-bottom: max(32px, calc(56 * var(--u)));
+}
+.prop-stage {
+  padding: max(14px, calc(18 * var(--u))) 0;
+  border-top: 1px solid var(--rule);
+}
+.prop-stage__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 24px;
+}
+.prop-stage__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  color: var(--paper);
+}
+.prop-stage__name span {
+  color: var(--fog);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+}
+.prop-stage__price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  font-size: clamp(26px, calc(44 * var(--u)), 60px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.prop-stage__price s {
+  color: var(--fog);
+  font-size: 0.42em;
+  letter-spacing: 0;
+  text-decoration-thickness: 1px;
+}
+.prop-stage .cs-para {
+  margin-top: 8px;
+  color: var(--fog);
+}
+@media (max-width: 767px) {
+  .prop-stage__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

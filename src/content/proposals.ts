@@ -255,7 +255,7 @@ export const proposals: Proposal[] = [
     hold: 'Slot held until Sat 17 Oct',
     kicker: 'Proposal · Nation · October 2026',
     title: 'A brand that says one thing: this makes you money.',
-    lede: 'Branding, a mascot, the withnation.ai landing page designed and built, a product reskin, a one-minute launch film and a seller milestone gift idea. Six weeks from Monday 19 October, with the brand and landing page first, so a first-time seller trusts Nation on the first screen and starts a store on the second.',
+    lede: 'Branding, a mascot, the withnation.ai landing page designed and built, a product reskin, a one-minute launch film and a seller milestone gift idea. 6 to 8 weeks from Monday 19 October, with the brand and landing page first, so a first-time seller trusts Nation on the first screen and starts a store on the second.',
     meta: [
       { label: 'Brand and website sprints', value: '35+', icon: 'layers' },
       { label: 'Raised by clients after their sprint', value: '$300M+', icon: 'tag' },
@@ -334,7 +334,7 @@ export const proposals: Proposal[] = [
     },
     run: {
       heading: 'How we’ll work together.',
-      intro: 'Daksh leads as creative director, with senior designers on brand, web, product and motion. A few simple rules keep six weeks of work moving without anyone waiting on anyone.',
+      intro: 'Daksh leads as creative director, with senior designers on brand, web, product and motion. A few simple rules keep 6 to 8 weeks of work moving without anyone waiting on anyone.',
       items: [
         { icon: 'message', label: 'One Slack channel', text: 'A shared Slack channel for the whole project, so every decision, file and question lives in one place instead of scattered threads.' },
         { icon: 'clock', label: 'A 30-minute review every week', text: 'One standing review call a week to keep us unblocked. Work lands in Figma with a short Loom in between, and you comment whenever suits you.' },
@@ -344,8 +344,8 @@ export const proposals: Proposal[] = [
       ],
     },
     schedule: {
-      heading: 'Six weeks, start to launch.',
-      body: 'The mascot is part of the brand, so it runs the same three weeks. The landing page starts in week two, as the identity locks, so it’s live soon after the brand is done. The product reskin and the launch video start the moment branding wraps, built from the finished brand and mascot. Gift ideation starts once the identity locks, so you have the idea in hand to take to a manufacturer.',
+      heading: '6 to 8 weeks, start to launch.',
+      body: 'The project runs 6 to 8 weeks. The plan below is the six-week path, and the full website package or slower review rounds take it toward eight. The mascot is part of the brand, so it runs the same three weeks. The landing page starts in week two, as the identity locks, so it’s live soon after the brand is done. The product reskin and the launch video start the moment branding wraps, built from the finished brand and mascot. Gift ideation starts once the identity locks, so you have the idea in hand to take to a manufacturer.',
       labels: { bring: 'What we do', decide: 'What you get' },
       sprints: [
         {
@@ -420,7 +420,7 @@ export const proposals: Proposal[] = [
         },
       ],
       decideBy: { week: 2, label: 'Identity locked 30 Oct' },
-      line: 'The brand and mascot are done by 6 November, the landing page is live on withnation.ai by 13 November, and everything is delivered by 25 November, before Thanksgiving. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
+      line: 'The brand and mascot are done by 6 November, the landing page is live on withnation.ai by 13 November, and on the six-week path everything is delivered by 25 November, before Thanksgiving. We start on your revised wireframe from 19 October, and the video needs your product recordings by 9 November.',
     },
     investment: {
       heading: 'Six stages. One price for all of them.',
@@ -442,7 +442,7 @@ export const proposals: Proposal[] = [
       ],
       lead: {
         name: 'Everything together',
-        terms: '6 weeks · 50% deposit reserves the slot',
+        terms: '6 to 8 weeks · a 50% deposit on branding reserves the slot',
         price: '$52,383',
         includes: 'The five design stages at 30% off the standalone prices ($50,383, from $71,976, so you save $21,593), plus $2,000 for the seller milestone gift idea. With the full website (landing page + 7 to 8 pages) instead of the landing page only, everything comes to $60,375.',
       },
@@ -453,7 +453,7 @@ export const proposals: Proposal[] = [
       heading: 'Let’s give Nation its flag.',
       intro: 'We’ve blocked your slot for Monday 19 October and can hold it until Saturday 17 October, 12 noon PST. After that we can’t guarantee our availability.',
       items: [
-        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay the 50% deposit of $26,191.50 through Contra, using the button below, by Saturday 12 noon PST.' },
+        { icon: 'tag', label: 'Step 1: Reserve your slot', text: 'Pay a deposit of $9,255.50, 50% of the branding sprint, through Contra, using the button below, by Saturday 12 noon PST.' },
         { icon: 'message', label: 'Step 2: Onboard', text: 'We open a shared Slack channel and send a short onboarding form for files and access: your revised wireframe, product access and any seller stories or sales numbers.' },
         { icon: 'calendar', label: 'Step 3: Kick off Monday 19 Oct', text: 'A kickoff call to meet the team and walk through your dashboard and timeline. Positioning and identity directions follow by the end of week one.' },
       ],
@@ -461,7 +461,7 @@ export const proposals: Proposal[] = [
     cta: {
       eyebrow: 'Reserve your slot by Saturday, 17 Oct',
       email: 'hello@pixeluplabs.com',
-      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a 50% deposit of $26,191.50 through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
+      note: 'Your slot for Monday 19 October is held until Saturday 17 October, 12 noon PST. Reserve it with a deposit of $9,255.50, 50% of the branding sprint, through Contra, and we’ll open the Slack channel and send the onboarding form the same day. Questions? Ping Daksh anytime.',
       reserve: { label: 'Reserve spot now', href: 'https://contra.com/payment-link/KLeSawvu-nation-full-project-deposit' },
     },
   },

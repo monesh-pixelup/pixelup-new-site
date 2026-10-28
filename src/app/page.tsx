@@ -1,25 +1,30 @@
-import About from '@/components/About';
-import Clients from '@/components/Clients';
-import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import Hero from '@/components/Hero';
-import News from '@/components/News';
-import Services from '@/components/Services';
-import Work from '@/components/Work';
+import Dome from '@/components/home/Dome';
+import Ethos from '@/components/home/Ethos';
+import HomeClients from '@/components/home/HomeClients';
+import HomeFooter from '@/components/home/HomeFooter';
+import HomeHero from '@/components/home/HomeHero';
+import HomeWork from '@/components/home/HomeWork';
+import Recognition from '@/components/home/Recognition';
+import Testimonials from '@/components/home/Testimonials';
+import WhatWeDo from '@/components/home/WhatWeDo';
 
+// Figma "Home - Desktop - 1440p" (PIXELUP-Brand-2026, node 1524:934). The 3D mark sits this page out.
 export default function Home() {
   return (
     <>
-      <Header />
-      <main>
-        <Hero />
-        <Work />
-        <Clients />
-        <About />
-        <Services />
-        <News />
+      <Header variant="home" />
+      <main className="home" data-mark="off">
+        <HomeHero />
+        <Ethos />
+        <HomeWork />
+        <WhatWeDo />
+        <Recognition />
+        <Dome />
+        <Testimonials />
+        <HomeClients />
       </main>
-      <Footer />
+      <HomeFooter />
     </>
   );
 }

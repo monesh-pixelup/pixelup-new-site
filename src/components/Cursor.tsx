@@ -2,7 +2,7 @@
 
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
-import { markState } from '@/lib/markState';
+import { cursorHint, markState } from '@/lib/markState';
 
 export default function Cursor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -25,6 +25,7 @@ export default function Cursor() {
     let target: Element | null = null;
     let mode = '';
     let words = '';
+    let variant = '';
 
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === 'touch') return;
@@ -38,7 +39,9 @@ export default function Cursor() {
       }
     };
     const onOver = (e: PointerEvent) => {
-      target = (e.target as Element | null)?.closest?.('a, button, [data-cursor]') ?? null;
+      const hit = (e.target as Element | null)?.closest?.('a, button, [data-cursor]') ?? null;
+      // Over a [data-pill] area the pill takes over (Pill.tsx); the dot stays out of the way.
+      target = hit && !hit.hasAttribute('data-cursor') && hit.matches('[data-pill]') ? null : hit;
     };
     const onLeave = () => {
       shown = false;
@@ -60,6 +63,9 @@ export default function Cursor() {
       if (markState.dragging) {
         next = 'label';
         copy = 'Spin';
+      } else if (cursorHint.label) {
+        next = 'label';
+        copy = cursorHint.label;
       } else if (custom) {
         next = 'label';
         copy = custom;
@@ -76,6 +82,11 @@ export default function Cursor() {
       if (next !== mode) {
         mode = next;
         el.dataset.mode = next;
+      }
+      const look = next === 'label' && cursorHint.label ? cursorHint.variant : '';
+      if (look !== variant) {
+        variant = look;
+        el.dataset.variant = look;
       }
     };
 

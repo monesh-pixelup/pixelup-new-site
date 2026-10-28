@@ -1,0 +1,2513 @@
+/* ---------------------------------------------------------------
+   Home — Figma "Home - Desktop - 1440p" (1524:934)
+   Phones and tablets get a stacked layout; from 1024px every element sits at its Figma coordinates on the
+   1440 canvas (1u = 1 design px), each section a fixed-height band so nothing drifts.
+
+   Type: the Figma sets Helvetica Now Display and Inter; the site's face is Switzer, which runs smaller on the cap.
+   Bold is scaled ×1.048 with tighter tracking so cap height and line length both match; Inter sizes ×1.07.
+   Text boxes are trimmed to cap height and baseline (.tb), the same box the Figma measures from.
+---------------------------------------------------------------- */
+
+html:has(main.home),
+html:has(main.home) body {
+  background: #000;
+}
+
+.tb {
+  display: block;
+  line-height: var(--lh, 1);
+  text-box: trim-both cap alphabetic;
+}
+/* Without text-box-trim, pull the line box in to the same cap-to-baseline box (Switzer: ascent 0.98, descent 0.25, cap 0.68). */
+@supports not (text-box: trim-both cap alphabetic) {
+  .tb {
+    margin-block: calc(-1em * ((var(--lh, 1) - 1.23) / 2 + 0.3)) calc(-1em * ((var(--lh, 1) - 1.23) / 2 + 0.25));
+  }
+}
+
+/* Display type: Helvetica Now Display Bold 56 / 52, −4% */
+.disp {
+  font-size: clamp(30px, 8.6vw, 44px);
+  font-weight: 700;
+  --track: -0.05em;
+  text-transform: uppercase;
+  --gap: 0.24em;
+}
+
+/* Lines on the Figma's breaks; each is a mask with room for ascenders and descenders. */
+.lines {
+  display: block;
+}
+.ln {
+  display: inline;
+}
+.ln + .ln {
+  margin-top: var(--gap, 0.3em);
+}
+
+/* Phones and tablets: the lines run together as ordinary text (the dome and clients headings keep theirs). */
+@media (max-width: 1023px) {
+  .lines:not(.hd__title, .hc__title) .tb {
+    display: inline;
+    line-height: inherit;
+  }
+  .disp {
+    line-height: 0.96;
+  }
+}
+
+/* Section label + raised numeral */
+.eb {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  font-size: 13px;
+  text-transform: uppercase;
+  /* 70% white as in the Figma; set in the colour so the fade-in (which ends at opacity 1) keeps it. */
+  color: rgb(255 255 255 / 0.7);
+}
+.eb__num {
+  margin-top: -4px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.645em;
+  letter-spacing: 0;
+}
+.eb--level .eb__num {
+  margin-top: 0;
+}
+
+/* ---------------------------------------------------------------
+   Hero: wordmark with the showreel laid over it in exclusion
+---------------------------------------------------------------- */
+.hh {
+  /* The hero is a graphic: it keeps the 1440 proportions at every width. */
+  --k: calc(var(--vw) / 1440);
+  position: relative;
+  height: calc(960 * var(--k));
+  margin-top: 64px;
+  /* The ®'s advance runs past the edge; its ink doesn't. */
+  overflow-x: clip;
+}
+.hh__title {
+  position: absolute;
+  inset: 0;
+  font-size: calc(330.9 * var(--k));
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+.hh__mask {
+  position: absolute;
+  top: calc(78 * var(--k));
+  left: calc(-2.2 * var(--k));
+  overflow: hidden;
+  /* Room for the U's overshoot and the ®, which stands a touch taller than the caps. */
+  padding: 0.02em 0.02em 0.03em;
+  margin: -0.02em -0.02em -0.03em;
+}
+/* Switzer's ® is a little larger and lower than the Figma's: set at 0.975 and raised to match its box (1272, 73 → 226). */
+.hh__mask--reg {
+  top: calc(76.9 * var(--k));
+  left: calc(1260.1 * var(--k));
+  font-size: calc(322.6 * var(--k));
+}
+.hh__word {
+  letter-spacing: -0.028em;
+}
+.hh__reg {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.hh__reel {
+  position: absolute;
+  top: calc(258 * var(--k));
+  left: calc(66.54 * var(--k));
+  width: calc(1302.1 * var(--k));
+  height: calc(594 * var(--k));
+  margin: 0;
+  overflow: hidden;
+  mix-blend-mode: exclusion;
+}
+/* The Figma frames a band of a square image: 220.73% tall, starting 59.33% above the frame. */
+.hh__zoom {
+  position: absolute;
+  top: -59.33%;
+  left: 0;
+  width: 100%;
+  height: 220.73%;
+}
+.hh__zoom img {
+  object-fit: cover;
+}
+/* The hero is one link to the work: a pill follows the cursor on desktop, a pill button shows on touch. */
+.hh__go {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.hh__mgo {
+  display: none;
+}
+@media (hover: none), (pointer: coarse), (max-width: 767px) {
+  .hh {
+    margin-bottom: 72px;
+  }
+  .hh__mgo {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    left: 0;
+    z-index: 2;
+    width: max-content;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 17px 15px 18px;
+    border-radius: 999px;
+    background: #0c0c0c;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .motion .hh__mgo {
+    animation: introFade 1.3s var(--ease-out) 1s both;
+  }
+}
+
+.hh__cue {
+  position: absolute;
+  top: calc(887 * var(--k));
+  left: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 4px;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+.hh__cue-rule {
+  position: absolute;
+  top: 0;
+  left: 1px;
+  width: 91px;
+  height: 1px;
+  background: var(--paper);
+  transform: scaleY(0.5);
+  transform-origin: 0 0;
+}
+.hh__cue-icon {
+  width: 9.6px;
+  height: 9.6px;
+}
+
+@keyframes hhRise {
+  from {
+    transform: translateY(150%);
+  }
+}
+@keyframes hhUnmask {
+  from {
+    clip-path: inset(100% 0% 0% 0%);
+  }
+  to {
+    clip-path: inset(0% 0% 0% 0%);
+  }
+}
+@keyframes hhSettle {
+  from {
+    transform: scale(1.2);
+  }
+}
+.motion .hh__word {
+  animation: hhRise 1.5s var(--ease-out) 0.1s both;
+}
+.motion .hh__reg {
+  animation: hhRise 1.5s var(--ease-out) 0.22s both;
+}
+.motion .hh__reel {
+  animation: hhUnmask 1.6s var(--ease-io) 0.3s both;
+}
+.motion .hh__zoom img {
+  animation: hhSettle 2.2s var(--ease-out) 0.3s both;
+}
+.motion .hh__cue {
+  animation: introFade 1.3s var(--ease-out) 0.9s both;
+}
+.motion .hh__cue-rule {
+  animation: introLine 1.4s var(--ease-io) 0.9s both;
+}
+
+/* ---------------------------------------------------------------
+   Ethos
+---------------------------------------------------------------- */
+.he {
+  padding: 72px var(--pad) 64px;
+}
+.he__title {
+  margin-top: 28px;
+}
+
+/* ---------------------------------------------------------------
+   Work grid: the Figma's seven composed frames
+---------------------------------------------------------------- */
+.hw {
+  padding: 0 var(--pad);
+}
+.hw__grid {
+  display: grid;
+  gap: 40px;
+}
+.hw__card {
+  display: block;
+}
+.hw__media {
+  position: relative;
+  aspect-ratio: var(--w) / var(--h);
+  overflow: hidden;
+  background: #101010;
+}
+.hw__zoom {
+  position: absolute;
+  inset: 0;
+}
+.hw__zoom img,
+.hw__video {
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+.hw__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hw__card:hover .hw__zoom :is(img, video) {
+  transform: scale(1.03);
+}
+.hw__cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.hw__label {
+  font-size: 15px;
+}
+.hw__index {
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------
+   What we do
+---------------------------------------------------------------- */
+.hs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  padding: 120px var(--pad) 40px;
+}
+.hs__eb,
+.hs__title {
+  grid-column: 1 / -1;
+}
+.hs__title {
+  margin: 28px 0 40px;
+}
+.hs__glyph {
+  grid-column: 1 / -1;
+  width: 54px;
+  height: auto;
+  margin-bottom: 40px;
+  fill: var(--paper);
+  overflow: visible;
+}
+.hs__top circle,
+.hs__ring circle {
+  transform-box: fill-box;
+  transform-origin: 50%;
+}
+.hs__label {
+  --lh: 1.07;
+  max-width: 6em;
+  margin-bottom: 18px;
+  font-size: 13px;
+  text-transform: uppercase;
+  /* Figma: white at 70%, in the colour so the fade-in reveal doesn't lift it to full white. */
+  color: rgb(255 255 255 / 0.7);
+}
+.hs__list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.hs__item {
+  /* Figma: the row is 12 tall on a 14 name (0.857em), name on the bottom, the number centred in the row
+     after a 1px spacer, so it rides up by the cap tops. */
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 11px;
+}
+.hs__name {
+  /* Weight and size as on /next: medium, 14 (13 on phones), the site's own tracking. */
+  font-size: 13px;
+  font-weight: 500;
+}
+.hs__num {
+  align-self: center;
+  /* Raised a touch above the row's centre, level with the name's cap tops. */
+  translate: 0 -2px;
+  /* White in difference: it inverts only where it overlaps the hover block, and reads unchanged over black. */
+  color: #fff;
+  mix-blend-mode: difference;
+  font-size: 6px;
+  letter-spacing: 0;
+  opacity: 0.6;
+  transition:
+    color 0.45s var(--ease-soft),
+    opacity 0.45s var(--ease-soft);
+}
+
+/* Hover (as on /next): the list dims, and the hovered name gets a paper block that wipes up from below,
+   its text turning ink. The block covers the full line box plus 2 × 3 padding, beyond the trimmed cap box. */
+.hs {
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hs__name {
+  position: relative;
+  isolation: isolate;
+}
+.hs__name::before {
+  content: '';
+  position: absolute;
+  inset: calc(-0.185em - 2px) -3px calc(-0.135em - 2px);
+  z-index: -1;
+  background: var(--paper);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 0.55s var(--ease-io);
+}
+.hs__name > span {
+  /* Inline, so the name keeps its cap-height box and the number lines up against it. */
+  display: inline;
+  transition:
+    color 0.45s var(--ease-soft),
+    opacity 0.45s var(--ease-soft);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hs__list:hover .hs__name > span,
+  .hs__list:hover .hs__num {
+    opacity: 0.32;
+  }
+  .hs__item:hover .hs__name::before {
+    transform: scaleY(1);
+    transform-origin: 50% 100%;
+  }
+  .hs__list .hs__item:hover .hs__name > span {
+    color: #000;
+    opacity: 1;
+  }
+  .hs__list .hs__item:hover .hs__num {
+    color: var(--paper);
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Recognition
+---------------------------------------------------------------- */
+.hr {
+  position: relative;
+  padding: 80px var(--pad) 40px;
+}
+.hr__count {
+  /* Design px for the 27: the Figma's figure enlarged on phones. Starts 10 above the black block, where the 2 overshoots. */
+  --s: calc(var(--vw) / 1440 * 1.9);
+  position: relative;
+  height: calc(513 * var(--s));
+  margin: 24px calc(-1 * var(--pad)) 0;
+  overflow: hidden;
+  /* Switzer's figures are shorter than its caps: sized so the 2 stands as tall as the Figma's (493.5 on a 483 cap). */
+  font-size: calc(749 * var(--s));
+}
+.hr__count > * {
+  position: absolute;
+}
+.hr__two {
+  /* Baseline 4888.4 on the canvas: cap top = baseline − 0.68 × 749. */
+  top: calc((4888.4 - 0.68 * 749 - 4389.44) * var(--s));
+  left: calc(-24.7 * var(--s));
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.hr__block {
+  top: calc(10 * var(--s));
+  left: calc(311.9 * var(--s));
+  width: calc(237 * var(--s));
+  height: calc(503 * var(--s));
+  background: #000;
+}
+.hr__one {
+  top: calc((4888.4 - 0.68 * 749 - 4389.44) * var(--s));
+  left: calc((345.9 - 24.7) * var(--s));
+  font-weight: 700;
+  letter-spacing: 0;
+  visibility: hidden;
+}
+.hr__two,
+.hr__one {
+  font-variant-numeric: tabular-nums;
+}
+.hr__seven {
+  top: calc(16.43 * var(--s));
+  left: calc(345.9 * var(--s));
+  width: calc(335.824 * var(--s));
+  height: auto;
+}
+.hr__text {
+  position: relative;
+  margin-top: -6px;
+  text-align: center;
+  mix-blend-mode: exclusion;
+}
+.hr__awards {
+  margin-top: 96px;
+}
+.hr__row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 0;
+}
+.hr__rule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--paper);
+}
+.hr__left,
+.hr__right {
+  display: flex;
+  align-items: flex-start;
+}
+.hr__left {
+  gap: 10px;
+}
+.hr__right {
+  gap: 6px;
+}
+.hr__title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+.hr__source {
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.hr__spark {
+  width: 0.7em;
+  height: 0.7em;
+  font-size: 22px;
+}
+
+/* ---------------------------------------------------------------
+   Work dome
+---------------------------------------------------------------- */
+.hd {
+  /* The hex-dome handoff's easing for every overlay change. */
+  --hd-ease: cubic-bezier(0.77, 0, 0.175, 1);
+  position: relative;
+  height: min(100svh, 760px);
+  min-height: 560px;
+  overflow: hidden;
+  background: #000;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.hd__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  touch-action: pan-y;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+.hd.is-live .hd__canvas {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .hd__canvas {
+    cursor: none;
+  }
+}
+/* Vignette, from the Figma frame; it eases off while dragging. */
+.hd__shade {
+  --k: calc(var(--vw) / 1440);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.7s var(--hd-ease);
+  background:
+    radial-gradient(calc(864 * var(--k)) calc(317.68 * var(--k)) at 50% calc(217.36 * var(--k)), rgb(0 0 0 / 0.78) 0%, rgb(0 0 0 / 0) 72%),
+    radial-gradient(calc(1728 * var(--k)) calc(752.4 * var(--k)) at 50% 60%, rgb(0 0 0 / 0) 55%, rgb(0 0 0 / 0.85) 100%);
+}
+.hd.is-drag .hd__shade {
+  opacity: 0.5;
+}
+.hd__head {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  left: 0;
+  text-align: center;
+  pointer-events: none;
+  transition:
+    opacity 0.7s var(--hd-ease),
+    filter 0.7s var(--hd-ease),
+    transform 0.7s var(--hd-ease);
+}
+/* Hidden until the cards fly in; it steps back while dragging or while a project is open. */
+.js .hd:not(.is-ready, .is-fallback) .hd__head {
+  opacity: 0;
+}
+.hd.is-drag .hd__head,
+.hd.is-open .hd__head {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(-12px) scale(0.98);
+}
+.hd__eb {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  font-size: 13px;
+  --track: 0;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.65);
+}
+.hd__eb sup {
+  top: 0;
+  font-size: 8px;
+  line-height: 1;
+  vertical-align: top;
+}
+.hd__title {
+  margin-top: 28px;
+  font-size: clamp(34px, 10vw, 52px);
+  font-weight: 500;
+  --track: -0.05em;
+  text-transform: uppercase;
+  --gap: 0.16em;
+}
+.hd__title .ln {
+  display: block;
+  /* Each line is a mask its words rise out of (with room for ascenders and descenders). */
+  overflow: hidden;
+  padding: 0.3em 0.06em 0.28em;
+  margin: -0.3em -0.06em -0.28em;
+}
+.hd__title .ln + .ln {
+  margin-top: calc(var(--gap) - 0.3em);
+}
+.hd__title .ln > .tb {
+  display: block;
+}
+.js .hd:not(.is-ready, .is-fallback) .hd__title .ln > .tb {
+  transform: translateY(1em);
+}
+.hd__bar {
+  position: absolute;
+  right: 16px;
+  bottom: 22px;
+  left: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 14px 0;
+  font-size: 11px;
+  --track: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition:
+    opacity 0.5s var(--hd-ease),
+    transform 0.5s var(--hd-ease);
+}
+.hd.is-open .hd__bar {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.hd__hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(255 255 255 / 0.65);
+}
+.hd__hint i {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--paper);
+  animation: hd-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes hd-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+.hd__count {
+  display: flex;
+  grid-row: 2;
+  align-items: center;
+  gap: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.hd__ticks {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 14px;
+}
+.hd__ticks i {
+  width: 1px;
+  height: 8px;
+  background: rgb(255 255 255 / 0.3);
+  transition: all 0.4s var(--hd-ease);
+}
+.hd__ticks i.is-on {
+  width: 2px;
+  height: 14px;
+  background: var(--paper);
+}
+.hd__name-now {
+  justify-self: end;
+  grid-row: 1;
+  grid-column: 2;
+}
+/* Before WebGL (and without it) the dome is a row of cards you can swipe. */
+.hd__list {
+  position: absolute;
+  right: 0;
+  bottom: 70px;
+  left: 0;
+  display: flex;
+  gap: 16px;
+  padding: 0 var(--pad);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.hd__item {
+  flex: 0 0 78%;
+  scroll-snap-align: center;
+}
+.hd__link {
+  display: block;
+}
+.hd__img {
+  position: relative;
+  display: block;
+  aspect-ratio: 431 / 262;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #151515;
+}
+.hd__img img {
+  object-fit: cover;
+}
+.hd__meta {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+.hd__name {
+  font-weight: 500;
+}
+.hd__scope {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hd__sum {
+  grid-column: 1 / -1;
+  color: rgb(255 255 255 / 0.62);
+}
+.js .hd:not(.is-fallback) .hd__list {
+  visibility: hidden;
+}
+.hd.is-fallback .hd__canvas {
+  display: none;
+}
+
+/* The open project: a panel over a shade rising from the bottom. */
+.hd__open {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.hd.is-open .hd__open {
+  pointer-events: auto;
+}
+.hd__open-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.95) 0%, rgb(0 0 0 / 0.6) 22%, transparent 40%);
+  opacity: 0;
+  transition: opacity 0.7s var(--hd-ease);
+}
+.hd.is-open .hd__open-shade {
+  opacity: 1;
+}
+.hd__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.4);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.6) rotate(-90deg);
+  transition:
+    opacity 0.7s var(--hd-ease),
+    transform 0.7s var(--hd-ease),
+    border-color 0.7s var(--hd-ease);
+}
+.hd.is-open .hd__close {
+  opacity: 1;
+  transform: none;
+}
+.hd__close:hover {
+  border-color: var(--paper);
+}
+.hd__close span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 1px;
+  background: var(--paper);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.hd__close span + span {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.hd__panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: end;
+  gap: 24px;
+  width: 100%;
+  padding: 16px 16px 28px;
+}
+.hd__panel-index {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 16px;
+  font-size: 12px;
+  --track: 0.06em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.65);
+}
+.hd__panel-title {
+  max-width: 18ch;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.02;
+  --track: -0.035em;
+  color: var(--paper);
+}
+.hd__word {
+  display: inline-block;
+  margin-bottom: -0.08em;
+  padding-bottom: 0.08em;
+  overflow: hidden;
+  vertical-align: top;
+}
+.hd__word > span {
+  display: inline-block;
+}
+.hd__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  margin: 0;
+  font-size: 12px;
+}
+.hd__facts > div {
+  padding-top: 10px;
+  border-top: 0.5px solid var(--rule);
+}
+.hd__facts dt {
+  margin-bottom: 6px;
+  font-size: 10px;
+  --track: 0.08em;
+  text-transform: uppercase;
+  color: var(--fog);
+}
+.hd__facts dd {
+  margin: 0;
+  line-height: 1.4;
+  color: var(--paper);
+}
+.hd__cta {
+  position: absolute;
+  top: -96px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: #000;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  transition: transform 0.5s var(--hd-ease);
+}
+.hd__cta:hover {
+  transform: scale(1.06);
+}
+.hd__cta > span:first-child {
+  max-width: 9ch;
+  line-height: 1.1;
+}
+.hd__cta-arrow {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  transition: transform 0.5s var(--hd-ease);
+}
+.hd__cta:hover .hd__cta-arrow {
+  transform: translate(4px, -4px);
+}
+@media (min-width: 1024px) {
+  .hd__close {
+    top: 20px;
+    right: 20px;
+  }
+  .hd__panel {
+    grid-template-columns: 1.25fr 1fr auto;
+    gap: 48px;
+    padding: 20px 20px 40px;
+  }
+  .hd__panel-title {
+    font-size: clamp(28px, 3vw, 46px);
+  }
+  .hd__facts {
+    font-size: 13px;
+  }
+  .hd__cta {
+    position: static;
+    width: 132px;
+    height: 132px;
+  }
+  .hd__cta-arrow {
+    top: 22px;
+    right: 30px;
+  }
+}
+
+/* The dome's own cursor: a dot at rest, a VIEW disc over a card, a smaller DRAG disc while dragging. */
+.hd__cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+}
+@media (hover: none) {
+  .hd__cursor {
+    display: none;
+  }
+}
+.hd__cursor-disc {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: #000;
+  font-size: 10px;
+  --track: 0.12em;
+  text-transform: uppercase;
+  transition: transform 0.5s var(--hd-ease);
+}
+.hd__cursor-disc.is-view {
+  transform: scale(1);
+}
+.hd__cursor-disc.is-drag {
+  transform: scale(0.62);
+}
+.hd__cursor-disc.is-idle {
+  transform: scale(0.14);
+  mix-blend-mode: difference;
+}
+.hd__cursor-disc span {
+  transition: opacity 0.2s var(--hd-ease);
+}
+.hd__cursor-disc.is-idle span {
+  opacity: 0;
+}
+html.is-dome-cursor .cursor {
+  visibility: hidden;
+}
+
+/* The dome's VIEW cursor: a white disc, drawn plain rather than inverted. */
+.cursor[data-variant='disc'] {
+  mix-blend-mode: normal;
+}
+.cursor[data-variant='disc'] .cursor__label > span {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 10.7px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------
+   Testimonials
+---------------------------------------------------------------- */
+.ht {
+  padding: 120px var(--pad) 120px;
+}
+.ht__title {
+  display: block;
+  margin-top: 28px;
+}
+.ht__rest {
+  margin-top: var(--gap);
+  text-align: right;
+}
+/* The carousel (as on /next, .nx-voices): sized in the Figma's 1440 units, or 390 on phones. */
+.hv {
+  --nu: var(--u);
+  --cw: calc(519 * var(--nu));
+  --gap: calc(100.5 * var(--nu));
+  --hv-pad: calc(18 * var(--nu));
+  --mute: #7c7c7c;
+  --label: #d6d6d6;
+  --grey: #a9a9a9;
+  --t12: max(11px, calc(12 * var(--nu)));
+  --t14: max(12px, calc(14 * var(--nu)));
+  --hx-io: cubic-bezier(0.76, 0, 0.24, 1);
+  --hx-out: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  margin-top: calc(88 * var(--nu));
+}
+.hv .arrow-swap svg {
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.hv__bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0 var(--hv-pad);
+}
+.hv__count {
+  display: flex;
+  margin: 0;
+  font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: var(--t12);
+  line-height: 1;
+}
+:where(.hv__count, .hv__count *) {
+  letter-spacing: 0;
+}
+.hv__range {
+  position: relative;
+  display: inline-grid;
+  height: 1em;
+  overflow: hidden;
+  color: var(--paper);
+}
+.hv__roll {
+  display: inline-flex;
+  grid-area: 1 / 1;
+}
+.hv__roll > span {
+  display: inline-block;
+}
+.hv__of {
+  color: var(--mute);
+  white-space: pre;
+}
+.hv__nav {
+  display: flex;
+  gap: 8px;
+}
+.hv__btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #ffffff38;
+  background: 0 0;
+  color: var(--paper);
+  font-size: 12px;
+  transition:
+    border-color 0.55s var(--hx-io),
+    color 0.55s var(--hx-io),
+    opacity 0.55s var(--hx-io);
+}
+.hv__btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 0.55s var(--hx-io);
+}
+.hv__btn > * {
+  position: relative;
+}
+.hv__btn:disabled {
+  opacity: 0.28;
+  pointer-events: none;
+}
+.hv__btn:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: 3px;
+}
+.hv__rail {
+  position: relative;
+  display: block;
+  height: 1px;
+  margin: calc(16 * var(--nu)) var(--hv-pad) 0;
+  overflow: hidden;
+  background: #ffffff29;
+}
+.hv__rail i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--thumb, 1) * 100%);
+  background: var(--paper);
+  transform: translateX(calc(var(--prog, 0) * (1 / var(--thumb, 1) - 1) * 100%));
+}
+.hv__view {
+  margin-top: calc(20 * var(--nu));
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.hv.is-drag .hv__view {
+  user-select: none;
+}
+.hv__track {
+  display: flex;
+  gap: var(--gap);
+  width: max-content;
+  margin: 0;
+  padding: 0 var(--hv-pad);
+  list-style: none;
+}
+.hv-q {
+  display: flex;
+  flex: none;
+  width: var(--cw);
+  transform: skewX(calc(var(--v, 0) * -1.2deg));
+  transform-origin: 50% 100%;
+  transition: opacity 0.55s var(--hx-io);
+}
+.hv-q__in {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.hv-q__slug {
+  display: flex;
+  margin: 0;
+  font-size: var(--t12);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hv-q__n {
+  flex: 0 0 calc(88.5 * var(--nu));
+  color: var(--paper);
+  font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+}
+:where(.hv-q__n) {
+  letter-spacing: 0;
+}
+.hv-q__co {
+  color: var(--label);
+  transition: translate 0.55s var(--hx-io);
+}
+.hv-q__say {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  margin: calc(36 * var(--nu)) 0 0;
+}
+.hv-q__quote {
+  flex: 1 0 auto;
+  margin: 0;
+}
+.hv-q__quote p {
+  margin: 0;
+  color: var(--mute);
+  font-size: max(20px, calc(28 * var(--nu)));
+  font-weight: 400;
+  line-height: 1.12;
+  text-indent: -0.4em;
+}
+:where(.hv-q__quote, .hv-q__quote *) {
+  letter-spacing: -0.025em;
+}
+.hv-q__mark {
+  margin: 0 -0.06em;
+  padding: 0 0.06em;
+  background: linear-gradient(var(--paper), var(--paper)) no-repeat 0 0 / 100% 0;
+  color: var(--paper);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-size 0.55s var(--hx-io),
+    color 0.55s var(--hx-io);
+}
+.hv-q__lit {
+  color: inherit;
+}
+.hv-q__by {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  column-gap: calc(12 * var(--nu));
+  margin-top: calc(36 * var(--nu));
+  font-size: var(--t14);
+  line-height: 1.3;
+}
+.hv-q__who {
+  display: grid;
+}
+.hv-q__name {
+  color: var(--paper);
+}
+.hv-q__title {
+  color: var(--grey);
+}
+.hv-q__more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--paper);
+  font-size: var(--t12);
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.hv-q__more .arrow-swap {
+  font-size: 0.8em;
+}
+.hv-q__more::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
+}
+.hv-q__more:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: 4px;
+}
+.hv-q__plate {
+  position: relative;
+  display: block;
+  margin-top: calc(32 * var(--nu));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #151515;
+  clip-path: inset(0);
+  transition: clip-path 0.55s var(--hx-io);
+}
+.hv-q__wipe,
+.hv-q__drift {
+  position: absolute;
+  display: block;
+}
+.hv-q__wipe {
+  inset: 0;
+}
+.hv-q__drift {
+  inset: 0 -4%;
+  translate: calc(var(--p, 0) * -3%) 0;
+}
+.hv-q__drift img {
+  object-fit: cover;
+  -webkit-user-drag: none;
+  transition: scale 0.7s var(--hx-out);
+}
+.hv.is-drag .hv-q__plate {
+  clip-path: inset(calc(8 * var(--nu)));
+}
+
+/* Arrival: the rail draws, the bar and cards slide in, the plates wipe open and the highlights light up. */
+html.motion .hv.is-in .hv__rail {
+  transform-origin: 0;
+  animation: hv-rail 0.55s var(--hx-io) backwards;
+}
+html.motion .hv.is-in .hv__bar {
+  animation: hv-bar 0.7s var(--hx-out) 0.1s backwards;
+}
+html.motion .hv.is-in .hv__rail i {
+  animation: hv-thumb 0.7s var(--hx-out) 0.35s backwards;
+}
+html.motion .hv.is-in .hv-q__in {
+  animation: hv-q-in 0.7s var(--hx-out) calc(0.12s + var(--i) * 80ms) backwards;
+}
+html.motion .hv.is-in .hv-q__wipe {
+  animation:
+    hv-q-wipe 0.55s var(--hx-io) calc(0.22s + var(--i) * 80ms) backwards,
+    hv-q-settle 0.7s var(--hx-out) calc(0.22s + var(--i) * 80ms) backwards;
+}
+html.motion .hv.is-in .hv-q__lit {
+  animation: hv-q-lit 0.7s var(--hx-out) calc(0.67s + var(--i) * 80ms) backwards;
+}
+html.motion .hv:not(.is-in) :is(.hv__rail, .hv__bar, .hv__rail i, .hv-q__in) {
+  opacity: 0;
+}
+html.motion .hv:not(.is-in) .hv-q__wipe {
+  clip-path: inset(0 100% 0 0);
+}
+@keyframes hv-rail {
+  0% {
+    transform: scaleX(0);
+  }
+}
+@keyframes hv-bar {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(8 * var(--nu)));
+  }
+}
+@keyframes hv-thumb {
+  0% {
+    opacity: 0;
+  }
+}
+@keyframes hv-q-in {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(64 * var(--nu)));
+  }
+}
+@keyframes hv-q-wipe {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes hv-q-settle {
+  0% {
+    scale: 1.08;
+  }
+}
+@keyframes hv-q-lit {
+  0% {
+    color: #7c7c7c;
+  }
+}
+@keyframes hv-q-in-phone {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(32 * var(--mu)));
+  }
+}
+
+/* Hovering a card dims the others, fills its highlight and nudges the company name. */
+@media (hover: hover) and (pointer: fine) {
+  .hv:not(.is-drag, .is-moving) .hv__track:has(.hv-q:hover) .hv-q:not(:hover) {
+    opacity: 0.32;
+    transition-delay: 60ms;
+  }
+  .hv:not(.is-drag, .is-moving) .hv-q:hover .hv-q__mark {
+    background-position: 0 100%;
+    background-size: 100% 100%;
+    color: var(--ink);
+  }
+  .hv:not(.is-drag, .is-moving) .hv-q:hover .hv-q__co {
+    translate: calc(6 * var(--nu)) 0;
+  }
+  .hv:not(.is-drag, .is-moving) .hv-q:hover .hv-q__drift img {
+    scale: 1.035;
+  }
+  .hv-q:hover .hv-q__more .arrow-swap svg:first-child {
+    transform: translateX(115%);
+  }
+  .hv-q:hover .hv-q__more .arrow-swap svg + svg {
+    transform: translateX(0);
+  }
+  .hv__btn:hover {
+    border-color: var(--paper);
+    color: var(--ink);
+  }
+  .hv__btn:hover::before {
+    transform: scaleY(1);
+    transform-origin: 50% 100%;
+  }
+}
+.hv__track:has(.hv-q__more:focus-visible) .hv-q:not(:has(:focus-visible)) {
+  opacity: 0.32;
+}
+.hv-q:has(.hv-q__more:focus-visible) .hv-q__mark {
+  background-position: 0 100%;
+  background-size: 100% 100%;
+  color: var(--ink);
+}
+.hv-q:has(.hv-q__more:focus-visible) .hv-q__co {
+  translate: calc(6 * var(--nu)) 0;
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hv {
+    --cw: calc(873 * var(--nu));
+  }
+}
+/* Touch: a native scroll-snap strip. */
+@media (hover: none), (pointer: coarse) {
+  .hv__view {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: auto;
+  }
+  .hv__view::-webkit-scrollbar {
+    display: none;
+  }
+  .hv-q {
+    transform: none;
+    scroll-snap-align: start;
+    scroll-margin-left: var(--hv-pad);
+  }
+}
+@media (max-width: 767px) {
+  .ht {
+    padding-bottom: calc(96 * var(--vw) / 390);
+  }
+  .hv {
+    --mu: calc(var(--vw) / 390);
+    --cw: calc(318 * var(--mu));
+    --gap: calc(10 * var(--mu));
+    --hv-pad: 16px;
+    --t12: 12px;
+    --t14: 13px;
+    margin-top: calc(44 * var(--mu));
+  }
+  .hv__rail {
+    margin-top: calc(12 * var(--mu));
+  }
+  .hv__view {
+    margin-top: calc(16 * var(--mu));
+  }
+  .hv-q__n {
+    flex-basis: calc(40 * var(--mu));
+  }
+  .hv-q__say {
+    margin-top: calc(20 * var(--mu));
+  }
+  .hv-q__quote p {
+    font-size: calc(19 * var(--mu));
+    line-height: 1.2;
+    text-indent: 0;
+  }
+  :where(.hv-q__quote, .hv-q__quote *) {
+    letter-spacing: -0.02em;
+  }
+  .hv-q__by {
+    margin-top: calc(16 * var(--mu));
+  }
+  .hv-q__more {
+    align-items: flex-end;
+    min-height: 40px;
+  }
+  .hv-q__plate {
+    margin-top: calc(16 * var(--mu));
+  }
+  html.motion .hv.is-in .hv-q__in {
+    animation-name: hv-q-in-phone;
+  }
+}
+/* Below desktop the section pads its content; the carousel runs edge to edge and keeps its own gutter. */
+@media (max-width: 1023px) {
+  .hv {
+    margin-right: calc(-1 * var(--pad));
+    margin-left: calc(-1 * var(--pad));
+  }
+}
+
+/* ---------------------------------------------------------------
+   Clients (as on /next): the page flips from ink to paper as the section arrives (--flip, Experience), then a tall
+   field where the names turn on a drum over the brand gradient, which ClientsSky walks through as you scroll.
+---------------------------------------------------------------- */
+/* Testimonials share the flip, and lift away inside .ht__in. */
+.ht,
+.hc {
+  position: relative;
+  isolation: isolate;
+}
+.ht::before,
+.hc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--paper);
+  opacity: var(--flip);
+  pointer-events: none;
+  will-change: opacity;
+}
+.ht {
+  --flip: 0;
+}
+.hc {
+  --flip: 1;
+  /* The black gap the Figma leaves between the gradient and the footer. */
+  --fade-out: 95px;
+  padding-top: 96px;
+  padding-bottom: var(--fade-out);
+  background: #000;
+  color: #000;
+  text-align: center;
+}
+.hc::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--fade-out);
+  background: #000;
+  pointer-events: none;
+}
+.hc__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hc__eb {
+  position: relative;
+  color: inherit;
+}
+.hc__eb .eb__num {
+  position: absolute;
+  left: 100%;
+  margin-left: 3px;
+}
+.hc__title {
+  margin-top: 48px;
+  text-align: center;
+  --gap: 0.24em;
+}
+.hc__title .ln {
+  display: block;
+}
+
+.hc__field {
+  --lu: calc(var(--vw) * 0.74 / 443.61);
+  position: relative;
+  isolation: isolate;
+  margin-top: 72px;
+  /* Room under the last name before the gradient hands over to the footer. */
+  padding: 30px 0 48px;
+  /* The static gradient (no WebGL, or before it starts), with the Figma's grain over it. */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(
+      180deg,
+      #ffffff 4.8334%,
+      rgb(6 29 70) 25.305%,
+      rgb(3 3 6) 33.981%,
+      rgb(3 2 7) 44.319%,
+      rgb(69 8 84) 50.167%,
+      rgb(136 14 162) 56.014%,
+      rgb(255 75 50) 71.067%,
+      rgb(238 35 124) 79.931%,
+      rgb(229 44 39) 87.981%,
+      rgb(69 119 56) 99.038%
+    );
+  background-size:
+    180px 180px,
+    100% 100%;
+  background-blend-mode: overlay, normal;
+  /* The Figma rounds the gradient's lower corners; clip-path keeps the sticky sky working. */
+  clip-path: inset(0 round 0 0 7px 7px);
+}
+.hc__field.is-live {
+  background-image: none;
+}
+.hc__sky {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.hc__sky > div {
+  position: sticky;
+  top: 0;
+  height: 100lvh;
+  opacity: 0;
+}
+.hc__field.is-live .hc__sky > div {
+  opacity: 1;
+}
+.hc__sky canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hc__sky > div::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 180px 180px;
+  mix-blend-mode: overlay;
+}
+.hc__side {
+  display: none;
+}
+.hc__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  color: var(--paper);
+  mix-blend-mode: difference;
+}
+/* Live, the names are drawn plain: ink over light stretches, paper over dark ones. */
+.hc__field.is-live :is(.hc__list, .hc__side > span) {
+  color: #000;
+  mix-blend-mode: normal;
+  transition: color 0.6s var(--ease-soft-out);
+}
+.hc__field.is-live.is-ink .hc__side > span {
+  color: #fff;
+}
+/* Each name reads against the colour behind it (ClientsSky). */
+.hc__field.is-live .hc__logo {
+  transition: color 0.6s var(--ease-soft-out);
+}
+.hc__field.is-live .hc__logo.is-ink {
+  color: #fff;
+}
+.hc__logo {
+  display: grid;
+  place-items: center;
+  height: calc(63.6 * var(--lu));
+  will-change: transform, opacity;
+}
+.hc__logo svg {
+  width: calc(var(--w) * var(--lu));
+  height: calc(var(--hh) * var(--lu));
+  overflow: visible;
+  fill: currentColor;
+  transition:
+    transform 0.55s var(--ease-io),
+    opacity 0.45s var(--ease-soft-out);
+}
+.hc {
+  --ease-soft-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hc__list:has(.hc__logo:hover) .hc__logo svg {
+    opacity: 0.3;
+  }
+  .hc__list .hc__logo:hover svg {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Footer — Figma "Footer / 01 Monolith" (1524:1259)
+---------------------------------------------------------------- */
+.hf {
+  margin-top: 0;
+  padding: 24px var(--pad) 22px;
+  background: #000;
+}
+.hf__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.hf__ask {
+  font-size: 12px;
+  font-weight: 500;
+  --track: -0.005em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.55);
+}
+.hf__meta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.hf__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  --track: -0.005em;
+  text-transform: uppercase;
+}
+.hf__line {
+  display: block;
+  width: 21px;
+  height: 1px;
+  background: rgb(255 255 255 / 0.5);
+}
+.hf__contact {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--paper);
+  font-size: 12px;
+  font-weight: 500;
+  --track: -0.03em;
+  text-transform: uppercase;
+}
+
+.hf__sign {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 72px 0 56px;
+  font-size: 15.5vw;
+  font-weight: 500;
+  line-height: 1;
+}
+.hf__mask {
+  display: block;
+  overflow: hidden;
+  /* Side room for the last letter: tight tracking also pulls the box in after it, so its ink runs past the edge. */
+  padding: 0.04em 0.12em 0.06em;
+  margin: -0.04em -0.12em -0.06em;
+}
+.hf__mask > * {
+  display: block;
+}
+.hf__px .tb {
+  letter-spacing: -0.075em;
+}
+.hf__you .tb {
+  letter-spacing: -0.085em;
+}
+.hf__reg {
+  align-self: flex-start;
+  font-size: 0.39em;
+}
+.hf__x {
+  font-size: 0.35em;
+  font-weight: 300;
+}
+.hf__arrow svg {
+  width: 0.62em;
+  height: 0.62em;
+  transform: rotate(-45deg);
+}
+.hf__arrow,
+.hf__x {
+  display: none;
+}
+
+.hf__cols {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px 16px;
+  padding: 26px 0 64px;
+}
+.hf__rule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: #262626;
+}
+.hf__col--studio {
+  grid-column: 1 / -1;
+}
+.hf__label {
+  margin-bottom: 14px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: #7a7a7a;
+}
+.hf__studio {
+  font-size: 19px;
+  line-height: 1.15;
+  --track: -0.02em;
+}
+.hf__list {
+  font-size: 19px;
+  line-height: 1.25;
+  --track: -0.02em;
+}
+.hf__list a {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 3px;
+}
+.hf__list sup {
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: #9a9a9a;
+}
+.hf__place {
+  color: rgb(255 255 255 / 0.55);
+}
+.hf__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  --track: 0;
+  color: #7a7a7a;
+}
+.hf__mark {
+  flex: none;
+  width: 18px;
+  height: auto;
+}
+.hf__top-link {
+  white-space: nowrap;
+  transition: color 0.4s var(--ease-out);
+}
+.hf__top-link:hover {
+  color: var(--paper);
+}
+
+/* Small links keep their size but get a ~40px hit area on touch screens. */
+@media (max-width: 767px) {
+  .hf__list a,
+  .hf__contact,
+  .hf__top-link {
+    position: relative;
+  }
+  .hf__list a::before,
+  .hf__top-link::before {
+    content: '';
+    position: absolute;
+    inset: -8px -6px;
+  }
+  .hf__bar p {
+    max-width: 14em;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Tablets
+---------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hw__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .hw__card--wide {
+    grid-column: 1 / -1;
+  }
+  .hs {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .hs__glyph {
+    grid-column: 1;
+    grid-row: 3 / span 2;
+  }
+  .hr__count {
+    --s: calc(var(--vw) / 1440 * 1.3);
+  }
+  .hf__cols {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  }
+  .hf__col--studio {
+    grid-column: auto;
+  }
+  .hf__arrow,
+  .hf__x {
+    display: block;
+  }
+  .hf__sign {
+    font-size: 13.5vw;
+  }
+  .hc__field {
+    --lu: var(--u);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Desktop: the Figma canvas
+---------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .disp {
+    font-size: calc(58.7 * var(--u));
+    --track: -0.06em;
+    /* 52 / 52 leading: the gap between one line's baseline and the next line's cap top */
+    --gap: calc((52 - 58.7 * 0.68) * var(--u));
+  }
+  /* A column, so the lines' negative margins never collapse into each other. */
+  .lines {
+    display: flex;
+    flex-direction: column;
+  }
+  .ln {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Room for ascenders, accents and descenders around the cap-height box. */
+    padding: 0.3em 0.06em 0.28em;
+    margin: -0.3em -0.06em -0.28em;
+  }
+  .ln + .ln {
+    margin-top: calc(var(--gap) - 0.3em);
+  }
+  .eb {
+    position: absolute;
+    gap: calc(3 * var(--u));
+    font-size: calc(14 * var(--u));
+  }
+  .eb__num {
+    margin-top: calc(-4 * var(--u));
+    font-size: calc(9.03 * var(--u));
+  }
+  .eb--level .eb__num {
+    margin-top: 0;
+  }
+
+  /* Hero (0 → 960) */
+  .hh {
+    margin-top: 0;
+  }
+  .hh__cue {
+    left: calc(18 * var(--u));
+    gap: 0;
+    padding-top: calc(3.92 * var(--u));
+    font-size: calc(14 * var(--u));
+  }
+  .hh__cue-rule {
+    left: calc(0.87 * var(--u));
+    width: calc(91 * var(--u));
+  }
+  .hh__cue-icon {
+    position: absolute;
+    top: calc(4 * var(--u));
+    left: calc(81.6 * var(--u));
+    width: calc(9.6 * var(--u));
+    height: calc(9.6 * var(--u));
+  }
+
+  /* Ethos (960 → 1305.77) */
+  .he {
+    position: relative;
+    height: calc(345.77 * var(--u));
+    padding: 0;
+  }
+  .he__eb {
+    top: calc(44.69 * var(--u));
+    left: calc(720 * var(--u));
+  }
+  .he__title {
+    position: absolute;
+    top: calc(97 * var(--u));
+    left: calc(18 * var(--u));
+    width: calc(1404 * var(--u));
+    margin: 0;
+  }
+  /* Lines hug their text so the first one can start at the centre column without clipping. */
+  .he__title {
+    align-items: flex-start;
+  }
+  .he__title .ln:first-child {
+    margin-left: calc(696 * var(--u) - 0.06em);
+  }
+
+  /* Work grid (1305.77 → 3420) */
+  .hw {
+    position: relative;
+    height: calc(2114.23 * var(--u));
+    padding: 0;
+  }
+  .hw__grid {
+    position: absolute;
+    top: 0;
+    left: calc(19.19 * var(--u));
+    display: block;
+    width: calc(1402.81 * var(--u));
+  }
+  .hw__card {
+    position: absolute;
+    top: calc(var(--y) * var(--u));
+    left: calc(var(--x) * var(--u));
+    width: calc(var(--w) * var(--u));
+    height: calc((var(--cap) + 12) * var(--u));
+  }
+  .hw__media {
+    height: calc(var(--h) * var(--u));
+    aspect-ratio: auto;
+  }
+  .hw__cap {
+    position: absolute;
+    top: calc(var(--cap) * var(--u));
+    right: 0;
+    left: 0;
+    margin: 0;
+  }
+  .hw__label {
+    font-size: calc(16 * var(--u));
+  }
+  .hw__index {
+    font-size: calc(14 * var(--u));
+  }
+
+  /* What we do (3420 → 4280) */
+  .hs {
+    position: relative;
+    display: block;
+    height: calc(860 * var(--u));
+    padding: 0;
+  }
+  .hs__eb {
+    top: calc(47.62 * var(--u));
+    left: calc(17 * var(--u));
+  }
+  .hs__title {
+    position: absolute;
+    top: calc(132.62 * var(--u));
+    left: calc(17 * var(--u));
+    width: calc(412 * var(--u));
+    margin: 0;
+  }
+  .hs__glyph {
+    position: absolute;
+    top: calc(262.62 * var(--u));
+    left: calc(532 * var(--u));
+    width: calc(107.982 * var(--u));
+    height: calc(224.213 * var(--u));
+    margin: 0;
+  }
+  .hs__group {
+    position: absolute;
+    top: calc(396.62 * var(--u));
+  }
+  .hs__group--1 {
+    left: calc(814 * var(--u));
+  }
+  .hs__group--2 {
+    left: calc(1170 * var(--u));
+  }
+  .hs__label {
+    --lh: 1.0714;
+    width: calc(70 * var(--u));
+    max-width: none;
+    margin: 0;
+    font-size: calc(14 * var(--u));
+  }
+  .hs__group--1 .hs__label {
+    width: auto;
+  }
+  .hs__list {
+    position: absolute;
+    top: calc(19 * var(--u));
+    gap: calc(5 * var(--u));
+  }
+  .hs__group--1 .hs__list {
+    left: calc(93 * var(--u));
+  }
+  .hs__group--2 .hs__list {
+    top: calc(24 * var(--u));
+    left: calc(93 * var(--u));
+  }
+  .hs__item {
+    height: max(10.3px, calc(12 * var(--u)));
+    gap: calc(1 * var(--u));
+    white-space: nowrap;
+  }
+  .hs__name {
+    font-size: max(12px, calc(14 * var(--u)));
+  }
+  .hs__name::before {
+    inset: calc(-0.185em - 2 * var(--u)) calc(-3 * var(--u)) calc(-0.135em - 2 * var(--u));
+  }
+  .hs__num {
+    translate: 0 min(-2px, calc(-2.75 * var(--u)));
+    font-size: calc(5.16 * var(--u));
+  }
+
+  /* Recognition (4280 → 6560.65) */
+  .hr {
+    height: calc(2280.65 * var(--u));
+    padding: 0;
+  }
+  .hr__eb {
+    top: calc(55.44 * var(--u));
+    left: calc(17 * var(--u));
+  }
+  .hr__count {
+    --s: var(--u);
+    position: absolute;
+    top: calc(109.44 * var(--u));
+    left: 0;
+    width: calc(690 * var(--u));
+    margin: 0;
+  }
+  .hr__text {
+    position: absolute;
+    top: calc(582.44 * var(--u));
+    left: calc(136 * var(--u));
+    width: calc(1147 * var(--u));
+    margin: 0;
+  }
+  .hr__awards {
+    position: absolute;
+    top: calc(1468.62 * var(--u));
+    left: calc(17 * var(--u));
+    width: calc(1404 * var(--u));
+    margin: 0;
+  }
+  .hr__row {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0;
+    height: calc(76 * var(--u));
+    padding: calc(26 * var(--u)) 0 0;
+  }
+  .hr__left {
+    gap: calc(11 * var(--u));
+  }
+  .hr__right {
+    gap: calc(9 * var(--u));
+    margin-right: calc(2 * var(--u));
+  }
+  .hr__title {
+    font-size: calc(33.5 * var(--u));
+    letter-spacing: -0.06em;
+  }
+  .hr__source {
+    font-size: calc(14 * var(--u));
+  }
+  .hr__spark {
+    width: calc(23 * var(--u));
+    height: calc(23 * var(--u));
+    margin-top: calc(0.6 * var(--u));
+  }
+
+  /* Work dome (6560.65 → 7396.65) */
+  .hd {
+    height: calc(836 * var(--u));
+    min-height: 0;
+  }
+  .hd__shade {
+    background:
+      radial-gradient(calc(864 * var(--u)) calc(317.68 * var(--u)) at calc(720 * var(--u)) calc(217.36 * var(--u)), rgb(0 0 0 / 0.78) 0%, rgb(0 0 0 / 0) 72%),
+      radial-gradient(calc(1728 * var(--u)) calc(752.4 * var(--u)) at calc(720 * var(--u)) calc(501.6 * var(--u)), rgb(0 0 0 / 0) 55%, rgb(0 0 0 / 0.85) 100%);
+  }
+  .hd__head {
+    top: 0;
+  }
+  .hd__eb {
+    position: absolute;
+    top: calc(57.35 * var(--u));
+    right: 0;
+    left: 0;
+    gap: calc(4 * var(--u));
+    font-size: calc(13.9 * var(--u));
+  }
+  .hd__eb span {
+    display: block;
+    text-box: trim-both cap alphabetic;
+    line-height: 1;
+  }
+  .hd__eb sup {
+    margin-top: calc(-2.2 * var(--u));
+    font-size: calc(8.56 * var(--u));
+  }
+  .hd__title {
+    position: absolute;
+    top: calc(117.66 * var(--u));
+    right: 0;
+    left: 0;
+    margin: 0;
+    font-size: calc(67.3 * var(--u));
+    --gap: calc((56.66 - 67.3 * 0.68) * var(--u));
+  }
+  .hd__bar {
+    top: calc(805.35 * var(--u));
+    right: auto;
+    bottom: auto;
+    left: calc(20 * var(--u));
+    grid-template-columns: calc(631.31 * var(--u)) calc(137.36 * var(--u)) calc(631.33 * var(--u));
+    gap: 0;
+    height: calc(8 * var(--u));
+    font-size: calc(11.8 * var(--u));
+  }
+  .hd__hint,
+  .hd__count,
+  .hd__name-now {
+    grid-row: 1;
+    height: calc(8 * var(--u));
+    line-height: 1;
+  }
+  .hd__hint span,
+  .hd__count > span:not(.hd__ticks),
+  .hd__name-now {
+    text-box: trim-both cap alphabetic;
+  }
+  .hd__hint {
+    gap: calc(10 * var(--u));
+  }
+  .hd__hint i {
+    width: calc(6 * var(--u));
+    height: calc(6 * var(--u));
+    border-radius: calc(3 * var(--u));
+  }
+  .hd__count {
+    grid-column: 2;
+    gap: calc(14 * var(--u));
+  }
+  .hd__ticks {
+    gap: calc(5 * var(--u));
+    height: calc(14 * var(--u));
+  }
+  .hd__ticks i {
+    height: calc(8 * var(--u));
+  }
+  .hd__ticks i.is-on {
+    width: calc(2 * var(--u));
+    height: calc(14 * var(--u));
+  }
+  .hd__name-now {
+    grid-column: 3;
+  }
+  .hd__list {
+    bottom: calc(110 * var(--u));
+  }
+  .hd__item {
+    flex-basis: calc(431 * var(--u));
+  }
+
+  /* Testimonials (7396.65 → 9063.65) */
+  .ht {
+    position: relative;
+    padding: 0 0 calc(160 * var(--u));
+  }
+  .ht__in {
+    position: relative;
+    padding-top: calc(335 * var(--u));
+  }
+  .ht__eb {
+    top: calc(250 * var(--u));
+    left: calc(994 * var(--u));
+  }
+  .ht__title {
+    position: relative;
+    width: calc(1404 * var(--u));
+    margin: 0 0 0 calc(15 * var(--u));
+  }
+  .ht__rest {
+    margin-top: var(--gap);
+  }
+  .ht__rest .tb {
+    margin-right: 0.06em;
+  }
+
+  /* Clients (from 9063.65): label at 134, heading at 289, then the field (as on /next) */
+  .hc {
+    --fade-out: calc(95.08 * var(--u));
+    padding-top: calc(134 * var(--u));
+  }
+  .hc__eb {
+    position: relative;
+    top: auto;
+    left: auto;
+    gap: 0;
+  }
+  .hc__eb .eb__num {
+    margin-left: calc(3 * var(--u));
+  }
+  .hc__title {
+    width: calc(300 * var(--u));
+    margin: calc((289 - 134 - 14 * 0.68) * var(--u)) 0 0;
+  }
+  .hc__field {
+    --lu: var(--u);
+    margin-top: calc(144 * var(--u));
+    padding: calc(30 * var(--u)) 0 calc(90 * var(--u));
+    clip-path: inset(0 round 0 0 calc(6.954 * var(--u)) calc(6.954 * var(--u)));
+  }
+  .hc__side {
+    position: absolute;
+    inset: 0 calc(18 * var(--u));
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .hc__side > span {
+    position: sticky;
+    top: 50vh;
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: flex-start;
+    margin-top: calc(359 * var(--u));
+    color: var(--paper);
+    font-size: max(12px, calc(14 * var(--u)));
+    line-height: 1;
+    text-transform: uppercase;
+    mix-blend-mode: difference;
+  }
+  .hc__side sup {
+    position: relative;
+    top: -0.45em;
+    margin-left: calc(3 * var(--u));
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: max(7px, 0.645em);
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: top;
+  }
+
+  /* Footer (12857.73 → 13525) */
+  .hf {
+    margin-top: 0;
+    padding: calc(28 * var(--u)) calc(20 * var(--u)) calc(22 * var(--u));
+  }
+  .hf__top {
+    flex-wrap: nowrap;
+    height: calc(21 * var(--u));
+  }
+  .hf__ask,
+  .hf__status,
+  .hf__contact {
+    font-size: calc(12.84 * var(--u));
+  }
+  .hf__meta {
+    gap: calc(40 * var(--u));
+  }
+  .hf__status {
+    gap: calc(8 * var(--u));
+  }
+  .hf__line {
+    width: calc(21 * var(--u));
+  }
+  .hf__contact {
+    gap: calc(10 * var(--u));
+    padding-bottom: calc(5 * var(--u));
+  }
+  .hf__sign {
+    position: relative;
+    display: block;
+    height: calc(151.2 * var(--u));
+    margin: calc(96 * var(--u)) 0 calc(70 * var(--u));
+    font-size: calc(222 * var(--u));
+  }
+  .hf__sign > .hf__mask {
+    position: absolute;
+    top: 0;
+  }
+  .hf__sign > .hf__px {
+    left: 0;
+  }
+  .hf__sign > .hf__reg {
+    left: calc(613.8 * var(--u));
+    font-size: calc(86.3 * var(--u));
+  }
+  .hf__sign > .hf__x {
+    top: calc(43.6 * var(--u));
+    left: calc(677.9 * var(--u));
+    display: block;
+    font-size: calc(109.6 * var(--u));
+  }
+  .hf__sign > .hf__arrow {
+    top: calc(-6.33 * var(--u));
+    left: calc(742.4 * var(--u));
+    display: block;
+  }
+  .hf__arrow svg {
+    width: calc(136.6 * var(--u));
+    height: calc(136.6 * var(--u));
+  }
+  .hf__sign > .hf__you {
+    left: calc(895.3 * var(--u));
+  }
+  .hf__cols {
+    display: flex;
+    gap: 0;
+    padding: calc(28 * var(--u)) 0 calc(91 * var(--u));
+  }
+  .hf__col {
+    flex: none;
+    width: calc(280 * var(--u));
+  }
+  .hf__col--studio {
+    flex: 1 0 0;
+  }
+  .hf__label {
+    margin-bottom: calc(14 * var(--u));
+    font-size: calc(10 * var(--u));
+    line-height: 1.25;
+  }
+  .hf__studio {
+    font-size: calc(21.4 * var(--u));
+    line-height: calc(23 * var(--u));
+  }
+  .hf__studio span {
+    display: block;
+  }
+  .hf__list {
+    font-size: calc(21.4 * var(--u));
+    line-height: calc(25 * var(--u));
+  }
+  .hf__list a {
+    gap: calc(3 * var(--u));
+  }
+  .hf__list sup {
+    font-size: calc(9.63 * var(--u));
+  }
+  .hf__bar {
+    padding-top: calc(18 * var(--u));
+    font-size: calc(10 * var(--u));
+  }
+  .hf__mark {
+    width: calc(18 * var(--u));
+  }
+
+  /* Header, home variant (Figma 1524:935): items placed on the canvas, bold logo. */
+  .hdr--home {
+    display: block;
+    height: calc(48 * var(--u));
+    padding: 0;
+  }
+  .hdr--home .hdr__brand {
+    position: absolute;
+    top: calc(19 * var(--u) - 0.185 * 21.97 * var(--u));
+    left: calc(22.92 * var(--u));
+    gap: calc(7 * var(--u));
+    padding: 0;
+  }
+  .hdr--home .hdr__logo {
+    font-size: calc(21.97 * var(--u));
+    font-weight: 700;
+    --track: -0.028em;
+  }
+  /* The Figma's ® is a cap-height circle on the baseline, not a small superscript. */
+  .hdr--home .hdr__reg {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 500;
+  }
+  .hdr--home .hdr__tag {
+    --track: 0;
+    font-size: calc(8 * var(--u));
+  }
+  .hdr--home .hdr__nav {
+    position: absolute;
+    top: calc(25 * var(--u) - 0.325 * 14 * var(--u));
+    left: calc(867.92 * var(--u));
+    display: block;
+    padding: 0;
+    font-size: calc(14 * var(--u));
+  }
+  .hdr--home .hdr__link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+  }
+  .hdr--home .hdr__link:nth-child(2) {
+    top: calc(-1 * var(--u));
+    left: calc(87 * var(--u));
+  }
+  .hdr--home .hdr__link:nth-child(3) {
+    left: calc(180 * var(--u));
+  }
+  .hdr--home .hdr__link sup {
+    top: -0.62em;
+    font-size: 0.37em;
+  }
+  .hdr--home .hdr__meta {
+    position: absolute;
+    top: calc(24 * var(--u) - 0.325 * 12 * var(--u));
+    left: calc(1196.92 * var(--u));
+    display: block;
+    padding: 0;
+    font-size: calc(12 * var(--u));
+  }
+  .hdr--home .hdr__contact {
+    position: absolute;
+    top: 0;
+    left: calc(156 * var(--u));
+  }
+  .hdr--home .hdr__contact-inner {
+    min-width: calc(73 * var(--u));
+  }
+  .hdr--home .hdr__contact-inner .arrow-swap {
+    font-size: calc(10 * var(--u));
+  }
+  .hdr--home .hdr__line {
+    transform-origin: 0 100%;
+    scale: 1 0.5;
+  }
+}
+
+/* Lines that start hidden for their reveal. */
+@media (min-width: 1024px) {
+  .motion [data-reveal='stack'] .ln > * {
+    transform: translateY(160%);
+  }
+}
+@media (max-width: 1023px) {
+  .motion [data-reveal='stack'] {
+    opacity: 0;
+  }
+}
+.motion .hf__mask > * {
+  transform: translateY(160%);
+}
+.motion [data-reveal='list'] > * {
+  opacity: 0;
+}
+.motion .hr__two,
+.motion .hr__one,
+.motion .hr__seven {
+  transform: translateY(104%);
+}

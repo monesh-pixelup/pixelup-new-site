@@ -21,3 +21,10 @@ export const markState = {
   failed: false,
   stops: [] as DockStop[],
 };
+
+/** A label for the cursor set by canvases that hit-test their own content (the home dome). */
+export const cursorHint = {
+  label: '',
+  /** 'disc' is the dome's round VIEW cursor. */
+  variant: '' as '' | 'disc',
+};

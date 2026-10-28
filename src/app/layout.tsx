@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import Cursor from '@/components/Cursor';
 import Experience from '@/components/Experience';
 import MarkCanvas from '@/components/mark/MarkCanvas';
+import LogoPop from '@/components/LogoPop';
+import Pill from '@/components/Pill';
 import { services, site } from '@/content/site';
 import '@/styles/base.css';
 import '@/styles/chrome.css';
@@ -12,6 +14,7 @@ import '@/styles/work.css';
 import '@/styles/case.css';
 import '@/styles/explorations.css';
 import '@/styles/proposal.css';
+import '@/styles/home.css';
 
 // Self-hosted so the type never depends on a third-party CDN.
 const switzer = localFont({
@@ -19,10 +22,21 @@ const switzer = localFont({
     { path: './fonts/Switzer-300.woff2', weight: '300' },
     { path: './fonts/Switzer-400.woff2', weight: '400' },
     { path: './fonts/Switzer-500.woff2', weight: '500' },
+    { path: './fonts/Switzer-700.woff2', weight: '700' },
   ],
   variable: '--font-switzer',
   display: 'swap',
   fallback: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+});
+
+// Labels and numerals on the home page.
+const mono = localFont({
+  src: './fonts/GeistMono-Regular.woff2',
+  weight: '400',
+  variable: '--font-mono',
+  display: 'swap',
+  preload: false,
+  fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 });
 
 const title = 'PIXELUP LABS - Premium Brands and Websites';
@@ -76,7 +90,7 @@ const boot = `(function(d){var c=d.documentElement.classList;c.add('js');if(!mat
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={switzer.variable} suppressHydrationWarning>
+    <html lang="en" className={`${switzer.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }} />
@@ -86,6 +100,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Lives outside the pages so the mark stays docked across route changes. */}
         <MarkCanvas />
         <Cursor />
+        <Pill />
+        <LogoPop />
         <Experience />
       </body>
     </html>

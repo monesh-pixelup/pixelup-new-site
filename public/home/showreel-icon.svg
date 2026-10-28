@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="9.6" height="9.6" viewBox="0 0 9.6 9.6" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Vector">
+<use xlink:href="#stroke0_0_4" fill="white"/>
+<mask id="stroke1_0_4" maskUnits="userSpaceOnUse" x="-0.7" y="-0.7" width="11" height="11" fill="black">
+<rect fill="white" x="-0.7" y="-0.7" width="11" height="11"/>
+<use xlink:href="#stroke0_0_4"/>
+</mask>
+<path d="M3.53237 3.52214H0.3V3.15402H3.16309V0.3H3.53237V3.52214ZM0.3 6.07786V6.44598H3.16309V9.3H3.53279V6.07786H0.3ZM6.06721 9.3H6.4365V6.44598H9.29959V6.07786H6.06721V9.3ZM6.43691 3.15402V0.3H6.06763V3.52214H9.3V3.15402H6.43691Z" stroke-width="0.6" stroke="white" mask="url(#stroke1_0_4)"/>
+</g>
+<defs>
+<path id="stroke0_0_4" d="M3.53237 3.52214H0.3V3.15402H3.16309V0.3H3.53237V3.52214ZM0.3 6.07786V6.44598H3.16309V9.3H3.53279V6.07786H0.3ZM6.06721 9.3H6.4365V6.44598H9.29959V6.07786H6.06721V9.3ZM6.43691 3.15402V0.3H6.06763V3.52214H9.3V3.15402H6.43691Z"/>
+</defs>
+</svg>

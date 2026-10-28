@@ -211,74 +211,176 @@ export const projects: Project[] = [
 ];
 
 /* ---------------------------------------------------------------
-   Home work grid — the Figma's scattered layout, filled from the portfolio
+   Home — Figma "Home - Desktop - 1440p" (PIXELUP-Brand-2026, node 1524:934).
+   Copy is the Figma's, verbatim. Lines that are placeholders in the Figma are marked PLACEHOLDER;
+   swap them for real copy before launch. `lines` keep the Figma's line breaks on desktop; phones rewrap.
 ---------------------------------------------------------------- */
 
-export type Work = {
-  client: string;
-  summary: string;
-  scope: string[];
-  media: Media;
+export type HomeWork = {
+  label: string;
+  index: string;
+  src: string;
+  alt: string;
+  /** Plays in place of the image, which stays as its poster. */
+  video?: string;
+  /** [x, y, width, imageHeight, captionCapTop] on the 1440 canvas, from the top of the grid. */
+  frame: [number, number, number, number, number];
   href?: string;
-  /** Desktop geometry from the Figma frame: [x, y, width, mediaHeight] on the 1440 canvas, y from the top of the grid. */
-  frame: [number, number, number, number];
 };
 
-const frames: Record<string, Work['frame']> = {
-  Greptile: [357, 121, 441, 388],
-  Replay: [810, 40, 321, 343],
-  CTGT: [1143, 80, 273, 343],
-  Streamline: [634, 594, 496, 343],
-  'Henry Labs': [24, 0, 321, 275],
-  Sainapse: [24, 391, 321, 275],
-  'Sully.ai': [1142, 517, 273, 228],
-  Reducto: [24, 782, 598, 275],
-  Zenact: [1143, 823, 273, 343],
-  Monumint: [810, 1015, 321, 343],
-  Pogo: [357, 1096, 441, 388],
-  Autumn: [24, 1132, 321, 275],
-  Valley: [634, 1518, 496, 343],
+export const home = {
+  ethos: {
+    eyebrow: 'Our ethos',
+    numeral: 'I',
+    lead: 'Remarkable by default &',
+    lines: ['Never merely enough Uncommon while being', 'the frontier partner for AI labs.'],
+  },
+
+  // Images are the Figma's composed frames, exported flat.
+  work: [
+    { label: 'Replay', index: '01', src: '/home/work-replay.jpg', alt: 'Replay identity: engraved figure, data sheets and code', frame: [0, 0, 781, 430.63, 446.23], href: 'https://www.replay.ai/' },
+    { label: 'Greptile', index: '02', src: '/home/work-greptile.jpg', alt: 'Greptile app icon, poster and colour palette', frame: [801.81, 0, 601, 321.5, 334.6], href: '/case-studies/greptile' },
+    { label: 'Autumn', index: '03', src: '/home/work-autumn.jpg', alt: 'Autumn wordmark over a portrait lit in violet', frame: [0, 545.63, 601, 319, 334.6], href: 'https://useautumn.com/' },
+    { label: 'Henrylabs', index: '04', src: '/home/work-henrylabs.jpg', alt: 'Henry Labs posters: where intent becomes action', frame: [621.81, 545.63, 781, 430.63, 446.23], href: '/case-studies/henrylabs' },
+    { label: 'Fuse AI', index: '05', src: '/home/work-fuse-poster.jpg', alt: 'FuseAI brand film: racing collage with the (FUSE*) wordmark', video: '/home/work-fuse.mp4', frame: [0, 1091.27, 1402.81, 358.15, 376.15] },
+    // PLACEHOLDER: the Figma labels this Streamline image "REPLAY". The link follows the image.
+    { label: 'Replay', index: '06', src: '/home/work-streamline.jpg', alt: 'Streamline wordmark with brand imagery and product screens', frame: [0, 1568.42, 781, 430.63, 446.23], href: '/case-studies/streamline' },
+    { label: 'Sainapse', index: '07', src: '/home/work-sainapse.jpg', alt: 'Sainapse mark over a misty valley', frame: [801.81, 1568.42, 601, 319, 334.6], href: '/case-studies/sainapse' },
+  ] satisfies HomeWork[],
+
+  services: {
+    eyebrow: 'What we do',
+    numeral: 'II',
+    lines: ['Everything', 'you need', 'is what we', 'specialize in'],
+    groups: [
+      {
+        title: 'Branding',
+        items: ['Brand architecture', 'Brand positioning', 'Naming', 'Brand strategy', 'Brand development', 'Brand identity', 'Brand implementation', 'Wayfinding', 'Iconography', 'Illustration', '3D', 'Print', 'Editorial design', 'Type design'],
+      },
+      {
+        title: 'Digital Branding',
+        items: ['User Experience', 'User Interface', 'Prototyping', 'Web design', 'App design', 'E-commerce', 'Front-end development', 'Back-end development', 'Digital Publishing'],
+      },
+    ],
+  },
+
+  recognition: {
+    eyebrow: 'Recognition',
+    numeral: 'III',
+    count: '27',
+    // PLACEHOLDER: XX figures.
+    lines: [
+      "We've been featured across some of",
+      "the world's leading design platforms,",
+      'recognized for our distinctive',
+      'approach to branding, typography,',
+      'and digital experiences. With XX+',
+      'international features, XX industry',
+      'awards, and XX nominations.',
+    ],
+    // PLACEHOLDER: the Figma repeats three awards twice.
+    awards: [
+      { title: 'SOTD ‘21', source: 'Awwwards', award: 'Site of the day', project: 'Greptile' },
+      { title: 'HM ‘21', source: 'Awwwards', award: 'Honourable Mention', project: 'Relay.ai' },
+      { title: 'Brand feature ‘24', source: 'Recent design', award: 'Design feature', project: 'Monument' },
+      { title: 'Brand feature ‘24', source: 'Recent design', award: 'Design feature', project: 'Monument' },
+      { title: 'HM ‘21', source: 'Awwwards', award: 'Honourable Mention', project: 'Relay.ai' },
+      { title: 'SOTD ‘21', source: 'Awwwards', award: 'Site of the day', project: 'Greptile' },
+    ],
+  },
+
+  dome: {
+    eyebrow: 'Work',
+    numeral: 'IV',
+    lines: ['Some', 'highlights', 'from our', 'recent', 'projects'],
+    /** The project the dome opens on (the Figma's default state). */
+    start: 'Reducto',
+  },
+
+  testimonials: {
+    eyebrow: 'Testimonials',
+    numeral: 'V',
+    lead: "Don't take our word for it.",
+    lines: ['We could tell you how good we are,', 'but that would be awkward'],
+    // As on /next: a carousel of quotes, each with its highlighted phrase and a plate from the case study.
+    voices: [
+      {
+        company: 'Replay',
+        quote: "PIXELUP LABS nailed our brand + website + component library. Best agency I've ever worked with.",
+        highlight: "Best agency I've ever worked with.",
+        name: 'Brendan Mahony',
+        title: 'Founder & CEO',
+        plate: '/case-studies/replay/billboard.avif',
+      },
+      {
+        company: 'Greptile',
+        quote: 'Daksh is a tier-1 designer, with great taste, attention-to-detail, and strong product intuition.',
+        highlight: 'a tier-1 designer',
+        name: 'Daksh Gupta',
+        title: 'Co-founder',
+        href: cs('greptile'),
+        plate: '/case-studies/greptile/subway-poster.avif',
+      },
+      {
+        company: 'FuseAI',
+        quote:
+          '…Improved customer feedback and [higher] free to paid trial conversions on the product. Good creative judgement as a team with strong branding expertise.',
+        highlight: 'Good creative judgement as a team with strong branding expertise.',
+        name: 'Saurav Bubber',
+        title: 'Co-founder & CEO',
+        plate: '/case-studies/fuseai/billboard.avif',
+      },
+      {
+        company: 'Henry Labs',
+        quote:
+          'Pixelup has been a great partner for us at Henry Labs. They handled our landing page redesign and core product design, and the output speaks for itself…',
+        highlight: 'the output speaks for itself',
+        name: 'Faaris Hussain',
+        title: 'COO',
+        href: cs('henrylabs'),
+        plate: '/case-studies/henrylabs/asset-2.avif',
+      },
+    ] as { company: string; quote: string; highlight?: string; name: string; title: string; href?: string; plate: string }[],
+  },
+
+  clients: {
+    eyebrow: 'Clients',
+    numeral: 'IV',
+    lines: ['We’ve', 'worked', 'with all', 'the', 'names', 'you know', 'or heard', 'of'],
+    side: 'Past projects',
+    /** The drum, as on /next: wordmarks from /home/logotypes.svg (`w` × `h` is each symbol's box); `src` and `ratio`
+        feed the card that follows the cursor. */
+    logos: [
+      { id: 'greptile', name: 'Greptile', w: 443.61, h: 43.04, src: '/clients/greptile.svg', ratio: 4.129 },
+      { id: 'bland-ai', name: 'Bland AI', w: 254.51, h: 42.45, src: '/clients/bland.svg', ratio: 3.455 },
+      { id: 'reducto', name: 'Reducto', w: 273.8, h: 44.35, src: '/clients/reducto.svg', ratio: 5.722 },
+      { id: 'sully-ai', name: 'Sully.ai', w: 194.83, h: 45.06, src: '/clients/sully.svg', ratio: 4.847 },
+      { id: 'ctgt', name: 'CTGT', w: 136.39, h: 41.73, src: '/clients/ctgt.svg', ratio: 3.663 },
+      { id: 'autumn', name: 'Autumn', w: 261.97, h: 43.4, src: '/clients/autumn-pricing.svg', ratio: 4.064 },
+      { id: 'monumint', name: 'Monumint', w: 315.76, h: 44.23, src: '/clients/monumint.svg', ratio: 7.495 },
+      { id: 'revyl', name: 'Revyl', w: 174.28, h: 42.45, src: '/clients/revyl.svg', ratio: 3.667 },
+      { id: 'dayflow', name: 'Dayflow', w: 310.92, h: 42.98, src: '/clients/dayflow.svg', ratio: 3.525 },
+      { id: 'synthio-labs', name: 'Synthio Labs', w: 391.08, h: 44.36, src: '/clients/synthio-labs.svg', ratio: 5.741 },
+      { id: 'audrion', name: 'Audrion', w: 186.18, h: 43.04, src: '/clients/audrion.svg', ratio: 8.875 },
+    ],
+  },
+
+  footer: {
+    eyebrow: 'Have a project in mind?',
+    studio: ['A full service design studio.', 'Remarkable by default, the frontier', 'partner for AI labs.'],
+    // PLACEHOLDER: only X has a known profile; the others need their URLs.
+    elsewhere: [
+      { label: 'Instagram', href: '#' },
+      { label: 'X / Twitter', href: 'https://x.com/dakshpixelup' },
+      { label: 'LinkedIn', href: '#' },
+      { label: 'Awwwards', href: '#' },
+    ],
+    location: 'Bangalore, India',
+    legal: '©2026 Pixelup Pvt. Ltd. All rights reserved.',
+  },
 };
 
-export const work: Work[] = projects
-  .filter((p) => frames[p.client] && p.cover)
-  .map((p) => ({ client: p.client, summary: p.summary, scope: p.scope, media: p.cover!, href: p.href, frame: frames[p.client] }));
-
-/** Height of the desktop work canvas in design px (bottom of the lowest card plus its caption). */
-export const workCanvasHeight = 1915;
-
-
-/** Logos from pixeluplabs.com/clients. `w`/`h` are the artwork's viewBox; `ink` is the [top, bottom] fraction
-    of that height the visible mark occupies, where it isn't the full box (measured from the rendered file). */
-export const clients: { name: string; src: string; w: number; h: number; ink?: [number, number] }[] = [
-  { name: 'Greptile', src: '/clients/greptile.svg', w: 256, h: 62 },
-  { name: 'Razorpay', src: '/clients/razorpay.png', w: 106, h: 32, ink: [0.063, 0.789] },
-  { name: 'Bland.ai', src: '/clients/bland.svg', w: 76, h: 22 },
-  { name: 'Reducto', src: '/clients/reducto.svg', w: 103, h: 18 },
-  { name: 'Streamline.ai', src: '/clients/streamline.svg', w: 151, h: 31, ink: [0, 0.742] },
-  { name: 'Sully.ai', src: '/clients/sully.svg', w: 475, h: 98 },
-  { name: 'Pogo', src: '/clients/pogo.svg', w: 60, h: 29 },
-  { name: 'Valley', src: '/clients/valley.svg', w: 215, h: 51 },
-  { name: 'CTGT', src: '/clients/ctgt.svg', w: 348, h: 95 },
-  { name: 'Autumn', src: '/clients/autumn-pricing.svg', w: 894, h: 220 },
-  { name: 'Monumint', src: '/clients/monumint.svg', w: 817, h: 109 },
-  { name: 'Sainapse', src: '/clients/sainapse.svg', w: 155, h: 28 },
-  { name: 'Limelight', src: '/clients/limelight.svg', w: 600, h: 107 },
-  { name: 'Revyl', src: '/clients/revyl.svg', w: 1100, h: 300 },
-  { name: 'Zenact', src: '/clients/zenact.svg', w: 1347, h: 188 },
-  { name: 'Henry Labs', src: '/clients/henrylabs.svg', w: 1453, h: 208 },
-  { name: 'Jumbo', src: '/clients/jumbo.svg', w: 870, h: 180 },
-  { name: 'DayFlow', src: '/clients/dayflow.svg', w: 1195, h: 339 },
-  { name: 'Synthio Labs', src: '/clients/synthio-labs.svg', w: 1217, h: 212 },
-  { name: 'Workers.io', src: '/clients/workers-io.svg', w: 797, h: 125 },
-  { name: "Audrion's", src: '/clients/audrion.svg', w: 284, h: 32 },
-];
-
-export const about = {
-  statement: 'Your product is enterprise-grade. Your brand still looks like a prototype.',
-  body: 'AI products now ship faster than the brands around them. Buyers and investors judge you on your site and deck before they ever try the product. PIXELUP LABS designs the brands, websites and launches that make hard-to-explain AI products trusted on first sight.',
-};
-
+/** Offers in the site's structured data (layout.tsx). */
 export const services = [
   {
     title: 'Brand Sprint',
@@ -298,15 +400,6 @@ export const services = [
     summary: 'A senior design team on call for launches, decks, product marketing and everything after.',
     tags: ['Launches', 'Decks', 'Product', 'Campaigns'],
   },
-];
-
-export const news = [
-  { type: 'Report', title: 'State of AI Startup Branding 2026', meta: 'Coming soon', href: '#news' },
-  { type: 'Case study', title: 'Greptile: demo requests doubled in week one, then a $25M Series A', meta: 'Product, Brand', href: cs('greptile') },
-  { type: 'Case study', title: 'Sully.ai: 26x growth in the 11 months after the redesign', meta: 'Brand, Web', href: cs('sully') },
-  { type: 'Case study', title: 'Sainapse: relaunched ahead of GA, now deployed at Ford and Freshworks', meta: 'Brand, Web', href: cs('sainapse') },
-  { type: 'Case study', title: 'Henry Labs: an embedded checkout for agentic commerce', meta: 'Brand, Web, Product', href: cs('henrylabs') },
-  { type: 'Case study', title: 'Streamline: AI intake for in-house legal teams', meta: 'Brand, Web', href: cs('streamline') },
 ];
 
 /* ---------------------------------------------------------------

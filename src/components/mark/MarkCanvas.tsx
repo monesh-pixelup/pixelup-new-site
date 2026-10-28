@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { markState } from '@/lib/markState';
 
 const HANDLES = 8;
@@ -9,8 +10,16 @@ export default function MarkCanvas() {
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const uiRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  // Pages marked data-mark="off" (home) go without the mark; it loads on the first page that shows it, then stays.
+  const [wanted, setWanted] = useState(false);
 
   useEffect(() => {
+    setWanted((w) => w || !document.querySelector('[data-mark="off"]'));
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!wanted) return;
     const root = rootRef.current;
     const canvas = canvasRef.current;
     const ui = uiRef.current;
@@ -70,7 +79,7 @@ export default function MarkCanvas() {
       scene?.dispose();
       markState.ready = false;
     };
-  }, []);
+  }, [wanted]);
 
   return (
     <div className="mark" ref={rootRef} aria-hidden="true">

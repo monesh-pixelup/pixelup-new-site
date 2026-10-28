@@ -4,9 +4,17 @@ import { projects, site } from '@/content/site';
 import MenuToggle from './MenuToggle';
 import { ArrowSwap, Roll, StatusDots } from './ui';
 
-export default function Header({ current, status = site.status }: { current?: 'work' | 'blog' | 'explorations'; status?: string } = {}) {
+type Props = {
+  current?: 'work' | 'blog' | 'explorations';
+  status?: string;
+  /** The home page (Figma 1524:935): bold logo and a shorter nav, Work · About · News. */
+  variant?: 'home';
+};
+
+export default function Header({ current, status = site.status, variant }: Props = {}) {
+  const home = variant === 'home';
   return (
-    <header className="hdr">
+    <header className={home ? 'hdr hdr--home' : 'hdr'}>
       <a href="/" className="hdr__brand" aria-label={`${site.name}, back to top`}>
         <span className="mask" data-intro="rise">
           <span className="hdr__logo">
@@ -35,22 +43,35 @@ export default function Header({ current, status = site.status }: { current?: 'w
             </span>
           </span>
         </a>
-        <a href="/explorations" className="hdr__link" aria-current={current === 'explorations' ? 'page' : undefined}>
-          <span className="mask" data-intro="rise">
-            <span>
-              <Roll>Explorations</Roll>
-              <sup data-count={explorations.length}>{explorations.length}</sup>
+        {home ? (
+          <a href="/blog" className="hdr__link">
+            <span className="mask" data-intro="rise">
+              <span>
+                <Roll>News</Roll>
+                <sup data-count={blog.length}>{blog.length}</sup>
+              </span>
             </span>
-          </span>
-        </a>
-        <a href="/blog" className="hdr__link" aria-current={current === 'blog' ? 'page' : undefined}>
-          <span className="mask" data-intro="rise">
-            <span>
-              <Roll>Blog</Roll>
-              <sup data-count={blog.length}>{blog.length}</sup>
-            </span>
-          </span>
-        </a>
+          </a>
+        ) : (
+          <>
+            <a href="/explorations" className="hdr__link" aria-current={current === 'explorations' ? 'page' : undefined}>
+              <span className="mask" data-intro="rise">
+                <span>
+                  <Roll>Explorations</Roll>
+                  <sup data-count={explorations.length}>{explorations.length}</sup>
+                </span>
+              </span>
+            </a>
+            <a href="/blog" className="hdr__link" aria-current={current === 'blog' ? 'page' : undefined}>
+              <span className="mask" data-intro="rise">
+                <span>
+                  <Roll>Blog</Roll>
+                  <sup data-count={blog.length}>{blog.length}</sup>
+                </span>
+              </span>
+            </a>
+          </>
+        )}
       </nav>
 
       <div className="hdr__meta">

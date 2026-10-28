@@ -123,6 +123,18 @@ canvas {
   display: block;
 }
 
+/* Media can't be dragged out or highlighted by a selection; text stays selectable. */
+img,
+svg,
+video,
+canvas,
+picture {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 button {
   padding: 0;
   border: 0;
@@ -218,8 +230,7 @@ html.lenis body {
   left: 0;
   padding-top: 0.1em;
 }
-:is(a, button):hover .roll__c,
-.card:hover .card__title .roll__c {
+:is(a, button):hover .roll__c {
   transform: translateY(calc(-100% - 0.1em));
 }
 

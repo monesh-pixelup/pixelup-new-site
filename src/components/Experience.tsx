@@ -119,6 +119,12 @@ export default function Experience() {
       const rebuildStops = () => {
         markState.stops = buildStops({ w: window.innerWidth, h: window.innerHeight, mobile: window.innerWidth < 768 });
       };
+      // Firefox ignores -webkit-user-drag: stop media (and links wrapping it) from being dragged off the page.
+      const onDragStart = (e: DragEvent) => {
+        const t = e.target as Element | null;
+        if (t instanceof Element && (t.closest('img, svg, video, canvas, picture') || t.querySelector?.('img, svg, video, canvas, picture'))) e.preventDefault();
+      };
+      document.addEventListener('dragstart', onDragStart);
       document.addEventListener('click', onClick);
       window.addEventListener('menu:toggle', onMenu);
       window.addEventListener('resize', setUnits);
@@ -199,11 +205,68 @@ export default function Experience() {
               );
             });
 
+            // Lines set on the Figma's breaks rise one after another out of their own masks; phones rewrap, so they fade.
+            $$('[data-reveal="stack"]').forEach((el) => {
+              const trigger = { trigger: el, start: 'top 90%', once: true };
+              if (!desktop) {
+                gsap.fromTo(el, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 1.2, ease: 'pxl', scrollTrigger: trigger });
+                return;
+              }
+              gsap.fromTo(
+                el.querySelectorAll('.ln > *'),
+                { y: 0, yPercent: 160 },
+                { yPercent: 0, duration: 1.3, ease: 'pxl', stagger: 0.08, scrollTrigger: trigger },
+              );
+            });
+            $$('[data-reveal="list"]').forEach((el) => {
+              gsap.fromTo(
+                el.children,
+                { autoAlpha: 0, y: 10 },
+                { autoAlpha: 1, y: 0, duration: 1, ease: 'pxl', stagger: 0.035, scrollTrigger: { trigger: el, start: 'top 90%', once: true } },
+              );
+            });
+            // Services glyph: brackets slide in, the dots pop, then the ring blinks round while on screen.
+            $$('[data-reveal="hex"]').forEach((el) => {
+              const ring = el.querySelectorAll('.hs__ring circle');
+              const blink = gsap.timeline({ paused: true, repeat: -1 });
+              ring.forEach((dot, i) => blink.to(dot, { opacity: 0.25, duration: 0.35, yoyo: true, repeat: 1, ease: 'sine.inOut' }, 0.22 * i));
+              blink.to({}, { duration: 0.8 });
+              gsap
+                .timeline({ scrollTrigger: { trigger: el, start: 'top 92%', once: true } })
+                .from(el.querySelectorAll('.hs__b--tl, .hs__b--bl'), { x: -10, autoAlpha: 0, duration: 1.1, ease: 'pxl' }, 0)
+                .from(el.querySelectorAll('.hs__b--tr, .hs__b--br'), { x: 10, autoAlpha: 0, duration: 1.1, ease: 'pxl' }, 0)
+                .from(el.querySelectorAll('.hs__top circle'), { scale: 0, transformOrigin: '50% 50%', duration: 0.7, ease: 'back.out(2)', stagger: 0.07 }, 0.35)
+                .from(ring, { scale: 0, transformOrigin: '50% 50%', duration: 0.6, ease: 'back.out(2)', stagger: 0.05 }, 0.6)
+                .call(() => blink.play(), [], 1.4);
+              ScrollTrigger.create({
+                trigger: el,
+                start: 'top bottom',
+                end: 'bottom top',
+                onToggle: (self) => (self.isActive ? blink.progress() > 0 && blink.resume() : blink.pause()),
+              });
+            });
+            $$('[data-draw]').forEach((el) => {
+              gsap.fromTo(
+                el,
+                { scaleX: 0 },
+                { scaleX: 1, duration: 1.8, ease: 'pxl-io', transformOrigin: '0% 50%', scrollTrigger: { trigger: el, start: 'top 95%', once: true } },
+              );
+            });
+
+            // Home hero: the showreel settles a little slower than the page, so the wordmark slides off it.
+            if ($('.hh')) {
+              gsap.fromTo(
+                '.hh__zoom',
+                { yPercent: 0 },
+                { yPercent: 9, ease: 'none', scrollTrigger: { trigger: '.hh', start: 'top top', end: 'bottom top', scrub: true } },
+              );
+            }
+
             // Home work grid: each image unmasks upward while its contents settle from a slight zoom.
-            $$('.card').forEach((card) => {
-              const media = card.querySelector('.card__media');
-              const zoom = card.querySelector('.card__zoom');
-              const meta = card.querySelectorAll('.card__title, .card__summary, .card__scope');
+            $$('[data-card]').forEach((card) => {
+              const media = card.querySelector('.hw__media');
+              const zoom = card.querySelector('.hw__zoom');
+              const meta = card.querySelectorAll('.hw__label, .hw__index');
               gsap
                 .timeline({ defaults: { ease: 'pxl' }, scrollTrigger: { trigger: card, start: 'top 94%', once: true } })
                 .fromTo(media, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5 })
@@ -219,96 +282,134 @@ export default function Experience() {
                   { y: () => -px(), ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } },
                 );
               }
-
-              if (card.hasAttribute('data-field') && media instanceof HTMLElement) {
-                on(card, 'pointermove', (e) => {
-                  const r = media.getBoundingClientRect();
-                  media.style.setProperty('--mx', `${e.clientX - r.left}px`);
-                  media.style.setProperty('--my', `${e.clientY - r.top}px`);
-                });
-              }
             });
 
-            if ($('.clients')) {
-              const clients = { trigger: '.clients', start: 'top 88%', once: true };
-              gsap.fromTo('.clients__rule', { scaleX: 0 }, { scaleX: 1, duration: 1.8, ease: 'pxl-io', transformOrigin: '0% 50%', scrollTrigger: clients });
-              gsap.fromTo(
-                '.clients__logos li',
-                { autoAlpha: 0, y: 16, filter: 'blur(8px)' },
-                { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'pxl', stagger: 0.07, delay: 0.25, clearProps: 'filter', scrollTrigger: clients },
-              );
-              gsap.fromTo('.clients__label', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2, delay: 0.6, scrollTrigger: clients });
-            }
+            // Recognition: the 27 rises out of the floor, one figure after the other; the award rows follow their rules.
+            const count = $('.hr__count');
+            if (count) {
+              const two = count.querySelector<HTMLElement>('.hr__two')!;
+              const one = count.querySelector<HTMLElement>('.hr__one')!;
+              const seven = count.querySelector('.hr__seven');
+              const rise = { y: 0, yPercent: 104 };
+              const riseTo = { yPercent: 0, duration: 1.6, ease: 'pxl', scrollTrigger: { trigger: count, start: 'top 85%', once: true } };
+              gsap.fromTo(two, rise, riseTo);
+              gsap.fromTo([one, seven], rise, { ...riseTo, delay: 0.12 });
 
-            // About: pinned while the statement lights up word by word; the mark assembles beside it.
-            const statementEl = $('.about__statement');
-            if (statementEl) {
-              const statement = SplitText.create(statementEl, { type: 'words', wordsClass: 'w' });
-              cleanups.push(() => statement.revert());
-              gsap
-                .timeline({
-                  scrollTrigger: {
-                    id: 'stage',
-                    trigger: '.about',
-                    start: 'top top',
-                    end: () => `+=${window.innerHeight * 1.4}`,
-                    pin: true,
-                    scrub: 0.6,
-                    invalidateOnRefresh: true,
-                  },
-                })
-                .fromTo(statement.words, { opacity: 0.46 }, { opacity: 1, duration: 0.5, stagger: 0.12, ease: 'none' })
-                .fromTo('.about__foot', { '--rule-x': 0 }, { '--rule-x': 1, duration: 0.6, ease: 'power2.inOut' }, '-=0.6')
-                .fromTo('.about__body', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-                .to({}, { duration: 0.5 });
-              gsap.fromTo('.about__eyebrow', { autoAlpha: 0 }, { autoAlpha: 1, duration: 1, scrollTrigger: { trigger: '.about', start: 'top 70%', once: true } });
-            }
-
-            // Services: pinned; titles roll through a mask and the mark signs whichever one is live.
-            const items = $$('.svc');
-            if (items.length) {
-              const titles = items.map((i) => i.querySelector('.svc__title-inner'));
-              const bodies = items.map((i) => i.querySelector('.svc__body'));
-              const n = items.length;
-              gsap.set(titles[0], { y: 0, yPercent: 0 });
-              gsap.set(titles.slice(1), { y: 0, yPercent: 130 });
-              gsap.set(bodies[0], { autoAlpha: 1, y: 0 });
-              gsap.set(bodies.slice(1), { autoAlpha: 0, y: 12 });
-              // Entrance on the outer mask so it never competes with the scrubbed title positions below.
-              gsap.fromTo(
-                items[0].querySelector('.svc__title'),
-                { clipPath: 'inset(0% 0% 100% 0%)' },
-                { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'pxl-io', clearProps: 'clipPath', scrollTrigger: { trigger: '.services', start: 'top 55%', once: true } },
-              );
-              const svc = gsap.timeline({
-                defaults: { ease: 'none' },
-                scrollTrigger: {
-                  id: 'services',
-                  trigger: '.services',
-                  start: 'top top',
-                  end: () => `+=${window.innerHeight * 0.45 * (2 * n - 1)}`,
-                  pin: true,
-                  scrub: 0.5,
-                  invalidateOnRefresh: true,
-                },
+              // Counts up from 10 as on /next, the typed second figure standing in for the drawn 7 until it lands.
+              const final = Number(two.textContent! + one.textContent!);
+              const show = (n: number) => {
+                const s = String(n).padStart(2, '0');
+                two.textContent = s[0];
+                one.textContent = s[1];
+              };
+              const tally = { v: Math.min(10, final) };
+              show(tally.v);
+              gsap.set(one, { visibility: 'visible' });
+              gsap.set(seven, { visibility: 'hidden' });
+              const land = () => {
+                show(final);
+                gsap.set(one, { visibility: 'hidden' });
+                gsap.set(seven, { visibility: 'visible' });
+              };
+              cleanups.push(land);
+              gsap.to(tally, {
+                v: final,
+                duration: 2,
+                ease: 'power3.out',
+                onUpdate: () => show(Math.round(tally.v)),
+                onComplete: land,
+                scrollTrigger: { trigger: count, start: 'top 60%', once: true },
               });
-              for (let k = 1; k < n; k++) {
-                const at = 2 * k - 1;
-                // Explicit start and end values on every step: scrubbing in either direction always lands exactly.
-                svc
-                  .fromTo(titles[k - 1], { y: 0, yPercent: 0 }, { y: 0, yPercent: -130, duration: 1, ease: 'power3.inOut', immediateRender: false }, at)
-                  .fromTo(titles[k], { y: 0, yPercent: 130 }, { y: 0, yPercent: 0, duration: 1, ease: 'power3.inOut', immediateRender: false }, at)
-                  .fromTo(bodies[k - 1], { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -12, duration: 0.4, ease: 'power2.in', immediateRender: false }, at)
-                  .fromTo(bodies[k], { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out', immediateRender: false }, at + 0.5);
+              gsap.fromTo(count, { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: count, start: 'top bottom', end: 'bottom top', scrub: true } });
+              // The statement lights up word by word as it crosses the screen (as on /next).
+              const words = $$('.hr__text .w');
+              if (words.length) {
+                gsap.fromTo(
+                  words,
+                  { opacity: 0.16 },
+                  { opacity: 1, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: '.hr__text', start: 'top 80%', end: 'bottom 45%', scrub: 0.6 } },
+                );
               }
-              svc.to({}, { duration: 1 }, 2 * n - 2);
+              $$('.hr__row').forEach((row) => {
+                gsap.fromTo(
+                  row.querySelectorAll('.hr__left, .hr__right'),
+                  { autoAlpha: 0, y: 18 },
+                  { autoAlpha: 1, y: 0, duration: 1.2, ease: 'pxl', delay: 0.15, stagger: 0.06, scrollTrigger: { trigger: row, start: 'top 95%', once: true } },
+                );
+              });
             }
 
-            if ($('.news__row')) {
+            // Clients (as on /next): the page flips from ink to paper as the section arrives, and the testimonials lift away.
+            if ($('.hc') && $('.ht__in')) {
+              gsap
+                .timeline({ scrollTrigger: { trigger: '.hc', start: 'top 92%', end: 'top 22%', scrub: 0.7, invalidateOnRefresh: true } })
+                .fromTo(['.ht', '.hc'], { '--flip': 0 }, { '--flip': 1, ease: 'sine.inOut', duration: 1 }, 0)
+                .fromTo(
+                  '.ht__in',
+                  { autoAlpha: 1, y: 0, scale: 1 },
+                  { autoAlpha: 0, y: () => -0.07 * window.innerHeight, scale: 0.965, transformOrigin: '50% 0%', ease: 'power1.in', duration: 0.5 },
+                  0,
+                );
+            }
+            // The names turn on a drum: each tips back and shrinks with its distance from the middle of the screen.
+            const drum = $('[data-drum]');
+            if (drum) {
+              const rows = Array.from(drum.children) as HTMLElement[];
+              let centres: number[] = [];
+              const measure = () => {
+                const top = drum.getBoundingClientRect().top + window.scrollY;
+                centres = rows.map((r) => top + r.offsetTop + r.offsetHeight / 2);
+              };
+              measure();
+              let near = false;
+              const watch = ScrollTrigger.create({ trigger: drum, start: 'top bottom', end: 'bottom top', onToggle: (self) => (near = self.isActive), onRefresh: measure });
+              const turn = () => {
+                if (!near) return;
+                const half = window.innerHeight / 2;
+                const mid = window.scrollY + half;
+                rows.forEach((row, i) => {
+                  const o = gsap.utils.clamp(-1.25, 1.25, (centres[i] - mid) / half);
+                  const a = Math.abs(o);
+                  row.style.transform = `perspective(900px) rotateX(${(-58 * o).toFixed(2)}deg) scale(${(1 - 0.14 * a).toFixed(3)})`;
+                  row.style.opacity = gsap.utils.clamp(0, 1, 1.15 - a * a * 0.7).toFixed(3);
+                });
+              };
+              gsap.ticker.add(turn);
+              window.addEventListener('resize', measure);
+              cleanups.push(() => {
+                gsap.ticker.remove(turn);
+                watch.kill();
+                window.removeEventListener('resize', measure);
+                rows.forEach((r) => {
+                  r.style.transform = '';
+                  r.style.opacity = '';
+                });
+              });
+            }
+            // Over the coloured stretch of the field the difference blend would tint the header and cursor; keep them white.
+            const field = $('.hc__field');
+            if (field) {
+              ScrollTrigger.create({
+                trigger: field,
+                start: () => `top+=${field.offsetHeight * 0.2} top`,
+                end: 'bottom top',
+                invalidateOnRefresh: true,
+                onToggle: (self) => html.classList.toggle('on-foot', self.isActive),
+              });
+              cleanups.push(() => html.classList.remove('on-foot'));
+            }
+
+            // Home footer: the sign-off rises letter group by group; the columns follow their rule.
+            if ($('.hf')) {
               gsap.fromTo(
-                '.news__row',
-                { autoAlpha: 0, y: 26 },
-                { autoAlpha: 1, y: 0, duration: 1.2, ease: 'pxl', stagger: 0.08, scrollTrigger: { trigger: '.news__list', start: 'top 90%', once: true } },
+                '.hf__mask > *',
+                { y: 0, yPercent: 160 },
+                { yPercent: 0, duration: 1.5, ease: 'pxl', stagger: 0.07, scrollTrigger: { trigger: '.hf__sign', start: 'top 92%', once: true } },
+              );
+              gsap.fromTo(
+                '.hf__col',
+                { autoAlpha: 0, y: 16 },
+                { autoAlpha: 1, y: 0, duration: 1.2, ease: 'pxl', stagger: 0.08, scrollTrigger: { trigger: '.hf__cols', start: 'top 92%', once: true } },
               );
             }
 
@@ -458,8 +559,10 @@ export default function Experience() {
       });
 
       const fontsReady = document.fonts?.ready ?? Promise.resolve();
-      if (markState.ready) markIntro();
-      else window.addEventListener('mark:ready', () => alive && markState.ready && markIntro(), { once: true });
+      // Pages can go without the mark (home); it stays apart and hidden there.
+      const markOff = !!$('[data-mark="off"]');
+      if (markState.ready && !markOff) markIntro();
+      else if (!markOff) window.addEventListener('mark:ready', () => alive && markState.ready && markIntro(), { once: true });
 
       Promise.race([fontsReady, wait(1200)]).then(() => {
         if (!alive) return;
@@ -474,6 +577,7 @@ export default function Experience() {
 
       return () => {
         alive = false;
+        document.removeEventListener('dragstart', onDragStart);
         document.removeEventListener('click', onClick);
         window.removeEventListener('menu:toggle', onMenu);
         window.removeEventListener('resize', setUnits);

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Work — PIXELUP LABS</title>
+  <meta name="description" content="Selected case studies from PIXELUP LABS, explored as an infinite draggable hex dome." />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <!-- Preloader -->
+  <div class="loader" id="loader">
+    <div class="loader__mark"><img src="media/nav-logo.svg" alt="PIXELUP LABS" /></div>
+    <div class="loader__bar"><span id="loaderBar"></span></div>
+    <div class="loader__meta">
+      <span>LOADING WORK</span>
+      <span class="loader__pct"><span id="loaderPct">000</span>%</span>
+    </div>
+  </div>
+
+  <canvas id="gl" aria-label="Interactive dome of case studies. Drag to explore, click a project to open it."></canvas>
+
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Chrome -->
+  <header class="nav">
+    <a class="nav__logo" href="https://www.pixeluplabs.com" aria-label="PIXELUP LABS home">
+      <img src="media/nav-logo.svg" alt="PIXELUP LABS" />
+    </a>
+    <nav class="nav__links">
+      <a href="#" class="is-active">Work</a>
+      <a href="https://www.pixeluplabs.com/process">Process</a>
+      <a href="https://www.pixeluplabs.com/call" class="nav__cta"><span>Book a call</span></a>
+    </nav>
+  </header>
+
+  <section class="hero" id="hero">
+    <div class="eyebrow"><span class="mask"><span class="line">WORK</span></span><sup>IV</sup></div>
+    <h1 class="title" id="title">
+      <span class="mask"><span class="line">Some</span></span>
+      <span class="mask"><span class="line">highlights</span></span>
+      <span class="mask"><span class="line">from our</span></span>
+      <span class="mask"><span class="line">recent</span></span>
+      <span class="mask"><span class="line">projects</span></span>
+    </h1>
+  </section>
+
+  <footer class="hud" id="hud">
+    <div class="hud__hint"><span class="hud__dot"></span><span id="hint">Drag to explore</span></div>
+    <div class="hud__counter">
+      <span id="hudIndex">01</span>
+      <div class="hud__ticks" id="ticks"></div>
+      <span id="hudTotal">14</span>
+    </div>
+    <div class="hud__active"><span id="hudName">Greptile</span></div>
+  </footer>
+
+  <!-- Detail -->
+  <div class="detail" id="detail" aria-hidden="true">
+    <button class="detail__close" id="close" aria-label="Close project"><span></span><span></span></button>
+    <div class="detail__panel">
+      <div class="detail__head">
+        <div class="detail__eyebrow"><span id="dIndex">01</span> / <span id="dName">Greptile</span><span class="detail__badge" id="dBadge"></span></div>
+        <h2 class="detail__title" id="dTitle"></h2>
+      </div>
+      <dl class="detail__meta">
+        <div><dt>Industry</dt><dd id="dNiche"></dd></div>
+        <div><dt>What we did</dt><dd id="dWork"></dd></div>
+        <div><dt>Year</dt><dd id="dYear"></dd></div>
+        <div class="detail__stat" id="dStatWrap"><dt>Result</dt><dd id="dStat"></dd></div>
+      </dl>
+      <a class="detail__cta" id="dLink" href="#" target="_blank" rel="noopener">
+        <span class="detail__cta-text">View case study</span>
+        <span class="detail__cta-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="cursor" id="cursor" aria-hidden="true"><span id="cursorLabel">Drag</span></div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

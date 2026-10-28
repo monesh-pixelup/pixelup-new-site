@@ -1,6 +1,10 @@
 # PIXELUP LABS — Website 2026
 
-Built from the Figma file `PIXELUP-Brand-2026`: **Home - Desktop - 1440p** (`674:68`) at `/` and **Work - Desktop - 1440p** (`674:208`) at `/work`.
+Built from the Figma file `PIXELUP-Brand-2026`: **Home - Desktop - 1440p** (`1524:934`) at `/` and **Work - Desktop - 1440p** (`674:208`) at `/work`.
+
+## Home page
+
+From 1024px every element sits at its Figma coordinates on the 1440 canvas (`src/styles/home.css`); phones and tablets stack. Copy lives in `home` in `src/content/site.ts`, with Figma placeholders marked `PLACEHOLDER`. The work dome (`src/components/home/dome/DomeScene.ts`) is three.js: projects on the inside of a cylinder, drag or arrow keys to turn, click the lit card to open it. The 3D mark sits the home page out (`data-mark="off"`).
 
 ```bash
 npm install

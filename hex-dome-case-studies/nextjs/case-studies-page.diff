@@ -1,0 +1,25 @@
+diff --git a/app/case-studies/page.tsx b/app/case-studies/page.tsx
+index f463250..505255c 100644
+--- a/app/case-studies/page.tsx
++++ b/app/case-studies/page.tsx
+@@ -1,7 +1,9 @@
+ import type { Metadata } from "next";
+ import { CaseStudyList } from "@/components/case-studies/CaseStudyList";
++import { HexDome } from "@/components/case-studies/HexDome";
+ import { Footer } from "@/components/Footer";
+ import { caseStudyShowcase } from "@/lib/case-studies-showcase";
++import { projects } from "@/lib/projects";
+ 
+ export const metadata: Metadata = {
+   title: "Case Studies - PIXELUP LABS",
+@@ -14,6 +16,10 @@ export const metadata: Metadata = {
+ export default function CaseStudiesPage() {
+   return (
+     <div className="relative flex flex-col gap-8 p-4 desk:p-5">
++      {/* Full-bleed: cancels the page padding, like the Footer below. */}
++      <div className="-mx-4 -mt-4 desk:-mx-5 desk:-mt-5">
++        <HexDome projects={projects} showcase={caseStudyShowcase} />
++      </div>
+       <header className="flex w-fit flex-col gap-4">
+         <h1 className="fade-up font-display tracking-display text-[24px] font-medium leading-[1.1] text-white [animation-delay:100ms] desk:text-[56px]">
+           Real projects,

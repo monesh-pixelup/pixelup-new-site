@@ -13,7 +13,8 @@ import { useEffect, useRef } from 'react';
 const RAMP: [number, string][] = [
   [0, '#ffffff'],
   [0.048334, '#ffffff'],
-  [0.25305, '#061d46'],
+  // Pulled in from the Figma's 0.25305: the long white-to-navy blend read as a flat grey on the way in.
+  [0.18, '#061d46'],
   [0.33981, '#030306'],
   [0.44319, '#030207'],
   [0.50167, '#450854'],
@@ -35,7 +36,7 @@ const LEAN = 0.34;
 const LEAD = 0.2;
 /** The soft fade from paper into colour below the field's top edge, in screen heights. It is pinned to the edge, so
     it scrolls away with the page and the colour never meets the paper above in a hard line. */
-const FADE = 0.3;
+const FADE = 0.24;
 
 let broken = false; // once the GPU can't keep up, stay on the CSS gradient for the session
 
@@ -342,12 +343,21 @@ export default function ClientsSky({ count }: { count: number }) {
     let pw = 0;
     let ph = 0;
     let lane = 0.2;
+    // Each name's centre down the field. The drum only rotates and scales the rows about their centres, so these hold
+    // while it turns, and the frame loop never has to ask the layout where a name is.
+    let centres: number[] = [];
     const measure = () => {
       if (!gl) return;
       const r = field.getBoundingClientRect();
       top = r.top + window.scrollY;
       height = r.height;
       left = r.left;
+      centres = items.map((li) => {
+        const el = li as HTMLElement;
+        let y = el.offsetHeight / 2;
+        for (let n: HTMLElement | null = el; n && n !== field; n = n.offsetParent as HTMLElement | null) y += n.offsetTop;
+        return y;
+      });
       cw = Math.max(1, canvas.clientWidth);
       ch = Math.max(1, canvas.clientHeight);
       let widest = 0;
@@ -446,8 +456,7 @@ export default function ClientsSky({ count }: { count: number }) {
         return ramp.lightness[Math.round(clamp(r, 0, 1) * (SIZE - 1))] < 0.6;
       };
       for (let i = 0; i < items.length; i++) {
-        const r = items[i].getBoundingClientRect();
-        const on = shade(r.top + r.height / 2 - ct0);
+        const on = shade(top + centres[i] - scroll - ct0);
         if (on !== inked[i]) items[i].classList.toggle('is-ink', (inked[i] = on));
       }
       const dark = shade(0.5 * ch);

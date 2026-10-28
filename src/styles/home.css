@@ -1469,7 +1469,13 @@ html.motion .hv:not(.is-in) .hv-q__wipe {
    Clients (as on /next): the page flips from ink to paper as the section arrives (--flip, Experience), then a tall
    field where the names turn on a drum over the brand gradient, which ClientsSky walks through as you scroll.
 ---------------------------------------------------------------- */
-/* Testimonials share the flip, and lift away inside .ht__in. */
+/* Testimonials share the flip, and lift away inside .ht__in. --flip is registered as non-inherited: scrubbed every
+   frame, an inherited one would restyle every card and logo in both sections. Only the backdrop reads it. */
+@property --flip {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
 .ht,
 .hc {
   position: relative;
@@ -1481,6 +1487,7 @@ html.motion .hv:not(.is-in) .hv-q__wipe {
   position: absolute;
   inset: 0;
   z-index: -1;
+  --flip: inherit;
   background: var(--paper);
   opacity: var(--flip);
   pointer-events: none;
@@ -1545,7 +1552,7 @@ html.motion .hv:not(.is-in) .hv-q__wipe {
     linear-gradient(
       180deg,
       #ffffff 4.8334%,
-      rgb(6 29 70) 25.305%,
+      rgb(6 29 70) 18%,
       rgb(3 3 6) 33.981%,
       rgb(3 2 7) 44.319%,
       rgb(69 8 84) 50.167%,
@@ -1576,9 +1583,13 @@ html.motion .hv:not(.is-in) .hv-q__wipe {
   top: 0;
   height: 100lvh;
   opacity: 0;
+  /* If the sky has to give up mid-scroll, it fades back to the CSS gradient instead of popping. */
+  transition: opacity 0.5s var(--ease-soft-out);
 }
+/* Coming in it's instant: the CSS gradient goes at the same moment, so a fade would flash black. */
 .hc__field.is-live .hc__sky > div {
   opacity: 1;
+  transition: none;
 }
 .hc__sky canvas {
   display: block;
@@ -1961,10 +1972,10 @@ html.motion .hv:not(.is-in) .hv-q__wipe {
     margin-left: calc(696 * var(--u) - 0.06em);
   }
 
-  /* Work grid (1305.77 → 3420) */
+  /* Work grid (1305.77 → 3348) */
   .hw {
     position: relative;
-    height: calc(2114.23 * var(--u));
+    height: calc(2042.23 * var(--u));
     padding: 0;
   }
   .hw__grid {

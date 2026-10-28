@@ -240,12 +240,12 @@ export const home = {
   work: [
     { label: 'Replay', index: '01', src: '/home/work-replay.jpg', alt: 'Replay identity: engraved figure, data sheets and code', frame: [0, 0, 781, 430.63, 446.23], href: 'https://www.replay.ai/' },
     { label: 'Greptile', index: '02', src: '/home/work-greptile.jpg', alt: 'Greptile app icon, poster and colour palette', frame: [801.81, 0, 601, 321.5, 334.6], href: '/case-studies/greptile' },
-    { label: 'Autumn', index: '03', src: '/home/work-autumn.jpg', alt: 'Autumn wordmark over a portrait lit in violet', frame: [0, 545.63, 601, 319, 334.6], href: 'https://useautumn.com/' },
-    { label: 'Henrylabs', index: '04', src: '/home/work-henrylabs.jpg', alt: 'Henry Labs posters: where intent becomes action', frame: [621.81, 545.63, 781, 430.63, 446.23], href: '/case-studies/henrylabs' },
-    { label: 'Fuse AI', index: '05', src: '/home/work-fuse-poster.jpg', alt: 'FuseAI brand film: racing collage with the (FUSE*) wordmark', video: '/home/work-fuse.mp4', frame: [0, 1091.27, 1402.81, 358.15, 376.15] },
+    { label: 'Autumn', index: '03', src: '/home/work-autumn.jpg', alt: 'Autumn wordmark over a portrait lit in violet', frame: [0, 521.63, 601, 319, 334.6], href: 'https://useautumn.com/' },
+    { label: 'Henrylabs', index: '04', src: '/home/work-henrylabs.jpg', alt: 'Henry Labs posters: where intent becomes action', frame: [621.81, 521.63, 781, 430.63, 446.23], href: '/case-studies/henrylabs' },
+    { label: 'Fuse AI', index: '05', src: '/home/work-fuse-poster.jpg', alt: 'FuseAI brand film: racing collage with the (FUSE*) wordmark', video: '/home/work-fuse.mp4', frame: [0, 1043.27, 1402.81, 358.15, 376.15] },
     // PLACEHOLDER: the Figma labels this Streamline image "REPLAY". The link follows the image.
-    { label: 'Replay', index: '06', src: '/home/work-streamline.jpg', alt: 'Streamline wordmark with brand imagery and product screens', frame: [0, 1568.42, 781, 430.63, 446.23], href: '/case-studies/streamline' },
-    { label: 'Sainapse', index: '07', src: '/home/work-sainapse.jpg', alt: 'Sainapse mark over a misty valley', frame: [801.81, 1568.42, 601, 319, 334.6], href: '/case-studies/sainapse' },
+    { label: 'Replay', index: '06', src: '/home/work-streamline.jpg', alt: 'Streamline wordmark with brand imagery and product screens', frame: [0, 1496.42, 781, 430.63, 446.23], href: '/case-studies/streamline' },
+    { label: 'Sainapse', index: '07', src: '/home/work-sainapse.jpg', alt: 'Sainapse mark over a misty valley', frame: [801.81, 1496.42, 601, 319, 334.6], href: '/case-studies/sainapse' },
   ] satisfies HomeWork[],
 
   services: {

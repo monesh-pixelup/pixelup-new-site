@@ -171,7 +171,8 @@ export function createHexDome(
   let destroyed = false;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  // A full-screen MSAA pass every frame: 1.5× keeps it crisp on retina at a little over half the pixels of 2×.
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.setClearColor(0x000000, 1);
   const maxAniso = renderer.capabilities.getMaxAnisotropy();
   const scene = new THREE.Scene();

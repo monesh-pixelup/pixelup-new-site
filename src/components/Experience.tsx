@@ -356,9 +356,12 @@ export default function Experience() {
             if (drum) {
               const rows = Array.from(drum.children) as HTMLElement[];
               let centres: number[] = [];
+              // The last midpoint drawn: the rows are only rewritten when the page has actually moved.
+              let drawn = NaN;
               const measure = () => {
                 const top = drum.getBoundingClientRect().top + window.scrollY;
                 centres = rows.map((r) => top + r.offsetTop + r.offsetHeight / 2);
+                drawn = NaN;
               };
               measure();
               let near = false;
@@ -367,6 +370,8 @@ export default function Experience() {
                 if (!near) return;
                 const half = window.innerHeight / 2;
                 const mid = window.scrollY + half;
+                if (Math.abs(mid - drawn) < 0.1) return;
+                drawn = mid;
                 rows.forEach((row, i) => {
                   const o = gsap.utils.clamp(-1.25, 1.25, (centres[i] - mid) / half);
                   const a = Math.abs(o);
